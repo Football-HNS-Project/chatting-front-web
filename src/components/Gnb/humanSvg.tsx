@@ -1,10 +1,14 @@
-export const HumanSvg = () => {
+type HumanSvgProps = {
+  size: number;
+};
+
+export const HumanSvg = ({ size }: HumanSvgProps) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 24 24"
       fill="currentColor"
-      className="w-[32px] h-[32px]"
+      width={size}
     >
       <path
         fillRule="evenodd"

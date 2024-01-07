@@ -16,7 +16,7 @@ export const Dropdown = () => {
               open && "bg-gray-100"
             } inline-flex w-full items-center justify-center h-[44px] gap-[9px] px-[12px] text-[16px] font-bold rounded hover:bg-gray-100 duration-300`}
           >
-            <HumanSvg />
+            <HumanSvg size={32} />
             닉네임
             <svg
               xmlns="http://www.w3.org/2000/svg"
