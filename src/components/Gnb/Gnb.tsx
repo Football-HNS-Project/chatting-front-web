@@ -10,7 +10,11 @@ export const Gnb: React.FC = () => {
   const location = useLocation();
 
   return (
-    <div className="fixed top-0 left-0 w-full h-[64px] z-[999] bg-white">
+    <div
+      className={`fixed top-0 left-0 w-full h-[64px] z-[999] bg-white ${
+        location.pathname === "/chatting" && "border-b-[1px] border-gray-200"
+      }`}
+    >
       <div className="flex flex-row h-full items-center px-[2rem] py-[1.2rem] justify-between max-w-[120rem] my-0 mx-auto">
         <a className="mr-[3.6rem] items-center" href="/">
           <Logo />
