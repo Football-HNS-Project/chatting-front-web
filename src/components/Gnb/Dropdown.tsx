@@ -2,7 +2,7 @@ import { Fragment, useState } from "react";
 
 import { Menu, Switch, Transition } from "@headlessui/react";
 
-import { HumanSvg } from "@components/Gnb/humanSvg";
+import { HumanSvg } from "@assets/humanSvg";
 
 export const Dropdown = () => {
   const [enabled, setEnabled] = useState(false);

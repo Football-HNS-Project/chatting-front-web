@@ -1,10 +1,11 @@
 import { useLocation } from "react-router-dom";
 
+import { MenuSvg } from "@assets/MenuSvg";
+import { SearchSvg } from "@assets/SearchSvg";
+
 import { Dropdown } from "@components/Gnb/Dropdown";
 import { GNB_MENU } from "@components/Gnb/GNB_MENU";
 import { Logo } from "@components/Gnb/Logo";
-import { MenuSvg } from "@components/Gnb/MenuSvg";
-import { SearchSvg } from "@components/Gnb/SearchSvg";
 
 export const Gnb: React.FC = () => {
   const location = useLocation();
