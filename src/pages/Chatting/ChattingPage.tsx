@@ -7,7 +7,7 @@ import { HumanSvg } from "@assets/humanSvg";
 import { Chatting_Dummy } from "@pages/Chatting/Chatting_Dummy";
 
 export const ChattingPage = () => {
-  const [checked, setChecked] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
   const [selectedChattingId, setSelectedChattingId] = useState<number | null>(
     null
   );
@@ -17,7 +17,7 @@ export const ChattingPage = () => {
         <div className="flex">
           {/* 채팅 목록 */}
           <nav className="flex flex-col w-[72px] py-[20px] px-[13px] border-l-[1px] border-r-[1px] chatting-divider bg-gray-200">
-            <a className="border-[2px] rounded-full border-orange-500 flex items-center justify-center">
+            <a className="border-[2px] rounded-full border-green-500 flex items-center justify-center">
               <HumanSvg size={40} />
             </a>
           </nav>
@@ -31,9 +31,9 @@ export const ChattingPage = () => {
                 <input
                   type="checkbox"
                   hidden
-                  onClick={() => setChecked(!checked)}
+                  onClick={() => setIsChecked(!isChecked)}
                 />
-                {checked ? <CheckedSvg /> : <UnCheckedSvg />}
+                {isChecked ? <UnCheckedSvg /> : <CheckedSvg />}
               </label>
             </div>
             <ul
@@ -58,8 +58,9 @@ export const ChattingPage = () => {
                       width={40}
                       height={40}
                       className="border-[1px] chatting-divider rounded-full"
-                      src="https://dnvefa72aowie.cloudfront.net/origin/user/202308/d58512c05b9677d82b6b1f3be5ddff9cbedfa010bcc2ef1ac49f8d7d00ccd211.png"
+                      src="/src/assets/Dummy_Icon.png"
                     />
+
                     <div className="w-0 flex-grow flex-shrink-0 basis-0">
                       <div className="flex flex-row items-center gap-[6px]">
                         <span className="h-[20px] text-[13px] font-bold overflow-x-hidden text-ellipsis whitespace-nowrap">
