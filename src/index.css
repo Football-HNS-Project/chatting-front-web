@@ -10,6 +10,9 @@
     align-items: center;
     padding: 10px;
   }
+  .chatting-divider {
+    @apply border-gray-200;
+  }
 }
 
 :root {

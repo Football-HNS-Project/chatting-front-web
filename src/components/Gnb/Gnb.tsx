@@ -1,16 +1,21 @@
 import { useLocation } from "react-router-dom";
 
+import { Logo } from "@assets/Logo";
+import { MenuSvg } from "@assets/MenuSvg";
+import { SearchSvg } from "@assets/SearchSvg";
+
 import { Dropdown } from "@components/Gnb/Dropdown";
 import { GNB_MENU } from "@components/Gnb/GNB_MENU";
-import { Logo } from "@components/Gnb/Logo";
-import { MenuSvg } from "@components/Gnb/MenuSvg";
-import { SearchSvg } from "@components/Gnb/SearchSvg";
 
 export const Gnb: React.FC = () => {
   const location = useLocation();
 
   return (
-    <div className="fixed top-0 left-0 w-full h-[64px] z-[999] bg-white">
+    <div
+      className={`fixed top-0 left-0 w-full h-[64px] z-[999] bg-white ${
+        location.pathname === "/chatting" && "border-b-[1px] border-gray-200"
+      }`}
+    >
       <div className="flex flex-row h-full items-center px-[2rem] py-[1.2rem] justify-between max-w-[120rem] my-0 mx-auto">
         <a className="mr-[3.6rem] items-center" href="/">
           <Logo />
