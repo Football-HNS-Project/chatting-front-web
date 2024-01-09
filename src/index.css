@@ -13,6 +13,9 @@
   .chatting-divider {
     @apply border-gray-200;
   }
+  .image-divider {
+    @apply border-gray-300;
+  }
 }
 
 :root {

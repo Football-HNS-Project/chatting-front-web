@@ -2,8 +2,6 @@ import { Fragment, useState } from "react";
 
 import { Menu, Switch, Transition } from "@headlessui/react";
 
-import { HumanSvg } from "@assets/humanSvg";
-
 export const Dropdown = () => {
   const [enabled, setEnabled] = useState(false);
 
@@ -16,7 +14,12 @@ export const Dropdown = () => {
               open && "bg-gray-100"
             } inline-flex w-full items-center justify-center h-[44px] gap-[9px] px-[12px] text-[16px] font-bold rounded hover:bg-gray-100 duration-300`}
           >
-            <HumanSvg size={32} />
+            <img
+              width={32}
+              height={32}
+              className="border-[1px] image-divider rounded-full"
+              src="/src/assets/Profile.png"
+            />
             닉네임
             <svg
               xmlns="http://www.w3.org/2000/svg"

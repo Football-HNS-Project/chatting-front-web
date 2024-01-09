@@ -2,7 +2,6 @@ import { useState } from "react";
 
 import { CheckedSvg } from "@assets/CheckedSvg";
 import { UnCheckedSvg } from "@assets/UnCheckedSvg";
-import { HumanSvg } from "@assets/humanSvg";
 
 import { Chatting_Dummy } from "@pages/Chatting/Chatting_Dummy";
 
@@ -17,8 +16,13 @@ export const ChattingPage = () => {
         <div className="flex">
           {/* 채팅 목록 */}
           <nav className="flex flex-col w-[72px] py-[20px] px-[13px] border-l-[1px] border-r-[1px] chatting-divider bg-gray-200">
-            <a className="border-[2px] rounded-full border-green-500 flex items-center justify-center">
-              <HumanSvg size={40} />
+            <a className="flex items-center justify-center border-[2px] rounded-full border-green-500 p-[2px]">
+              <img
+                width={40}
+                height={40}
+                className="border-[1px] image-divider rounded-full"
+                src="/src/assets/Profile.png"
+              />
             </a>
           </nav>
           <nav className="flex flex-col border-r-[1px] w-[312px] min-w-[312px]">
