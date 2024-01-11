@@ -5,25 +5,37 @@ import { useAtom } from "jotai";
 import { CheckedSvg } from "@assets/CheckedSvg";
 import { UnCheckedSvg } from "@assets/UnCheckedSvg";
 
-import { Chatting_Dummy } from "@pages/Chatting/Chatting_Dummy";
+import { Chatting_Dummy, User_Dummy } from "@pages/Chatting/Chatting_Dummy";
 
-import { ChattingAtom } from "@stores/ChattingStore";
+import { ChattingAtom, UserAtom } from "@stores/ChattingStore";
 
 export const ChattingList = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [selectedChattingId, setSelectedChattingId] = useAtom(ChattingAtom);
+  const [selectedUserId, setSelectedUserId] = useAtom(UserAtom);
 
   return (
     <>
-      <nav className="flex flex-col w-[72px] py-[20px] px-[13px] border-l-[1px] border-r-[1px] chatting-divider bg-gray-200">
-        <a className="flex items-center justify-center border-[2px] rounded-full border-green-500 p-[2px]">
-          <img
-            width={40}
-            height={40}
-            className="border-[1px] image-divider rounded-full"
-            src="/src/assets/Profile.png"
-          />
-        </a>
+      <nav className="flex flex-col w-[72px] py-[20px] px-[13px] border-l-[1px] border-r-[1px] chatting-divider bg-gray-200 gap-[20px]">
+        {User_Dummy.map((user) => (
+          <a
+            key={user.id}
+            className="inline-block relative w-[44px] h-[44px]"
+            onClick={() => {
+              setSelectedUserId(user.id);
+              console.log(selectedUserId);
+            }}
+          >
+            <img
+              width={44}
+              height={44}
+              className={`border-[1px] image-divider rounded-full ${
+                selectedUserId === user.id ? "profile-image-selected" : ""
+              }`}
+              src="/src/assets/Profile.png"
+            />
+          </a>
+        ))}
       </nav>
       <nav className="flex flex-col border-r-[1px] w-[312px] min-w-[312px]">
         <div className="flex h-[64px] min-h-[64px] items-center px-[20px] border-b-[1px] chatting-divider">
