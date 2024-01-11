@@ -1,15 +1,18 @@
 import { useState } from "react";
 
+import { useAtom } from "jotai";
+
 import { CheckedSvg } from "@assets/CheckedSvg";
 import { UnCheckedSvg } from "@assets/UnCheckedSvg";
 
 import { Chatting_Dummy } from "@pages/Chatting/Chatting_Dummy";
 
+import { ChattingAtom } from "@stores/ChattingStore";
+
 export const ChattingList = () => {
   const [isChecked, setIsChecked] = useState(false);
-  const [selectedChattingId, setSelectedChattingId] = useState<number | null>(
-    null
-  );
+  const [selectedChattingId, setSelectedChattingId] = useAtom(ChattingAtom);
+
   return (
     <>
       <nav className="flex flex-col w-[72px] py-[20px] px-[13px] border-l-[1px] border-r-[1px] chatting-divider bg-gray-200">
