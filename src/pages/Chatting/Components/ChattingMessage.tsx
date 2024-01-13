@@ -11,6 +11,7 @@ export const ChattingMessage = ({ chatting }: ChatttingMessageProps) => {
     <div className="flex flex-col overflow-x-hidden overflow-y-auto p-[20px] gap-[10px]">
       {chatting.map((chat) => (
         <div
+          key={chat.id}
           className={`${
             chat.userId === user.id
               ? "bg-green-300 self-end"
