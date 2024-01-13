@@ -2,7 +2,9 @@ import { useAtomValue } from "jotai";
 
 import { NoChatSvg } from "@assets/NoChatSvg";
 
+import { Chatting_Dummy } from "@pages/Chatting/Chatting_Dummy";
 import { ChattingDropdown } from "@pages/Chatting/Components/ChattingDropdown";
+import { ChattingMessage } from "@pages/Chatting/Components/ChattingMessage";
 
 import { ChattingAtom } from "@stores/ChattingStore";
 
@@ -21,10 +23,22 @@ export const ChattingDetail = () => {
                 src="/src/assets/Dummy_Icon.png"
                 className="border-[1px] chatting-divider rounded-full"
               />
-              <span className="text-[15px]">닉네임</span>
+              <span className="text-[15px]">
+                {/* TODO: API 끼우기 */}
+                {
+                  Chatting_Dummy.filter((v) => v.id === selectedChattingId)[0]
+                    .senderInfo.name
+                }
+              </span>
             </div>
             <ChattingDropdown />
           </div>
+          <ChattingMessage
+            chatting={
+              Chatting_Dummy.filter((v) => v.id === selectedChattingId)[0]
+                .message
+            }
+          />
         </div>
       ) : (
         <div className="flex flex-col justify-center items-center w-full h-full gap-[34px]">

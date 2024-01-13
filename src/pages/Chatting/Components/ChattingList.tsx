@@ -7,12 +7,12 @@ import { UnCheckedSvg } from "@assets/UnCheckedSvg";
 
 import { Chatting_Dummy, User_Dummy } from "@pages/Chatting/Chatting_Dummy";
 
-import { ChattingAtom, UserAtom } from "@stores/ChattingStore";
+import { ChattingAtom, SelectedUserAtom } from "@stores/ChattingStore";
 
 export const ChattingList = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [selectedChattingId, setSelectedChattingId] = useAtom(ChattingAtom);
-  const [selectedUserId, setSelectedUserId] = useAtom(UserAtom);
+  const [selectedUserId, setSelectedUserId] = useAtom(SelectedUserAtom);
 
   return (
     <>
@@ -80,7 +80,7 @@ export const ChattingList = () => {
                 <div className="w-0 flex-grow flex-shrink-0 basis-0">
                   <div className="flex flex-row items-center gap-[6px]">
                     <span className="h-[20px] text-[13px] font-bold overflow-x-hidden text-ellipsis whitespace-nowrap">
-                      {chatting.sender}
+                      {chatting.senderInfo.name}
                     </span>
                     <span className="text-[12px] whitespace-nowrap text-gray-500">
                       {chatting.sendDate}
@@ -88,7 +88,7 @@ export const ChattingList = () => {
                   </div>
                   <div className="flex h-[20px] items-center">
                     <span className="overflow-x-hidden text-ellipsis whitespace-nowrap text-[13px] text-gray-700">
-                      {chatting.message}
+                      {chatting.message[chatting.message.length - 1].message}
                     </span>
                   </div>
                 </div>
