@@ -4,6 +4,7 @@ import { NoChatSvg } from "@assets/NoChatSvg";
 
 import { Chatting_Dummy } from "@pages/Chatting/Chatting_Dummy";
 import { ChattingDropdown } from "@pages/Chatting/Components/ChattingDropdown";
+import { ChattingForm } from "@pages/Chatting/Components/ChattingForm";
 import { ChattingMessage } from "@pages/Chatting/Components/ChattingMessage";
 
 import { ChattingAtom } from "@stores/ChattingStore";
@@ -14,31 +15,35 @@ export const ChattingDetail = () => {
   return (
     <section className="flex flex-col min-w-[812px] max-w-[812px] border-r-[1px] chatting-divider">
       {selectedChattingId ? (
-        <div className="flex flex-shrink grow basis-0 flex-col overflow-hidden">
-          <div className="flex justify-between items-center min-h-[64px] border-b-[1px] chatting-divider px-[20px]">
-            <div className="flex items-center gap-[12px]">
-              <img
-                width={40}
-                height={40}
-                src="/src/assets/Dummy_Icon.png"
-                className="border-[1px] chatting-divider rounded-full"
-              />
-              <span className="text-[15px]">
-                {/* TODO: API 끼우기 */}
-                {
-                  Chatting_Dummy.filter((v) => v.id === selectedChattingId)[0]
-                    .senderInfo.name
-                }
-              </span>
+        <div className="flex flex-col w-full h-full">
+          {/* 상단부 */}
+          <div className="flex flex-shrink grow basis-0 flex-col overflow-hidden">
+            <div className="flex justify-between items-center min-h-[64px] border-b-[1px] chatting-divider px-[20px]">
+              <div className="flex items-center gap-[12px]">
+                <img
+                  width={40}
+                  height={40}
+                  src="/src/assets/Dummy_Icon.png"
+                  className="border-[1px] chatting-divider rounded-full"
+                />
+                <span className="text-[15px]">
+                  {/* TODO: API 끼우기 */}
+                  {
+                    Chatting_Dummy.filter((v) => v.id === selectedChattingId)[0]
+                      .senderInfo.name
+                  }
+                </span>
+              </div>
+              <ChattingDropdown />
             </div>
-            <ChattingDropdown />
+            <ChattingMessage
+              chatting={
+                Chatting_Dummy.filter((v) => v.id === selectedChattingId)[0]
+                  .message
+              }
+            />
           </div>
-          <ChattingMessage
-            chatting={
-              Chatting_Dummy.filter((v) => v.id === selectedChattingId)[0]
-                .message
-            }
-          />
+          <ChattingForm />
         </div>
       ) : (
         <div className="flex flex-col justify-center items-center w-full h-full gap-[34px]">
