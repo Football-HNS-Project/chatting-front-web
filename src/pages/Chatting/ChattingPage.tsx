@@ -11,8 +11,6 @@ export const ChattingPage = () => {
         </div>
         <div className="flex"></div>
       </div>
-      {/*  */}
-      {/*  */}
     </div>
   );
 };

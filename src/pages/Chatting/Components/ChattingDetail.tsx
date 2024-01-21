@@ -36,6 +36,7 @@ export const ChattingDetail = () => {
               </div>
               <ChattingDropdown />
             </div>
+            {/* 채팅 내용 */}
             <ChattingMessage
               chatting={
                 Chatting_Dummy.filter((v) => v.id === selectedChattingId)[0]

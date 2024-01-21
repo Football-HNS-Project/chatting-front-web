@@ -16,6 +16,7 @@ export const ChattingList = () => {
 
   return (
     <>
+      {/* 유저 목록 */}
       <nav className="flex flex-col w-[72px] py-[20px] px-[13px] border-l-[1px] border-r-[1px] chatting-divider bg-gray-200 gap-[20px]">
         {User_Dummy.map((user) => (
           <a
@@ -37,6 +38,8 @@ export const ChattingList = () => {
           </a>
         ))}
       </nav>
+
+      {/* 채팅방 (room) 목록 */}
       <nav className="flex flex-col border-r-[1px] w-[312px] min-w-[312px]">
         <div className="flex h-[64px] min-h-[64px] items-center px-[20px] border-b-[1px] chatting-divider">
           <span className="font-bold text-[16px]">닉네임</span>
@@ -52,6 +55,7 @@ export const ChattingList = () => {
             {isChecked ? <UnCheckedSvg /> : <CheckedSvg />}
           </label>
         </div>
+        {/* 채팅방 (room) 선택 */}
         <ul
           role="list"
           className="h-[calc(100%-56px)] overflow-x-hidden overflow-y-auto"

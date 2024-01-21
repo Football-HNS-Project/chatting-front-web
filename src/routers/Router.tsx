@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 
-import { RootLayout } from "@components/RootLayout/RootLayout";
+import { RootLayout } from "@components/Router/RootLayout";
+import { WebsocketProvider } from "@components/Websocket/WebsocketProvider";
 
 import { ChattingPage } from "@pages/Chatting/ChattingPage";
 import { HomePage } from "@pages/Home/HomePage";
@@ -17,7 +18,11 @@ export const router = () =>
         },
         {
           path: "/chatting",
-          element: <ChattingPage />,
+          element: (
+            <WebsocketProvider>
+              <ChattingPage />
+            </WebsocketProvider>
+          ),
         },
       ],
     },
