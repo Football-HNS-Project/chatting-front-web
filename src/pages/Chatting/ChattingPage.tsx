@@ -1,4 +1,5 @@
-import { ChattingDetail } from "@pages/Chatting/Components/ChattingDetail";
+import { Outlet } from "react-router-dom";
+
 import { ChattingList } from "@pages/Chatting/Components/ChattingList";
 
 export const ChattingPage = () => {
@@ -7,7 +8,7 @@ export const ChattingPage = () => {
       <div className="flex relative h-full my-0 mx-auto bg-white">
         <div className="flex">
           <ChattingList />
-          <ChattingDetail />
+          <Outlet />
         </div>
         <div className="flex"></div>
       </div>

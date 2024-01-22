@@ -8,12 +8,13 @@ import { Dropdown } from "@components/Gnb/Dropdown";
 import { GNB_MENU } from "@components/Gnb/GNB_MENU";
 
 export const Gnb: React.FC = () => {
-  const location = useLocation();
+  const { pathname } = useLocation();
+  const isChattingPage = pathname.includes("chatting");
 
   return (
     <div
       className={`fixed top-0 left-0 w-full h-[64px] z-[999] bg-white ${
-        location.pathname === "/chatting" && "border-b-[1px] border-gray-200"
+        isChattingPage && "border-b-[1px] border-gray-200"
       }`}
     >
       <div className="flex flex-row h-full items-center px-[2rem] py-[1.2rem] justify-between max-w-[120rem] my-0 mx-auto">
@@ -21,7 +22,7 @@ export const Gnb: React.FC = () => {
           <Logo />
         </a>
 
-        {location.pathname !== "/chatting" && (
+        {!isChattingPage && (
           <nav className="hidden md:flex flex-row w-full pr-[4rem]">
             <ul className="list-none inline-block font-bold">
               {GNB_MENU.map((menu) => (
@@ -35,7 +36,7 @@ export const Gnb: React.FC = () => {
           </nav>
         )}
 
-        {location.pathname !== "/chatting" ? (
+        {!isChattingPage ? (
           <div className="flex flex-row items-center justify-center gap-[1.2rem]">
             <button className="lg:hidden">
               <SearchSvg />

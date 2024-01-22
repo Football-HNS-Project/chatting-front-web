@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import { useNavigate, useParams } from "react-router-dom";
+
 import { useAtom } from "jotai";
 
 import { CheckedSvg } from "@assets/CheckedSvg";
@@ -7,11 +9,12 @@ import { UnCheckedSvg } from "@assets/UnCheckedSvg";
 
 import { Chatting_Dummy, User_Dummy } from "@pages/Chatting/Chatting_Dummy";
 
-import { ChattingAtom, SelectedUserAtom } from "@stores/ChattingStore";
+import { SelectedUserAtom } from "@stores/ChattingStore";
 
 export const ChattingList = () => {
+  const navigate = useNavigate();
+  const { id } = useParams();
   const [isChecked, setIsChecked] = useState(false);
-  const [selectedChattingId, setSelectedChattingId] = useAtom(ChattingAtom);
   const [selectedUserId, setSelectedUserId] = useAtom(SelectedUserAtom);
 
   return (
@@ -24,7 +27,7 @@ export const ChattingList = () => {
             className="inline-block relative w-[44px] h-[44px]"
             onClick={() => {
               setSelectedUserId(user.id);
-              console.log(selectedUserId);
+              navigate("/chatting");
             }}
           >
             <img
@@ -64,14 +67,12 @@ export const ChattingList = () => {
             <li
               key={chatting.id}
               onClick={() => {
-                setSelectedChattingId(chatting.id);
+                navigate(`room/${chatting.id}`);
               }}
             >
               <a
                 className={`flex p-[16px] h-[72px] border-b-[1px] chatting-divider items-center overflow-hidden gap-[8px] cursor-pointer hover:bg-gray-100 duration-200 active:transition-colors active:bg-slate-200 ${
-                  selectedChattingId === chatting.id
-                    ? "bg-gray-100"
-                    : "bg-white"
+                  Number(id) === chatting.id ? "bg-gray-100" : "bg-white"
                 }`}
               >
                 <img

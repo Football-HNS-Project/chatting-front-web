@@ -29,7 +29,4 @@ export const Chatting_Dummy = [
   },
 ];
 
-export const User_Dummy = [
-  { id: 1, name: "조현준" },
-  { id: 2, name: "노영삼" },
-];
+export const User_Dummy = [{ id: 1, name: "조현준" }];
