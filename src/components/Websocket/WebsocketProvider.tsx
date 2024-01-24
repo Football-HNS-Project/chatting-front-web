@@ -1,37 +1,38 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { createContext, useEffect, useRef, useState } from "react";
 
-type TMessage = {
-  room: string; // 채팅방 이름
-  user: string; // 사용자 이름
-  message: string; // 메시지 내용
-  timestamp: string[]; // 메시지 시간
-};
-type TRoom = {
-  name: string; // 채팅방 이름
-  messages: TMessage[]; // 채팅방의 메시지 목록
-};
+import {
+  TChatMessage,
+  TLeaveRoom,
+  TMessage,
+  TRoom,
+  TSendChatMessage,
+} from "@typings/WebsocketMessage";
 
 type WebSocketContextProps = {
   rooms: TRoom[];
-  messages: TMessage[];
+  currentRoom: TRoom | null;
+  messages: TChatMessage[];
   getRooms: () => void;
-  getMessages: (room: string) => void;
-  sendMessage: (room: string, user: string, message: string) => void;
+  enterRoom: (userId: string) => void;
+  leaveRoom: (payload: TLeaveRoom) => void;
+  getMessages: (roomId: string) => void;
+  sendMessage: (payload: TSendChatMessage) => void;
 };
 
-export const WebSocketContext = createContext<WebSocketContextProps | null>(
-  null
+export const WebSocketContext = createContext<WebSocketContextProps>(
+  {} as WebSocketContextProps
 );
 
 type WebsocketProviderProps = {
   children: React.ReactNode;
 };
+
 export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
   children,
 }) => {
   const [rooms, setRooms] = useState<TRoom[]>([]);
-  const [messages, setMessages] = useState<TMessage[]>([]);
+  const [currentRoom, setCurrentRoom] = useState<TRoom | null>(null);
+  const [messages, setMessages] = useState<TChatMessage[]>([]);
   const socketRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
@@ -42,13 +43,20 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     };
 
     socketRef.current.onmessage = (event) => {
-      const response = JSON.parse(event.data);
-
-      if (response.type === "roomList") {
-        setRooms(response.rooms);
-      } else if (response.type === "messageList") {
-        // [TODO] 수정
-        setMessages(response.messages);
+      const response: TMessage = JSON.parse(event.data);
+      switch (response.type) {
+        // 채팅방 목록
+        case "room_list":
+          setRooms(response.payload.rooms);
+          break;
+        // 메시지 목록
+        case "message_list":
+          setMessages(response.payload.messages);
+          break;
+        // 메시지
+        case "get_message":
+          setMessages((prev) => [...prev, response.payload.messages]);
+          break;
       }
     };
 
@@ -59,34 +67,62 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     };
   }, []);
 
+  /**
+   * 채팅방 입장
+   */
+  const enterRoom = (roomId: string) => {
+    const room = rooms.find((room) => room.id === roomId);
+    if (room) {
+      setCurrentRoom(room);
+      socketRef.current?.send(JSON.stringify({ type: "join", room: roomId }));
+    }
+  };
+
+  /**
+   * 채팅방 나가기
+   */
+  const leaveRoom = (payload: TLeaveRoom) => {
+    if (currentRoom && currentRoom.id === payload.payload.roomId) {
+      setCurrentRoom(null);
+      socketRef.current?.send(JSON.stringify(payload));
+    }
+  };
+
+  /**
+   * 채팅방 목록 가져오기
+   */
   const getRooms = () => {
-    const message = {
-      type: "getRooms",
-    };
-    socketRef.current?.send(JSON.stringify(message));
+    socketRef.current?.send(JSON.stringify({ type: "room_list" }));
   };
 
-  const getMessages = (room: string) => {
-    const message = {
-      type: "getMessages",
-      room: room,
-    };
-    socketRef.current?.send(JSON.stringify(message));
+  /**
+   * 메시지 목록 가져오기
+   */
+  const getMessages = (roomId: string) => {
+    socketRef.current?.send(
+      JSON.stringify({ type: "getMessages", room: roomId })
+    );
   };
 
-  const sendMessage = (room: string, user: string, text: string) => {
-    const message = {
-      type: "message",
-      room: room,
-      user: user,
-      text: text,
-    };
-    socketRef.current?.send(JSON.stringify(message));
+  /**
+   * 메시지 보내기
+   */
+  const sendMessage = (payload: TSendChatMessage) => {
+    socketRef.current?.send(JSON.stringify(payload));
   };
 
   return (
     <WebSocketContext.Provider
-      value={{ rooms, messages, getRooms, getMessages, sendMessage }}
+      value={{
+        rooms,
+        messages,
+        currentRoom,
+        enterRoom,
+        leaveRoom,
+        getRooms,
+        getMessages,
+        sendMessage,
+      }}
     >
       {children}
     </WebSocketContext.Provider>
