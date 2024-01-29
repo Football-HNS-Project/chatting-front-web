@@ -9,7 +9,7 @@ export type TUser = {
 /**
  * 채팅방을 생성할 때 인터페이스
  */
-export type TCreateRoom = {
+export type CreateRoomReq = {
   type: "create";
   payload: {
     name: string;

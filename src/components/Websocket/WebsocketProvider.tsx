@@ -1,6 +1,7 @@
 import { createContext, useEffect, useRef, useState } from "react";
 
 import {
+  CreateRoomReq,
   TChatMessage,
   TLeaveRoom,
   TMessage,
@@ -8,11 +9,12 @@ import {
   TSendChatMessage,
 } from "@typings/WebsocketMessage";
 
-type WebSocketContextProps = {
+export type WebSocketContextProps = {
   rooms: TRoom[];
   currentRoom: TRoom | null;
   messages: TChatMessage[];
   getRooms: () => void;
+  createRoom: (myId: string, userId: string) => void;
   enterRoom: (userId: string) => void;
   leaveRoom: (payload: TLeaveRoom) => void;
   getMessages: (roomId: string) => void;
@@ -40,6 +42,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
 
     socketRef.current.onopen = () => {
       console.log("WebSocket 연결");
+      // [TODO] 초기 유저 인증/인가를 통해 RoomList를 받아와야함.
     };
 
     socketRef.current.onmessage = (event) => {
@@ -60,12 +63,34 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
       }
     };
 
+    socketRef.current.onclose = (event) => {
+      if (event.wasClean) {
+        console.log("커넥션이 정상적으로 종료되었습니다.");
+      } else {
+        console.log("커넥션이 죽었습니다.");
+      }
+    };
+
     return () => {
       if (socketRef.current) {
         socketRef.current.close();
       }
     };
   }, []);
+
+  /**
+   * 채팅방 생성
+   */
+  const createRoom = (myId: string, userId: string) => {
+    const reqBody: CreateRoomReq = {
+      type: "create",
+      payload: {
+        name: userId,
+        userId: [myId, userId],
+      },
+    };
+    socketRef.current?.send(JSON.stringify(reqBody));
+  };
 
   /**
    * 채팅방 입장
@@ -117,6 +142,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         rooms,
         messages,
         currentRoom,
+        createRoom,
         enterRoom,
         leaveRoom,
         getRooms,
