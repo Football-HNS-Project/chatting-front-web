@@ -9,11 +9,12 @@ import { GNB_MENU } from "@components/Gnb/GNB_MENU";
 
 export const Gnb: React.FC = () => {
   const { pathname } = useLocation();
+
   const isChattingPage = pathname.includes("chatting");
 
   return (
     <div
-      className={`fixed top-0 left-0 w-full h-[64px] z-[999] bg-white ${
+      className={`fixed top-0 left-0 w-full h-[64px] z-[50] bg-white ${
         isChattingPage && "border-b-[1px] border-gray-200"
       }`}
     >

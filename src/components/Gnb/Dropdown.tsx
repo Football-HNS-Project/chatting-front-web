@@ -1,10 +1,13 @@
 import { Fragment, useState } from "react";
 
 import { Menu, Switch, Transition } from "@headlessui/react";
+import { useSetAtom } from "jotai";
+
+import { LogoutModalAtom } from "@stores/ModalStore";
 
 export const Dropdown = () => {
   const [enabled, setEnabled] = useState(false);
-
+  const setIsVisibleLogoutModal = useSetAtom(LogoutModalAtom);
   return (
     <Menu as="div" className="relative inline-block text-left">
       {({ open }) => (
@@ -50,14 +53,14 @@ export const Dropdown = () => {
               <div className="dropdown-menu">
                 <Menu.Item>
                   {({ active }) => (
-                    <button
+                    <div
                       onClick={(e) => {
                         e.preventDefault();
                         setEnabled(!enabled);
                       }}
                       className={`${
                         active ? "bg-gray-200" : "text-gray-900"
-                      } flex w-full justify-between items-center rounded-md p-[7px] text-[16px]`}
+                      } flex w-full justify-between items-center rounded-md p-[7px] text-[16px] cursor-pointer`}
                     >
                       채팅 알림
                       <Switch
@@ -74,7 +77,7 @@ export const Dropdown = () => {
                           } inline-block h-[14px] w-[14px] transform rounded-full bg-white transition`}
                         />
                       </Switch>
-                    </button>
+                    </div>
                   )}
                 </Menu.Item>
               </div>
@@ -83,8 +86,8 @@ export const Dropdown = () => {
                 <Menu.Item>
                   {({ active }) => (
                     <button
-                      onClick={(e) => {
-                        e.preventDefault();
+                      onClick={() => {
+                        setIsVisibleLogoutModal(true);
                       }}
                       className={`${
                         active ? "bg-gray-200" : "text-gray-900"
