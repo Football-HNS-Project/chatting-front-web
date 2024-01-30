@@ -53,7 +53,7 @@ export type TDeleteRoom = {
  * 채팅방 목록을 불러올 때 인터페이스
  */
 export type TGetRoomList = {
-  type: "room_list";
+  type: "rooms";
   payload: {
     rooms: TRoom[];
   };
@@ -64,9 +64,9 @@ export type TGetRoomList = {
  */
 export type TRoom = {
   id: string;
-  users: TUser[];
+  userSize: number;
   lastMessage: string;
-  timestamp: Date;
+  updatedAt: Date;
 };
 
 /**

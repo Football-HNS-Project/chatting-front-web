@@ -49,7 +49,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
       const response: TMessage = JSON.parse(event.data);
       switch (response.type) {
         // 채팅방 목록
-        case "room_list":
+        case "rooms":
           setRooms(response.payload.rooms);
           break;
         // 메시지 목록

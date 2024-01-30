@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -6,6 +6,8 @@ import { useAtom } from "jotai";
 
 import { CheckedSvg } from "@assets/CheckedSvg";
 import { UnCheckedSvg } from "@assets/UnCheckedSvg";
+
+import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
 
 import { Chatting_Dummy, User_Dummy } from "@pages/Chatting/Chatting_Dummy";
 
@@ -16,6 +18,9 @@ export const ChattingList = () => {
   const { id } = useParams();
   const [isChecked, setIsChecked] = useState(false);
   const [selectedUserId, setSelectedUserId] = useAtom(SelectedUserAtom);
+
+  const { rooms } = useContext(WebSocketContext);
+  console.log(rooms);
 
   return (
     <>
