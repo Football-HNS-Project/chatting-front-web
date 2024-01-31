@@ -9,7 +9,7 @@ import { UnCheckedSvg } from "@assets/UnCheckedSvg";
 
 import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
 
-import { Chatting_Dummy, User_Dummy } from "@pages/Chatting/Chatting_Dummy";
+import { User_Dummy } from "@pages/Chatting/Chatting_Dummy";
 
 import { SelectedUserAtom } from "@stores/ChattingStore";
 
@@ -20,7 +20,7 @@ export const ChattingList = () => {
   const [selectedUserId, setSelectedUserId] = useAtom(SelectedUserAtom);
 
   const { rooms } = useContext(WebSocketContext);
-  console.log(rooms);
+  console.log("ROOM", rooms);
 
   return (
     <>
@@ -68,16 +68,16 @@ export const ChattingList = () => {
           role="list"
           className="h-[calc(100%-56px)] overflow-x-hidden overflow-y-auto"
         >
-          {Chatting_Dummy.map((chatting) => (
+          {rooms.map((room) => (
             <li
-              key={chatting.id}
+              key={room.id}
               onClick={() => {
-                navigate(`room/${chatting.id}`);
+                navigate(`room/${room.id}`);
               }}
             >
               <a
                 className={`flex p-[16px] h-[72px] border-b-[1px] chatting-divider items-center overflow-hidden gap-[8px] cursor-pointer hover:bg-gray-100 duration-200 active:transition-colors active:bg-slate-200 ${
-                  Number(id) === chatting.id ? "bg-gray-100" : "bg-white"
+                  id === room.id ? "bg-gray-100" : "bg-white"
                 }`}
               >
                 <img
@@ -90,15 +90,17 @@ export const ChattingList = () => {
                 <div className="w-0 flex-grow flex-shrink-0 basis-0">
                   <div className="flex flex-row items-center gap-[6px]">
                     <span className="h-[20px] text-[13px] font-bold overflow-x-hidden text-ellipsis whitespace-nowrap">
-                      {chatting.senderInfo.name}
+                      {/* {chatting.senderInfo.name} */}
+                      {room.name}
                     </span>
                     <span className="text-[12px] whitespace-nowrap text-gray-500">
-                      {chatting.sendDate}
+                      {/* {room.} */}
+                      시간
                     </span>
                   </div>
                   <div className="flex h-[20px] items-center">
                     <span className="overflow-x-hidden text-ellipsis whitespace-nowrap text-[13px] text-gray-700">
-                      {chatting.message[chatting.message.length - 1].message}
+                      {/* {chatting.message[chatting.message.length - 1].message} */}
                     </span>
                   </div>
                 </div>

@@ -1,12 +1,8 @@
-import { useParams } from "react-router-dom";
-
-import { Chatting_Dummy } from "@pages/Chatting/Chatting_Dummy";
 import { ChattingDropdown } from "@pages/Chatting/Components/ChattingDropdown";
 import { ChattingForm } from "@pages/Chatting/Components/ChattingForm";
-import { ChattingMessage } from "@pages/Chatting/Components/ChattingMessage";
 
 export const YesChatting = () => {
-  const { id } = useParams();
+  // const { id } = useParams();
 
   return (
     <div className="flex flex-col w-full h-full">
@@ -22,20 +18,20 @@ export const YesChatting = () => {
             />
             <span className="text-[15px]">
               {/* TODO: API 끼우기 */}
-              {
+              {/* {
                 Chatting_Dummy.filter((v) => v.id === Number(id))[0].senderInfo
                   .name
-              }
+              } */}
             </span>
           </div>
           <ChattingDropdown />
         </div>
         {/* 채팅 내용 */}
-        <ChattingMessage
+        {/* <ChattingMessage
           chatting={
             Chatting_Dummy.filter((v) => v.id === Number(id))[0].message
           }
-        />
+        /> */}
       </div>
       <ChattingForm />
     </div>
