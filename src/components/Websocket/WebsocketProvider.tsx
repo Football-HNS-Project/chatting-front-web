@@ -38,10 +38,12 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
   const socketRef = useRef<WebSocket | null>(null);
 
   useEffect(() => {
-    socketRef.current = new WebSocket("ws://...");
-
+    socketRef.current = new WebSocket(import.meta.env.VITE_WEBSOCKET);
     socketRef.current.onopen = () => {
       console.log("WebSocket 연결");
+      socketRef.current?.send(
+        JSON.stringify({ type: "GET_ROOMS_REQ", data: { userId: 1 } })
+      );
       // [TODO] 초기 유저 인증/인가를 통해 RoomList를 받아와야함.
     };
 
@@ -49,9 +51,12 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
       const response: TMessage = JSON.parse(event.data);
       switch (response.type) {
         // 채팅방 목록
-        case "rooms":
-          setRooms(response.payload.rooms);
+        case "GET_ROOMS_RES":
+          setRooms(response.data);
           break;
+        // case "rooms":
+        //   setRooms(response.payload.rooms);
+        //   break;
         // 메시지 목록
         case "message_list":
           setMessages(response.payload.messages);
@@ -64,6 +69,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     };
 
     socketRef.current.onclose = (event) => {
+      console.log(event);
       if (event.wasClean) {
         console.log("커넥션이 정상적으로 종료되었습니다.");
       } else {
@@ -83,10 +89,10 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
    */
   const createRoom = (myId: string, userId: string) => {
     const reqBody: CreateRoomReq = {
-      type: "create",
-      payload: {
-        name: userId,
-        userId: [myId, userId],
+      type: "CREATE_ROOM",
+      data: {
+        name: "임시 방 이름",
+        participants: [myId, userId],
       },
     };
     socketRef.current?.send(JSON.stringify(reqBody));

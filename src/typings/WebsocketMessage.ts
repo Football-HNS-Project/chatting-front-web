@@ -10,10 +10,10 @@ export type TUser = {
  * 채팅방을 생성할 때 인터페이스
  */
 export type CreateRoomReq = {
-  type: "create";
-  payload: {
+  type: "CREATE_ROOM";
+  data: {
     name: string;
-    userId: string[];
+    participants: string[];
   };
 };
 
@@ -50,13 +50,19 @@ export type TDeleteRoom = {
 };
 
 /**
+ * 채팅방 생성했을 때 인터페이스
+ */
+export type GetRoomRes = {
+  type: "GET_ROOM_RES";
+  data: TRoom;
+};
+
+/**
  * 채팅방 목록을 불러올 때 인터페이스
  */
-export type TGetRoomList = {
-  type: "rooms";
-  payload: {
-    rooms: TRoom[];
-  };
+export type GetRoomListRes = {
+  type: "GET_ROOMS_RES";
+  data: TRoom[];
 };
 
 /**
@@ -65,8 +71,9 @@ export type TGetRoomList = {
 export type TRoom = {
   id: string;
   userSize: number;
-  lastMessage: string;
-  updatedAt: Date;
+  name: string;
+  // lastMessage: string;
+  // updatedAt: Date;
 };
 
 /**
@@ -118,7 +125,7 @@ export type TMessage =
   | TJoinRoom
   | TLeaveRoom
   | TDeleteRoom
-  | TGetRoomList
+  | GetRoomListRes
   | TMessageList
   | TSendChatMessage
   | TGetChatMessage;
