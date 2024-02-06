@@ -1,5 +1,5 @@
-import { ChattingDropdown } from "@pages/Chatting/Components/ChattingDropdown";
-import { ChattingForm } from "@pages/Chatting/Components/ChattingForm";
+import { Dropdown } from "@pages/Chatting/Components/ChatDetail/Dropdown";
+import { MessageForm } from "@pages/Chatting/Components/ChatDetail/MessageForm";
 
 export const YesChatting = () => {
   // const { id } = useParams();
@@ -24,7 +24,7 @@ export const YesChatting = () => {
               } */}
             </span>
           </div>
-          <ChattingDropdown />
+          <Dropdown />
         </div>
         {/* 채팅 내용 */}
         {/* <ChattingMessage
@@ -33,7 +33,7 @@ export const YesChatting = () => {
           }
         /> */}
       </div>
-      <ChattingForm />
+      <MessageForm />
     </div>
   );
 };

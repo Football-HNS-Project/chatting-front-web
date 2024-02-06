@@ -4,7 +4,7 @@ import { RootLayout } from "@components/Router/RootLayout";
 import { WebsocketProvider } from "@components/Websocket/WebsocketProvider";
 
 import { ChattingPage } from "@pages/Chatting/ChattingPage";
-import { ChattingDetail } from "@pages/Chatting/Components/ChattingDetail/ChattingDetail";
+import { ChattingDetail } from "@pages/Chatting/Components/ChatDetail/ChattingDetail";
 import { HomePage } from "@pages/Home/HomePage";
 
 export const router = () =>

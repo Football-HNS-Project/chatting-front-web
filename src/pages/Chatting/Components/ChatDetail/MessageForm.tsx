@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export const ChattingForm = () => {
+export const MessageForm = () => {
   const [inputMessage, setInputMessage] = useState("");
 
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
@@ -9,6 +9,7 @@ export const ChattingForm = () => {
     setInputMessage("");
     return;
   };
+
   return (
     <form className="flex relative flex-col m-[16px] h-[125px] justify-between rounded-lg border-[1px] border-gray-900">
       <textarea

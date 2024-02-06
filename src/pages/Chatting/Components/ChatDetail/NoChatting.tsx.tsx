@@ -12,6 +12,7 @@ export const NoChatting = () => {
   const [userId, setUserId] = React.useState<string>("");
   const { createRoom } = useContext(WebSocketContext);
   const user = useAtomValue(UserAtom);
+
   const handleCreateChat = () => {
     createRoom(user.id, Number(userId));
   };
@@ -22,6 +23,7 @@ export const NoChatting = () => {
       <span className="text-[14px] text-gray-700">
         채팅할 상대를 선택해주세요.
       </span>
+      {/* [TODO] 임시 채팅 생성 화면 */}
       <div>
         <input
           className="border-[1px] h-full mr-3 p-2"
