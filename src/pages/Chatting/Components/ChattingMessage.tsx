@@ -5,6 +5,7 @@ import { UserAtom } from "@stores/UserStore";
 type ChatttingMessageProps = {
   chatting: { id: number; userId: number; message: string }[];
 };
+
 export const ChattingMessage = ({ chatting }: ChatttingMessageProps) => {
   const user = useAtomValue(UserAtom);
   return (

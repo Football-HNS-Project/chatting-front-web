@@ -1,7 +1,10 @@
 import { createContext, useEffect, useRef, useState } from "react";
 
+import { useAtomValue } from "jotai";
+
 import {
   CreateRoomReq,
+  GetRoomsReq,
   TChatMessage,
   TLeaveRoom,
   TMessage,
@@ -9,12 +12,14 @@ import {
   TSendChatMessage,
 } from "@typings/WebsocketMessage";
 
+import { UserAtom } from "@stores/UserStore";
+
 export type WebSocketContextProps = {
   rooms: TRoom[];
   currentRoom: TRoom | null;
   messages: TChatMessage[];
   getRooms: () => void;
-  createRoom: (myId: string, userId: string) => void;
+  createRoom: (myId: number, userId: number) => void;
   enterRoom: (userId: string) => void;
   leaveRoom: (payload: TLeaveRoom) => void;
   getMessages: (roomId: string) => void;
@@ -36,27 +41,29 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
   const [currentRoom, setCurrentRoom] = useState<TRoom | null>(null);
   const [messages, setMessages] = useState<TChatMessage[]>([]);
   const socketRef = useRef<WebSocket | null>(null);
+  const user = useAtomValue(UserAtom);
 
   useEffect(() => {
-    socketRef.current = new WebSocket(import.meta.env.VITE_WEBSOCKET);
+    socketRef.current = new WebSocket(
+      `${import.meta.env.VITE_WEBSOCKET}?userId=${user.id}`
+    );
     socketRef.current.onopen = () => {
       console.log("WebSocket 연결");
       socketRef.current?.send(
-        JSON.stringify({ type: "GET_ROOMS_REQ", data: { userId: 1 } })
+        JSON.stringify({ type: "GET_ROOMS_REQUEST", data: {} } as GetRoomsReq)
       );
-      // [TODO] 초기 유저 인증/인가를 통해 RoomList를 받아와야함.
     };
 
     socketRef.current.onmessage = (event) => {
       const response: TMessage = JSON.parse(event.data);
       switch (response.type) {
         // 채팅방 목록
-        case "GET_ROOMS_RES":
+        case "GET_ROOMS_RESPONSE":
           setRooms(response.data);
           break;
-        // case "rooms":
-        //   setRooms(response.payload.rooms);
-        //   break;
+        case "CREATE_ROOM_RESPONSE":
+          console.log(response);
+          break;
         // 메시지 목록
         case "message_list":
           setMessages(response.payload.messages);
@@ -87,9 +94,9 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
   /**
    * 채팅방 생성
    */
-  const createRoom = (myId: string, userId: string) => {
+  const createRoom = (myId: number, userId: number) => {
     const reqBody: CreateRoomReq = {
-      type: "CREATE_ROOM",
+      type: "CREATE_ROOM_REQUEST",
       data: {
         name: "임시 방 이름",
         participants: [myId, userId],

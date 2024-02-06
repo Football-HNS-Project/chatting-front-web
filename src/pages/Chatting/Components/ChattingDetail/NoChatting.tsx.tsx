@@ -1,15 +1,19 @@
 import React, { useContext } from "react";
 
+import { useAtomValue } from "jotai";
+
 import { NoChatSvg } from "@assets/NoChatSvg";
 
 import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
 
+import { UserAtom } from "@stores/UserStore";
+
 export const NoChatting = () => {
   const [userId, setUserId] = React.useState<string>("");
   const { createRoom } = useContext(WebSocketContext);
-
+  const user = useAtomValue(UserAtom);
   const handleCreateChat = () => {
-    createRoom("1", userId);
+    createRoom(user.id, Number(userId));
   };
 
   return (

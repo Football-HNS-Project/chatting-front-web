@@ -1,8 +1,8 @@
 export const Chatting_Dummy = [
   {
-    id: 1,
+    id: 2,
     senderInfo: {
-      id: 1,
+      id: 2,
       name: "조현준",
     },
     sendDate: "2024-01-08 12:05",
@@ -14,9 +14,9 @@ export const Chatting_Dummy = [
     ],
   },
   {
-    id: 2,
+    id: 3,
     senderInfo: {
-      id: 2,
+      id: 3,
       name: "노영삼",
     },
     sendDate: "2024-01-08 12:11",
@@ -29,4 +29,4 @@ export const Chatting_Dummy = [
   },
 ];
 
-export const User_Dummy = [{ id: 1, name: "조현준" }];
+export const User_Dummy = [{ id: 2, name: "조현준" }];
