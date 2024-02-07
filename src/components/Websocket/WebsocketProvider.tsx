@@ -1,5 +1,7 @@
 import { createContext, useEffect, useRef, useState } from "react";
 
+import { useNavigate } from "react-router-dom";
+
 import { useAtomValue } from "jotai";
 
 import {
@@ -42,7 +44,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
   const [messages, setMessages] = useState<TChatMessage[]>([]);
   const socketRef = useRef<WebSocket | null>(null);
   const user = useAtomValue(UserAtom);
-
+  const navigate = useNavigate();
   useEffect(() => {
     socketRef.current = new WebSocket(
       `${import.meta.env.VITE_WEBSOCKET}?userId=${user.id}`
@@ -62,7 +64,8 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
           setRooms(response.data);
           break;
         case "CREATE_ROOM_RESPONSE":
-          console.log(response);
+          setRooms((prev) => [response.data, ...prev]);
+          navigate(`/chatting/room/${response.data.id}`);
           break;
         // 메시지 목록
         case "message_list":
