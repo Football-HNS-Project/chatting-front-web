@@ -10,8 +10,10 @@ export type TUser = {
  */
 export type TRoom = {
   id: string;
-  memberSize: number;
   name: string;
+  memberSize: number;
+  message: string;
+  updated: Date;
 };
 
 /**

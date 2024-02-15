@@ -58,19 +58,26 @@ export const ChatRoomList = () => {
               />
 
               <div className="w-0 flex-grow flex-shrink-0 basis-0">
-                <div className="flex flex-row items-center gap-[6px]">
-                  <span className="h-[20px] text-[13px] font-bold overflow-x-hidden text-ellipsis whitespace-nowrap">
-                    {/* {chatting.senderInfo.name} */}
-                    {room.name}
-                  </span>
-                  <span className="text-[12px] whitespace-nowrap text-gray-500">
-                    {/* {room.} */}
-                    시간
+                <div className="flex items-center justify-between">
+                  <div className="flex flex-row items-center gap-[4px]">
+                    <span className="max-w-[150px] h-[20px] text-[13px] font-bold overflow-x-hidden text-ellipsis whitespace-nowrap">
+                      {room.name}
+                    </span>
+                    <span className="text-[12px] text-gray-500">
+                      {room.memberSize}
+                    </span>
+                  </div>
+                  <span className="text-[11px] whitespace-nowrap text-gray-500">
+                    {`${new Date(room.updated).getFullYear()}-${String(
+                      new Date(room.updated).getMonth() + 1
+                    ).padStart(2, "0")}-${String(
+                      new Date(room.updated).getDate()
+                    ).padStart(2, "0")}`}
                   </span>
                 </div>
                 <div className="flex h-[20px] items-center">
                   <span className="overflow-x-hidden text-ellipsis whitespace-nowrap text-[13px] text-gray-700">
-                    {/* {chatting.message[chatting.message.length - 1].message} */}
+                    {room.message}
                   </span>
                 </div>
               </div>
