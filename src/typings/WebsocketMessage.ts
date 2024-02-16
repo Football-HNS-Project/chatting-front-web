@@ -15,6 +15,16 @@ export type TRoom = {
   message: string;
   updated: Date;
 };
+/**
+ * 채팅 메시지 인터페이스
+ */
+export type TChatMessage = {
+  id: string;
+  messageType: string;
+  sender: string;
+  createdAt: Date;
+  content: string;
+};
 
 /**
  * 채팅방 목록 조회 REQ
@@ -52,90 +62,47 @@ export type CreateRoomRes = {
 };
 
 /**
- * 채팅방을 입장할 때 인터페이스
+ * 채팅방 내부 메시지 수신 REQ
  */
-export type TJoinRoom = {
-  type: "join";
-  user: TUser;
-  payload: {
-    roomId: string;
+export type GetMessageListReq = {
+  type: "RECEIVE_MESSAGE_IN_ROOM";
+  data: {
+    id: string;
   };
 };
 
 /**
- * 채팅방을 나갈 때 인터페이스
+ * 채팅방 내부 메시지 수신 RES
  */
-export type TLeaveRoom = {
-  type: "leave";
-  user: TUser;
-  payload: {
-    roomId: string;
-  };
+export type GetMessageListRes = {
+  type: "RECEIVE_MESSAGES_IN_ROOM_RESPONSE";
+  data: TChatMessage[];
 };
 
 /**
- * 채팅방을 삭제할 때 인터페이스
+ * 채팅 메시지 송신 REQ
  */
-export type TDeleteRoom = {
-  type: "delete";
-  payload: {
-    roomId: string;
-  };
-};
-
-/**
- * 채팅 메시지를 받기 위한 인터페이스
- */
-export type TMessageList = {
-  type: "message_list";
-  payload: {
-    roomId: string;
-    sender: TUser;
-    messages: TChatMessage[];
-  };
-};
-
-/**
- * 채팅 메시지를 보내기 위한 인터페이스
- */
-export type TSendChatMessage = {
-  type: "send_message";
-  payload: {
+export type SendMessageReq = {
+  type: "SEND_MESSAGE_REQUEST";
+  data: {
     roomId: string;
     message: string;
     type: "text" | "image" | "video";
   };
 };
 
-/**
- * 채팅 메시지를 받기 위한 인터페이스
- */
-export type TGetChatMessage = {
-  type: "get_message";
-  payload: {
+export type ReceiveMessageRes = {
+  type: "RECEIVE_MESSAGE_IN_ROOMS";
+  data: {
     roomId: string;
-    sender: TUser;
-    messages: TChatMessage;
+    sender: string;
+    content: string;
+    updatedAt: Date;
   };
 };
 
-/**
- * 채팅 메시지 인터페이스
- */
-export type TChatMessage = {
-  message: string;
-  timestamp: Date;
-  type: "text" | "image" | "video";
-};
-
 export type TMessage =
-  | GetRoomsReq
   | GetRoomsRes
-  | CreateRoomReq
   | CreateRoomRes
-  | TJoinRoom
-  | TLeaveRoom
-  | TDeleteRoom
-  | TMessageList
-  | TSendChatMessage
-  | TGetChatMessage;
+  | GetMessageListRes
+  | ReceiveMessageRes;

@@ -1,17 +1,17 @@
 import { createContext, useEffect, useRef, useState } from "react";
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { useAtomValue } from "jotai";
 
 import {
   CreateRoomReq,
+  GetMessageListReq,
   GetRoomsReq,
+  SendMessageReq,
   TChatMessage,
-  TLeaveRoom,
   TMessage,
   TRoom,
-  TSendChatMessage,
 } from "@typings/WebsocketMessage";
 
 import { UserAtom } from "@stores/UserStore";
@@ -20,12 +20,9 @@ export type WebSocketContextProps = {
   rooms: TRoom[];
   currentRoom: TRoom | null;
   messages: TChatMessage[];
-  getRooms: () => void;
   createRoom: (myId: number, userId: number) => void;
-  enterRoom: (userId: string) => void;
-  leaveRoom: (payload: TLeaveRoom) => void;
   getMessages: (roomId: string) => void;
-  sendMessage: (payload: TSendChatMessage) => void;
+  sendMessage: (payload: SendMessageReq) => void;
 };
 
 export const WebSocketContext = createContext<WebSocketContextProps>(
@@ -40,11 +37,13 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
   children,
 }) => {
   const [rooms, setRooms] = useState<TRoom[]>([]);
-  const [currentRoom, setCurrentRoom] = useState<TRoom | null>(null);
+  const [currentRoom] = useState<TRoom | null>(null);
   const [messages, setMessages] = useState<TChatMessage[]>([]);
   const socketRef = useRef<WebSocket | null>(null);
   const user = useAtomValue(UserAtom);
   const navigate = useNavigate();
+  const { id } = useParams();
+
   useEffect(() => {
     socketRef.current = new WebSocket(
       `${import.meta.env.VITE_WEBSOCKET}?userId=${user.id}`
@@ -54,6 +53,9 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
       socketRef.current?.send(
         JSON.stringify({ type: "GET_ROOMS_REQUEST", data: {} } as GetRoomsReq)
       );
+      if (id) {
+        getMessages(String(id));
+      }
     };
 
     socketRef.current.onmessage = (event) => {
@@ -68,18 +70,17 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
           navigate(`/chatting/room/${response.data.id}`);
           break;
         // 메시지 목록
-        case "message_list":
-          setMessages(response.payload.messages);
+        case "RECEIVE_MESSAGES_IN_ROOM_RESPONSE":
+          setMessages(response.data);
           break;
-        // 메시지
-        case "get_message":
-          setMessages((prev) => [...prev, response.payload.messages]);
+        // 메시지 수신
+        case "RECEIVE_MESSAGE_IN_ROOMS":
+          console.log(response.data);
           break;
       }
     };
 
     socketRef.current.onclose = (event) => {
-      console.log(event);
       if (event.wasClean) {
         console.log("커넥션이 정상적으로 종료되었습니다.");
       } else {
@@ -109,46 +110,21 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
   };
 
   /**
-   * 채팅방 입장
-   */
-  const enterRoom = (roomId: string) => {
-    const room = rooms.find((room) => room.id === roomId);
-    if (room) {
-      setCurrentRoom(room);
-      socketRef.current?.send(JSON.stringify({ type: "join", room: roomId }));
-    }
-  };
-
-  /**
-   * 채팅방 나가기
-   */
-  const leaveRoom = (payload: TLeaveRoom) => {
-    if (currentRoom && currentRoom.id === payload.payload.roomId) {
-      setCurrentRoom(null);
-      socketRef.current?.send(JSON.stringify(payload));
-    }
-  };
-
-  /**
-   * 채팅방 목록 가져오기
-   */
-  const getRooms = () => {
-    socketRef.current?.send(JSON.stringify({ type: "room_list" }));
-  };
-
-  /**
    * 메시지 목록 가져오기
    */
   const getMessages = (roomId: string) => {
     socketRef.current?.send(
-      JSON.stringify({ type: "getMessages", room: roomId })
+      JSON.stringify({
+        type: "RECEIVE_MESSAGE_IN_ROOM",
+        data: { id: roomId },
+      } as GetMessageListReq)
     );
   };
 
   /**
    * 메시지 보내기
    */
-  const sendMessage = (payload: TSendChatMessage) => {
+  const sendMessage = (payload: SendMessageReq) => {
     socketRef.current?.send(JSON.stringify(payload));
   };
 
@@ -159,9 +135,6 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         messages,
         currentRoom,
         createRoom,
-        enterRoom,
-        leaveRoom,
-        getRooms,
         getMessages,
         sendMessage,
       }}

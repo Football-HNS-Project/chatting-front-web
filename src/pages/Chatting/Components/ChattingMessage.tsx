@@ -1,9 +1,11 @@
 import { useAtomValue } from "jotai";
 
+import { TChatMessage } from "@typings/WebsocketMessage";
+
 import { UserAtom } from "@stores/UserStore";
 
 type ChatttingMessageProps = {
-  chatting: { id: number; userId: number; message: string }[];
+  chatting: TChatMessage[];
 };
 
 export const ChattingMessage = ({ chatting }: ChatttingMessageProps) => {
@@ -14,12 +16,12 @@ export const ChattingMessage = ({ chatting }: ChatttingMessageProps) => {
         <div
           key={chat.id}
           className={`${
-            chat.userId === user.id
+            chat.sender === String(user.id)
               ? "bg-green-300 self-end"
               : "bg-gray-200 self-start"
           } max-w-[484px] p-[8px] rounded-2xl text-[14px]`}
         >
-          {chat.message}
+          {chat.content}
         </div>
       ))}
     </div>

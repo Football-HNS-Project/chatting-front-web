@@ -1,8 +1,21 @@
+import { useContext, useEffect } from "react";
+
+import { useParams } from "react-router-dom";
+
+import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
+
 import { Dropdown } from "@pages/Chatting/Components/ChatDetail/Dropdown";
 import { MessageForm } from "@pages/Chatting/Components/ChatDetail/MessageForm";
+import { ChattingMessage } from "@pages/Chatting/Components/ChattingMessage";
 
 export const YesChatting = () => {
-  // const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
+  const { messages, getMessages } = useContext(WebSocketContext);
+
+  useEffect(() => {
+    console.log("DD");
+    getMessages(String(id));
+  }, [id]);
 
   return (
     <div className="flex flex-col w-full h-full">
@@ -27,11 +40,7 @@ export const YesChatting = () => {
           <Dropdown />
         </div>
         {/* 채팅 내용 */}
-        {/* <ChattingMessage
-          chatting={
-            Chatting_Dummy.filter((v) => v.id === Number(id))[0].message
-          }
-        /> */}
+        <ChattingMessage chatting={messages} />
       </div>
       <MessageForm />
     </div>
