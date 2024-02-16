@@ -1,5 +1,7 @@
 import { useLocation } from "react-router-dom";
 
+import { useSetAtom } from "jotai";
+
 import { Logo } from "@assets/Logo";
 import { MenuSvg } from "@assets/MenuSvg";
 import { SearchSvg } from "@assets/SearchSvg";
@@ -7,10 +9,14 @@ import { SearchSvg } from "@assets/SearchSvg";
 import { Dropdown } from "@components/Gnb/Dropdown";
 import { GNB_MENU } from "@components/Gnb/GNB_MENU";
 
+import { UserAtom } from "@stores/UserStore";
+
 export const Gnb: React.FC = () => {
   const { pathname } = useLocation();
 
   const isChattingPage = pathname.includes("chatting");
+
+  const setUser = useSetAtom(UserAtom);
 
   return (
     <div
@@ -60,7 +66,39 @@ export const Gnb: React.FC = () => {
             </a>
           </div>
         ) : (
-          <Dropdown />
+          <>
+            <div className="flex gap-5">
+              <button
+                onClick={() => {
+                  setUser({ id: 1, name: "김도현" });
+                }}
+              >
+                김도현
+              </button>
+              <button
+                onClick={() => {
+                  setUser({ id: 2, name: "조현준" });
+                }}
+              >
+                조현준
+              </button>
+              <button
+                onClick={() => {
+                  setUser({ id: 2, name: "노영삼" });
+                }}
+              >
+                노영삼
+              </button>
+              <button
+                onClick={() => {
+                  setUser({ id: 4, name: "한봉훈" });
+                }}
+              >
+                한봉훈
+              </button>
+            </div>
+            <Dropdown />
+          </>
         )}
       </div>
     </div>

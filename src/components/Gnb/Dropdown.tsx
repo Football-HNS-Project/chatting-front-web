@@ -1,13 +1,16 @@
 import { Fragment, useState } from "react";
 
 import { Menu, Switch, Transition } from "@headlessui/react";
-import { useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 
 import { LogoutModalAtom } from "@stores/ModalStore";
+import { UserAtom } from "@stores/UserStore";
 
 export const Dropdown = () => {
   const [enabled, setEnabled] = useState(false);
   const setIsVisibleLogoutModal = useSetAtom(LogoutModalAtom);
+  const user = useAtomValue(UserAtom);
+
   return (
     <Menu as="div" className="relative inline-block text-left">
       {({ open }) => (
@@ -23,7 +26,7 @@ export const Dropdown = () => {
               className="border-[1px] image-divider rounded-full"
               src="/src/assets/Profile.png"
             />
-            닉네임
+            {user.name}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"

@@ -21,7 +21,7 @@ export type TRoom = {
 export type TChatMessage = {
   id: string;
   messageType: string;
-  sender: string;
+  sender: number;
   createdAt: Date;
   content: string;
 };

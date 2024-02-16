@@ -93,7 +93,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         socketRef.current.close();
       }
     };
-  }, []);
+  }, [user.id]);
 
   /**
    * 채팅방 생성
