@@ -1,3 +1,3 @@
 import { atom } from "jotai";
 
-export const UserAtom = atom({ id: 0, name: "김도현" });
+export const UserAtom = atom({ id: 1, name: "김도현" });

@@ -1,9 +1,15 @@
 import { Fragment, useState } from "react";
 
 import { Menu, Switch, Transition } from "@headlessui/react";
+import { useAtomValue, useSetAtom } from "jotai";
+
+import { LogoutModalAtom } from "@stores/ModalStore";
+import { UserAtom } from "@stores/UserStore";
 
 export const Dropdown = () => {
   const [enabled, setEnabled] = useState(false);
+  const setIsVisibleLogoutModal = useSetAtom(LogoutModalAtom);
+  const user = useAtomValue(UserAtom);
 
   return (
     <Menu as="div" className="relative inline-block text-left">
@@ -20,7 +26,7 @@ export const Dropdown = () => {
               className="border-[1px] image-divider rounded-full"
               src="/src/assets/Profile.png"
             />
-            닉네임
+            {user.name}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -50,14 +56,14 @@ export const Dropdown = () => {
               <div className="dropdown-menu">
                 <Menu.Item>
                   {({ active }) => (
-                    <button
+                    <div
                       onClick={(e) => {
                         e.preventDefault();
                         setEnabled(!enabled);
                       }}
                       className={`${
                         active ? "bg-gray-200" : "text-gray-900"
-                      } flex w-full justify-between items-center rounded-md p-[7px] text-[16px]`}
+                      } flex w-full justify-between items-center rounded-md p-[7px] text-[16px] cursor-pointer`}
                     >
                       채팅 알림
                       <Switch
@@ -74,7 +80,7 @@ export const Dropdown = () => {
                           } inline-block h-[14px] w-[14px] transform rounded-full bg-white transition`}
                         />
                       </Switch>
-                    </button>
+                    </div>
                   )}
                 </Menu.Item>
               </div>
@@ -83,8 +89,8 @@ export const Dropdown = () => {
                 <Menu.Item>
                   {({ active }) => (
                     <button
-                      onClick={(e) => {
-                        e.preventDefault();
+                      onClick={() => {
+                        setIsVisibleLogoutModal(true);
                       }}
                       className={`${
                         active ? "bg-gray-200" : "text-gray-900"

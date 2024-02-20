@@ -4,7 +4,7 @@ import { Menu, Transition } from "@headlessui/react";
 
 import { EllipsisVerticalSvg } from "@assets/EllipsisVerticalSvg";
 
-export const ChattingDropdown = () => {
+export const Dropdown = () => {
   return (
     <Menu as="div" className="relative inline-block text-left">
       <>

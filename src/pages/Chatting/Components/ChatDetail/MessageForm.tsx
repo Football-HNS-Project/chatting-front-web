@@ -1,14 +1,24 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 
-export const ChattingForm = () => {
+import { useParams } from "react-router-dom";
+
+import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
+
+export const MessageForm = () => {
   const [inputMessage, setInputMessage] = useState("");
+  const { sendMessage } = useContext(WebSocketContext);
+  const { id } = useParams<{ id: string }>();
 
   const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
-    console.log(inputMessage);
+    sendMessage({
+      type: "SEND_MESSAGE_REQUEST",
+      data: { roomId: String(id), message: inputMessage, type: "text" },
+    });
     setInputMessage("");
     return;
   };
+
   return (
     <form className="flex relative flex-col m-[16px] h-[125px] justify-between rounded-lg border-[1px] border-gray-900">
       <textarea

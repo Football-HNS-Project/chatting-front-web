@@ -1,5 +1,7 @@
 import { useLocation } from "react-router-dom";
 
+import { useSetAtom } from "jotai";
+
 import { Logo } from "@assets/Logo";
 import { MenuSvg } from "@assets/MenuSvg";
 import { SearchSvg } from "@assets/SearchSvg";
@@ -7,13 +9,19 @@ import { SearchSvg } from "@assets/SearchSvg";
 import { Dropdown } from "@components/Gnb/Dropdown";
 import { GNB_MENU } from "@components/Gnb/GNB_MENU";
 
+import { UserAtom } from "@stores/UserStore";
+
 export const Gnb: React.FC = () => {
-  const location = useLocation();
+  const { pathname } = useLocation();
+
+  const isChattingPage = pathname.includes("chatting");
+
+  const setUser = useSetAtom(UserAtom);
 
   return (
     <div
-      className={`fixed top-0 left-0 w-full h-[64px] z-[999] bg-white ${
-        location.pathname === "/chatting" && "border-b-[1px] border-gray-200"
+      className={`fixed top-0 left-0 w-full h-[64px] z-[50] bg-white ${
+        isChattingPage && "border-b-[1px] border-gray-200"
       }`}
     >
       <div className="flex flex-row h-full items-center px-[2rem] py-[1.2rem] justify-between max-w-[120rem] my-0 mx-auto">
@@ -21,7 +29,7 @@ export const Gnb: React.FC = () => {
           <Logo />
         </a>
 
-        {location.pathname !== "/chatting" && (
+        {!isChattingPage && (
           <nav className="hidden md:flex flex-row w-full pr-[4rem]">
             <ul className="list-none inline-block font-bold">
               {GNB_MENU.map((menu) => (
@@ -35,7 +43,7 @@ export const Gnb: React.FC = () => {
           </nav>
         )}
 
-        {location.pathname !== "/chatting" ? (
+        {!isChattingPage ? (
           <div className="flex flex-row items-center justify-center gap-[1.2rem]">
             <button className="lg:hidden">
               <SearchSvg />
@@ -58,7 +66,39 @@ export const Gnb: React.FC = () => {
             </a>
           </div>
         ) : (
-          <Dropdown />
+          <>
+            <div className="flex gap-5">
+              <button
+                onClick={() => {
+                  setUser({ id: 1, name: "김도현" });
+                }}
+              >
+                김도현
+              </button>
+              <button
+                onClick={() => {
+                  setUser({ id: 2, name: "조현준" });
+                }}
+              >
+                조현준
+              </button>
+              <button
+                onClick={() => {
+                  setUser({ id: 2, name: "노영삼" });
+                }}
+              >
+                노영삼
+              </button>
+              <button
+                onClick={() => {
+                  setUser({ id: 4, name: "한봉훈" });
+                }}
+              >
+                한봉훈
+              </button>
+            </div>
+            <Dropdown />
+          </>
         )}
       </div>
     </div>
