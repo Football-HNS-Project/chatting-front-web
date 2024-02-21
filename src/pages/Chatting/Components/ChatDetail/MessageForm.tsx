@@ -5,7 +5,12 @@ export const MessageForm = () => {
   // const { sendMessage } = useContext(WebSocketContext);
   // const { id } = useParams<{ id: string }>();
 
-  const handleSubmit = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const handleSubmit = (
+    e:
+      | React.FormEvent<HTMLFormElement>
+      | React.MouseEvent<HTMLButtonElement, MouseEvent>
+      | React.KeyboardEvent<HTMLTextAreaElement>
+  ) => {
     e.preventDefault();
     // sendMessage({
     //   type: "SEND_MESSAGE_REQUEST",
@@ -16,7 +21,10 @@ export const MessageForm = () => {
   };
 
   return (
-    <form className="flex relative flex-col m-[16px] h-[125px] justify-between rounded-lg border-[1px] border-gray-900">
+    <form
+      className="flex relative flex-col m-[16px] h-[125px] justify-between rounded-lg border-[1px] border-gray-900"
+      onSubmit={handleSubmit}
+    >
       <textarea
         value={inputMessage}
         maxLength={1000}
@@ -24,6 +32,12 @@ export const MessageForm = () => {
         className="mt-[12px] mx-[12px] w-[calc(100%-24px)] h-[63px] p-0 resize-none text-[14px] outline-none"
         onChange={(e) => {
           setInputMessage(e.target.value);
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            handleSubmit(e);
+          }
         }}
       />
       <div className="flex justify-between my-[8px] mx-[10px]">

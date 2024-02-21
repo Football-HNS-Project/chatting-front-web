@@ -10,7 +10,6 @@ type ChatttingMessageProps = {
 
 export const ChattingMessage = ({ chatting }: ChatttingMessageProps) => {
   const user = useAtomValue(UserAtom);
-
   return (
     <div className="flex flex-col overflow-x-hidden overflow-y-auto p-[20px] gap-[10px]">
       {chatting.map((chat) => (

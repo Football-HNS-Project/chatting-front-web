@@ -24,6 +24,7 @@ export type TChatMessage = {
   sender: number;
   createdAt: Date;
   content: string;
+  roomId?: string;
 };
 
 /**
@@ -99,12 +100,7 @@ export type SendMessageReq = {
  */
 export type ReceiveMessageRes = {
   type: "RECEIVE_MESSAGE_IN_ROOMS";
-  data: {
-    roomId: string;
-    sender: string;
-    content: string;
-    updatedAt: Date;
-  };
+  data: TChatMessage;
 };
 
 type TSystemRef =
