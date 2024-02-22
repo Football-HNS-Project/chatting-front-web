@@ -1,19 +1,21 @@
-import React from "react";
-
+// import React, { useContext } from "react";
+// import { useAtomValue } from "jotai";
 import { NoChatSvg } from "@assets/NoChatSvg";
+
+import { CreateRoomModal } from "@components/Modal/CreateRoomModal";
 
 // import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
 
 // import { UserAtom } from "@stores/UserStore";
 
 export const NoChatting = () => {
-  const [userId, setUserId] = React.useState<string>("");
+  // const [userId, setUserId] = React.useState<string>("");
   // const { createRoom } = useContext(WebSocketContext);
   // const user = useAtomValue(UserAtom);
 
-  const handleCreateChat = () => {
-    // createRoom(user.id, Number(userId));
-  };
+  // const handleCreateChat = () => {
+  //   createRoom(user.id, Number(userId));
+  // };
 
   return (
     <div className="flex flex-col justify-center items-center w-full h-full gap-[34px]">
@@ -21,8 +23,9 @@ export const NoChatting = () => {
       <span className="text-[14px] text-gray-700">
         채팅할 상대를 선택해주세요.
       </span>
+      <CreateRoomModal />
       {/* [TODO] 임시 채팅 생성 화면 */}
-      <div>
+      {/* <div>
         <input
           className="border-[1px] h-full mr-3 p-2"
           placeholder="userId를 입력하세요"
@@ -38,7 +41,7 @@ export const NoChatting = () => {
         >
           채팅하기
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };
