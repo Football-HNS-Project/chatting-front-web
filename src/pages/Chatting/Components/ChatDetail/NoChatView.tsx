@@ -1,6 +1,6 @@
 import { NoChatSvg } from "@assets/NoChatSvg";
 
-export const NoChatting = () => {
+export const NoChatView = () => {
   return (
     <div className="flex flex-col justify-center items-center w-full h-full gap-[34px]">
       <NoChatSvg />

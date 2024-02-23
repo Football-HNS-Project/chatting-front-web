@@ -1,20 +1,12 @@
 import { useAtomValue } from "jotai";
 
-// import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
 import { Dropdown } from "@pages/Chatting/Components/ChatDetail/Dropdown";
 import { MessageForm } from "@pages/Chatting/Components/ChatDetail/MessageForm";
 
-// import { ChatMessage } from "@pages/Chatting/Components/ChatMessage";
 import { UserAtom } from "@stores/UserStore";
 
 export const ChatDetail = () => {
-  // const { id } = useParams<{ id: string }>();
-  // const { messages, getMessages } = useContext(WebSocketContext);
   const user = useAtomValue(UserAtom);
-
-  // useEffect(() => {
-  //   getMessages(String(id));
-  // }, [id]);
 
   return (
     <div className="flex flex-col w-full h-full">

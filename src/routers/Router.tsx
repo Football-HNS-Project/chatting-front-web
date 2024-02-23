@@ -4,7 +4,7 @@ import { RootLayout } from "@components/Router/RootLayout";
 import { WebsocketProvider } from "@components/Websocket/WebsocketProvider";
 
 import { ChattingPage } from "@pages/Chatting/ChattingPage";
-import { ChattingDetail } from "@pages/Chatting/Components/ChatDetail/ChattingDetail";
+import { ChatView } from "@pages/Chatting/Components/ChatDetail/ChatView";
 import { HomePage } from "@pages/Home/HomePage";
 
 export const router = () =>
@@ -27,11 +27,11 @@ export const router = () =>
           children: [
             {
               index: true,
-              element: <ChattingDetail />,
+              element: <ChatView />,
             },
             {
               path: "room/:id",
-              element: <ChattingDetail />,
+              element: <ChatView />,
             },
           ],
         },

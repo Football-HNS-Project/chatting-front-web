@@ -6,13 +6,20 @@ import { TChatMessage } from "@typings/WebsocketMessage";
 
 import { UserAtom, User_Dummy } from "@stores/UserStore";
 
-type ChattingMessageProps = {
+type ChatMessageProps = {
   chatting: TChatMessage[];
 };
 
-export const ChattingMessage = ({ chatting }: ChattingMessageProps) => {
+export const ChatMessage = ({ chatting }: ChatMessageProps) => {
   const user = useAtomValue(UserAtom);
   const messageEndRef = React.useRef<HTMLDivElement | null>(null);
+  const changeDate = (date: Date) => {
+    const createdAt = new Date(date);
+    if (createdAt.getHours() < 12) {
+      return `오전 ${createdAt.getHours()}:${createdAt.getMinutes()}`;
+    }
+    return `오후 ${createdAt.getHours() - 12}:${createdAt.getMinutes()}`;
+  };
 
   const userMapping = (userId: number) => {
     const user = User_Dummy.filter((u) => u.id === userId);
@@ -46,6 +53,9 @@ export const ChattingMessage = ({ chatting }: ChattingMessageProps) => {
             } rounded-2xl max-w-[484px] p-[8px] text-[14px]`}
           >
             {chat.content}
+          </div>
+          <div className="self-end mx-3 text-[10px]">
+            {changeDate(chat.createdAt)}
           </div>
         </div>
       ))}
