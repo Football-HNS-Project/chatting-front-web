@@ -37,28 +37,77 @@ export const ChatMessage = ({ chatting }: ChatMessageProps) => {
       ref={messageEndRef}
       className="flex flex-col overflow-x-hidden overflow-y-auto p-[20px] gap-[10px]"
     >
-      {chatting.map((chat) => (
-        <div
-          key={chat.id}
-          className={`flex ${
-            chat.sender === user.id
-              ? "self-end flex-row-reverse"
-              : "self-start flex-row"
-          } `}
-        >
-          {chat.sender !== user.id && <div>{userMapping(chat.sender)}</div>}
+      {chatting.map((chat, index) => {
+        const isCreated = new Date(chat.createdAt);
+        let displayTime = true;
+        const timeValue = changeDate(chat.createdAt);
+        if (index !== chatting.length - 1) {
+          const nextSender = chatting[index + 1].sender;
+          if (nextSender === chat.sender) {
+            const nextTimeValue = changeDate(chatting[index + 1].createdAt);
+            if (timeValue === nextTimeValue) {
+              displayTime = false;
+            }
+          }
+        }
+
+        let displayProfile = false;
+
+        if (index !== 0) {
+          const prevSender = chatting[index - 1].sender;
+          const prevCreatedDate = new Date(chatting[index - 1].createdAt);
+          prevCreatedDate.setHours(prevCreatedDate.getHours() - 9);
+          if (
+            prevSender !== chat.sender ||
+            prevCreatedDate.getDate() !== isCreated.getDate()
+          ) {
+            displayProfile = true;
+          }
+        } else {
+          displayProfile = true;
+        }
+        if (chat.sender === user.id) {
+          displayProfile = false;
+        }
+
+        return (
           <div
-            className={`${
-              chat.sender === user.id ? "bg-green-300" : "bg-gray-200"
-            } rounded-2xl max-w-[484px] p-[8px] text-[14px]`}
+            key={chat.id}
+            className={`flex ${
+              chat.sender === user.id
+                ? "self-end flex-row-reverse"
+                : "self-start flex-row"
+            } `}
           >
-            {chat.content}
+            <div className="flex">
+              {/* 프로필 */}
+              {displayProfile ? (
+                <div className="w-[40px] h-[40px] bg-slate-400 rounded-3xl" />
+              ) : chat.sender !== user.id ? (
+                <div className="w-[40px]" />
+              ) : null}
+              <div className="ml-[5px]">
+                {/* 이름 */}
+                {displayProfile && (
+                  <p className="mb-[5px] text-xl">{userMapping(chat.sender)}</p>
+                )}
+                {/* 내용 */}
+                <div
+                  className={`${
+                    chat.sender === user.id ? "bg-green-300" : "bg-gray-200"
+                  } rounded-2xl max-w-[484px] p-[8px] text-[14px]`}
+                >
+                  {chat.content}
+                </div>
+              </div>
+            </div>
+            {/* 시간 */}
+            {displayTime ? (
+              <div className="self-end mx-2 text-[10px]">{timeValue}</div>
+            ) : null}
           </div>
-          <div className="self-end mx-3 text-[10px]">
-            {changeDate(chat.createdAt)}
-          </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };
