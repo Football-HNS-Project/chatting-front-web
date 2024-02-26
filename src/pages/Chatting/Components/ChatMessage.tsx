@@ -16,9 +16,13 @@ export const ChatMessage = ({ chatting }: ChatMessageProps) => {
   const changeDate = (date: Date) => {
     const createdAt = new Date(date);
     if (createdAt.getHours() < 12) {
-      return `오전 ${createdAt.getHours()}:${createdAt.getMinutes()}`;
+      return `오전 ${createdAt.getHours()}:${String(
+        createdAt.getMinutes()
+      ).padStart(2, "0")}`;
     }
-    return `오후 ${createdAt.getHours() - 12}:${createdAt.getMinutes()}`;
+    return `오후 ${createdAt.getHours() - 12}:${String(
+      createdAt.getMinutes()
+    ).padStart(2, "0")}`;
   };
 
   const userMapping = (userId: number) => {
