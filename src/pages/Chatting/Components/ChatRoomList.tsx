@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -6,6 +6,8 @@ import { useAtomValue } from "jotai";
 
 import { CheckedSvg } from "@assets/CheckedSvg";
 import { UnCheckedSvg } from "@assets/UnCheckedSvg";
+
+import { GetRoomsReq, TRoom } from "@typings/WebsocketMessage";
 
 import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
 
@@ -15,8 +17,27 @@ export const ChatRoomList = () => {
   const navigate = useNavigate();
   const user = useAtomValue(UserAtom);
   const { id } = useParams<{ id: string }>();
+  const { isReady, subscribe, unsubscribe, sendRequest } =
+    useContext(WebSocketContext);
+
   const [isChecked, setIsChecked] = useState(false);
-  const { rooms } = useContext(WebSocketContext);
+  const [roomList, setRoomList] = useState<TRoom[]>([]);
+
+  useEffect(() => {
+    if (isReady) {
+      sendRequest({
+        type: "GET_ROOMS_REQUEST",
+        data: {},
+      } as GetRoomsReq);
+      subscribe("GET_ROOMS_RESPONSE", (data) => {
+        setRoomList(data as TRoom[]);
+      });
+    }
+
+    return () => {
+      unsubscribe("GET_ROOMS_RESPONSE");
+    };
+  }, [isReady, sendRequest, subscribe, unsubscribe]);
 
   return (
     <nav className="flex flex-col border-r-[1px] w-[312px] min-w-[312px]">
@@ -38,7 +59,7 @@ export const ChatRoomList = () => {
         role="list"
         className="h-[calc(100%-56px)] overflow-x-hidden overflow-y-auto"
       >
-        {rooms.map((room) => (
+        {roomList.map((room) => (
           <li
             key={room.id}
             onClick={() => {
