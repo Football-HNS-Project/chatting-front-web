@@ -41,9 +41,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
   }>({});
   const roomRef = useRef<{
     [key: string]: (
-      data:
-        | { roomId: string; content: TChatMessage[] }
-        | { roomId: string; sender: string; content: string; updatedAt: Date }
+      data: { roomId: string; content: TChatMessage[] } | TChatMessage
     ) => void;
   }>({});
 

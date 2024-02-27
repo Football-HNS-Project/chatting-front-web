@@ -1,10 +1,8 @@
-import { Fragment, useContext } from "react";
+import { Fragment } from "react";
 import React from "react";
 
 import { Dialog, Transition } from "@headlessui/react";
 import { useAtom, useAtomValue } from "jotai";
-
-import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
 
 import { CreateRoomModalAtom } from "@stores/ModalStore";
 import { UserAtom, User_Dummy } from "@stores/UserStore";
@@ -15,10 +13,9 @@ export const CreateRoomModal = () => {
   const [userList, setUserList] = React.useState<number[]>([]);
   const user = useAtomValue(UserAtom);
   const [title, setTitle] = React.useState<string>("");
-  const { createRoom } = useContext(WebSocketContext);
 
   const handleConfirm = () => {
-    createRoom(title, userList);
+    // createRoom(title, userList);
     setIsVisibleCreateRoomModal(false);
   };
 
