@@ -2,9 +2,8 @@ import { useNavigate } from "react-router-dom";
 
 import { useAtom } from "jotai";
 
-import { User_Dummy } from "@pages/Chatting/Chatting_Dummy";
-
 import { SelectedUserAtom } from "@stores/ChattingStore";
+import { User_Dummy } from "@stores/UserStore";
 
 export const UserList = () => {
   const navigate = useNavigate();

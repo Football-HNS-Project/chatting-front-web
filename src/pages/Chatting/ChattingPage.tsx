@@ -1,5 +1,7 @@
 import { Outlet } from "react-router-dom";
 
+import { CreateRoomModal } from "@components/Modal/CreateRoomModal";
+
 import { ChatRoomList } from "@pages/Chatting/Components/ChatRoomList";
 import { UserList } from "@pages/Chatting/Components/UserList";
 
@@ -12,7 +14,7 @@ export const ChattingPage = () => {
           <ChatRoomList />
           <Outlet />
         </div>
-        <div className="flex"></div>
+        <CreateRoomModal />
       </div>
     </div>
   );

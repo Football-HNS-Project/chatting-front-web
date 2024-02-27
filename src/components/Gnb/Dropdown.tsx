@@ -3,12 +3,13 @@ import { Fragment, useState } from "react";
 import { Menu, Switch, Transition } from "@headlessui/react";
 import { useAtomValue, useSetAtom } from "jotai";
 
-import { LogoutModalAtom } from "@stores/ModalStore";
+import { CreateRoomModalAtom, LogoutModalAtom } from "@stores/ModalStore";
 import { UserAtom } from "@stores/UserStore";
 
 export const Dropdown = () => {
   const [enabled, setEnabled] = useState(false);
   const setIsVisibleLogoutModal = useSetAtom(LogoutModalAtom);
+  const setIsVisibleCreateRoomModal = useSetAtom(CreateRoomModalAtom);
   const user = useAtomValue(UserAtom);
 
   return (
@@ -80,6 +81,23 @@ export const Dropdown = () => {
                           } inline-block h-[14px] w-[14px] transform rounded-full bg-white transition`}
                         />
                       </Switch>
+                    </div>
+                  )}
+                </Menu.Item>
+              </div>
+
+              <div className="dropdown-menu">
+                <Menu.Item>
+                  {({ active }) => (
+                    <div
+                      onClick={() => {
+                        setIsVisibleCreateRoomModal(true);
+                      }}
+                      className={`${
+                        active ? "bg-gray-200" : "text-gray-900"
+                      } flex w-full justify-between items-center rounded-md p-[7px] text-[16px] cursor-pointer`}
+                    >
+                      채팅방 생성
                     </div>
                   )}
                 </Menu.Item>

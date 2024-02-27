@@ -9,7 +9,7 @@ import { SearchSvg } from "@assets/SearchSvg";
 import { Dropdown } from "@components/Gnb/Dropdown";
 import { GNB_MENU } from "@components/Gnb/GNB_MENU";
 
-import { UserAtom } from "@stores/UserStore";
+import { UserAtom, User_Dummy } from "@stores/UserStore";
 
 export const Gnb: React.FC = () => {
   const { pathname } = useLocation();
@@ -68,34 +68,16 @@ export const Gnb: React.FC = () => {
         ) : (
           <>
             <div className="flex gap-5">
-              <button
-                onClick={() => {
-                  setUser({ id: 1, name: "김도현" });
-                }}
-              >
-                김도현
-              </button>
-              <button
-                onClick={() => {
-                  setUser({ id: 2, name: "조현준" });
-                }}
-              >
-                조현준
-              </button>
-              <button
-                onClick={() => {
-                  setUser({ id: 2, name: "노영삼" });
-                }}
-              >
-                노영삼
-              </button>
-              <button
-                onClick={() => {
-                  setUser({ id: 4, name: "한봉훈" });
-                }}
-              >
-                한봉훈
-              </button>
+              {User_Dummy.map((v) => (
+                <button
+                  key={v.id}
+                  onClick={() => {
+                    setUser({ id: v.id, name: v.name });
+                  }}
+                >
+                  {v.name}
+                </button>
+              ))}
             </div>
             <Dropdown />
           </>
