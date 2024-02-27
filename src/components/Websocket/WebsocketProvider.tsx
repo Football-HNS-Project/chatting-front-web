@@ -1,28 +1,25 @@
 import { createContext, useEffect, useRef, useState } from "react";
 
-import { useNavigate, useParams } from "react-router-dom";
-
 import { useAtomValue } from "jotai";
 
 import {
-  CreateRoomReq,
-  GetMessageListReq,
-  GetRoomsReq,
-  SendMessageReq,
   TChatMessage,
-  TMessage,
+  TMessageReq,
+  TMessageRes,
+  TMessageResType,
   TRoom,
 } from "@typings/WebsocketMessage";
 
 import { UserAtom } from "@stores/UserStore";
 
-export type WebSocketContextProps = {
-  rooms: TRoom[];
-  currentRoom: TRoom | null;
-  messages: TChatMessage[];
-  createRoom: (myId: number, userId: number) => void;
-  getMessages: (roomId: string) => void;
-  sendMessage: (payload: SendMessageReq) => void;
+type WebSocketContextProps = {
+  isReady: boolean;
+  subscribe: (
+    channel: TMessageResType,
+    callback: (data: TRoom[] | TRoom) => void
+  ) => void;
+  unsubscribe: (channel: TMessageResType) => void;
+  sendRequest: (data: TMessageReq) => void;
 };
 
 export const WebSocketContext = createContext<WebSocketContextProps>(
@@ -36,109 +33,88 @@ type WebsocketProviderProps = {
 export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
   children,
 }) => {
-  const [rooms, setRooms] = useState<TRoom[]>([]);
-  const [currentRoom] = useState<TRoom | null>(null);
-  const [messages, setMessages] = useState<TChatMessage[]>([]);
-  const socketRef = useRef<WebSocket | null>(null);
   const user = useAtomValue(UserAtom);
-  const navigate = useNavigate();
-  const { id } = useParams();
+  const [isReady, setIsReady] = useState(false);
+  const ws = useRef<WebSocket | null>(null);
+  const systemRef = useRef<{
+    [key: string]: (data: TRoom | TRoom[]) => void;
+  }>({});
+  const roomRef = useRef<{
+    [key: string]: (
+      data:
+        | { roomId: string; content: TChatMessage[] }
+        | { roomId: string; sender: string; content: string; updatedAt: Date }
+    ) => void;
+  }>({});
+
+  const subscribe = (
+    channel: TMessageResType,
+    callback: (data: TRoom | TRoom[]) => void
+  ) => {
+    systemRef.current[channel] = callback;
+  };
+  const unsubscribe = (channel: TMessageResType) => {
+    delete systemRef.current[channel];
+  };
+  const sendRequest = (data: TMessageReq) => {
+    ws.current?.send(JSON.stringify(data));
+  };
 
   useEffect(() => {
-    socketRef.current = new WebSocket(
+    ws.current = new WebSocket(
       `${import.meta.env.VITE_WEBSOCKET}?userId=${user.id}`
     );
-    socketRef.current.onopen = () => {
-      console.log("WebSocket 연결");
-      socketRef.current?.send(
-        JSON.stringify({ type: "GET_ROOMS_REQUEST", data: {} } as GetRoomsReq)
-      );
-      if (id) {
-        getMessages(String(id));
-      }
+
+    ws.current.onopen = () => {
+      setIsReady(true);
+      console.log("socket open");
     };
 
-    socketRef.current.onmessage = (event) => {
-      const response: TMessage = JSON.parse(event.data);
-      switch (response.type) {
-        // 채팅방 목록
+    ws.current.onclose = () => {
+      setIsReady(false);
+      console.log("socket close");
+    };
+
+    ws.current.onmessage = (event: MessageEvent) => {
+      const { type, data }: TMessageRes = JSON.parse(event.data);
+      switch (type) {
+        // 채팅 방 외부(시스템) 관련 type
         case "GET_ROOMS_RESPONSE":
-          setRooms(response.data);
+        case "CREATE_ROOM_RESPONSE": {
+          const action = `${type}`;
+          if (systemRef.current[action]) {
+            systemRef.current[action](data);
+          } else {
+            systemRef.current[action]?.(data);
+          }
           break;
-        case "CREATE_ROOM_RESPONSE":
-          setRooms((prev) => [response.data, ...prev]);
-          navigate(`/chatting/room/${response.data.id}`);
-          break;
-        // 메시지 목록
+        }
+        // 채팅 방 내부(메시지) 관련 type
         case "RECEIVE_MESSAGES_IN_ROOM_RESPONSE":
-          setMessages(response.data);
+        case "RECEIVE_MESSAGE_IN_ROOMS": {
+          const action = `${type}_${data.roomId}`;
+          roomRef.current[action]?.(data);
           break;
-        // 메시지 수신
-        case "RECEIVE_MESSAGE_IN_ROOMS":
-          console.log(response.data);
-          break;
-      }
-    };
-
-    socketRef.current.onclose = (event) => {
-      if (event.wasClean) {
-        console.log("커넥션이 정상적으로 종료되었습니다.");
-      } else {
-        console.log("커넥션이 죽었습니다.");
+        }
       }
     };
 
     return () => {
-      if (socketRef.current) {
-        socketRef.current.close();
+      if (ws.current) {
+        ws.current.close();
       }
     };
   }, [user.id]);
 
-  /**
-   * 채팅방 생성
-   */
-  const createRoom = (myId: number, userId: number) => {
-    const reqBody: CreateRoomReq = {
-      type: "CREATE_ROOM_REQUEST",
-      data: {
-        name: "임시 방 이름",
-        participants: [myId, userId],
-      },
-    };
-    socketRef.current?.send(JSON.stringify(reqBody));
-  };
-
-  /**
-   * 메시지 목록 가져오기
-   */
-  const getMessages = (roomId: string) => {
-    socketRef.current?.send(
-      JSON.stringify({
-        type: "RECEIVE_MESSAGE_IN_ROOM",
-        data: { id: roomId },
-      } as GetMessageListReq)
-    );
-  };
-
-  /**
-   * 메시지 보내기
-   */
-  const sendMessage = (payload: SendMessageReq) => {
-    socketRef.current?.send(JSON.stringify(payload));
+  const ret = {
+    isReady,
+    subscribe,
+    unsubscribe,
+    sendRequest,
   };
 
   return (
-    <WebSocketContext.Provider
-      value={{
-        rooms,
-        messages,
-        currentRoom,
-        createRoom,
-        getMessages,
-        sendMessage,
-      }}
-    >
+    <WebSocketContext.Provider value={ret}>
       {children}
     </WebSocketContext.Provider>
   );

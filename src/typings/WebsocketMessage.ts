@@ -72,11 +72,14 @@ export type GetMessageListReq = {
 };
 
 /**
- * 채팅방 내부 메시지 수신 RES
+ * 채팅방 내부 메시지 목록 수신 RES
  */
 export type GetMessageListRes = {
   type: "RECEIVE_MESSAGES_IN_ROOM_RESPONSE";
-  data: TChatMessage[];
+  data: {
+    roomId: string;
+    content: TChatMessage[];
+  };
 };
 
 /**
@@ -91,6 +94,9 @@ export type SendMessageReq = {
   };
 };
 
+/**
+ * 채팅 메시지 수신 RES
+ */
 export type ReceiveMessageRes = {
   type: "RECEIVE_MESSAGE_IN_ROOMS";
   data: {
@@ -101,7 +107,25 @@ export type ReceiveMessageRes = {
   };
 };
 
-export type TMessage =
+type TSystemRef =
+  | "RECEIVE_MESSAGES_IN_ROOM_RESPONSE"
+  | "RECEIVE_MESSAGE_IN_ROOMS";
+type TRoomRef = "GET_ROOMS_RESPONSE" | "CREATE_ROOM_RESPONSE";
+
+export type TMessageResType = TSystemRef | TRoomRef;
+export type TMessageReqType =
+  | "GET_ROOMS_REQUEST"
+  | "CREATE_ROOM_REQUEST"
+  | "CREATE_ROOM_REQUEST"
+  | "SEND_MESSAGE_REQUEST";
+
+export type TMessageReq =
+  | GetRoomsReq
+  | CreateRoomReq
+  | GetMessageListReq
+  | SendMessageReq;
+
+export type TMessageRes =
   | GetRoomsRes
   | CreateRoomRes
   | GetMessageListRes
