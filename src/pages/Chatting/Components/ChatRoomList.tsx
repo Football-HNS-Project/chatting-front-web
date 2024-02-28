@@ -2,15 +2,16 @@ import { useContext, useEffect, useState } from "react";
 
 import { useNavigate, useParams } from "react-router-dom";
 
-import { useAtomValue } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 
 import { CheckedSvg } from "@assets/CheckedSvg";
 import { UnCheckedSvg } from "@assets/UnCheckedSvg";
 
-import { GetRoomsReq, TRoom } from "@typings/WebsocketMessage";
+import { TRoom } from "@typings/WebsocketMessage";
 
 import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
 
+import { RoomListAtom } from "@stores/RoomListAtom";
 import { UserAtom } from "@stores/UserStore";
 
 export const ChatRoomList = () => {
@@ -21,14 +22,14 @@ export const ChatRoomList = () => {
     useContext(WebSocketContext);
 
   const [isChecked, setIsChecked] = useState(false);
-  const [roomList, setRoomList] = useState<TRoom[]>([]);
+  const [roomList, setRoomList] = useAtom(RoomListAtom);
 
   useEffect(() => {
     if (isReady) {
       sendRequest({
         type: "GET_ROOMS_REQUEST",
         data: {},
-      } as GetRoomsReq);
+      });
       subscribe("GET_ROOMS_RESPONSE", (data) => {
         setRoomList(data as TRoom[]);
       });
@@ -37,7 +38,7 @@ export const ChatRoomList = () => {
     return () => {
       unsubscribe("GET_ROOMS_RESPONSE");
     };
-  }, [isReady, sendRequest, subscribe, unsubscribe]);
+  }, [isReady, sendRequest, setRoomList, subscribe, unsubscribe]);
 
   return (
     <nav className="flex flex-col border-r-[1px] w-[312px] min-w-[312px]">
@@ -89,10 +90,10 @@ export const ChatRoomList = () => {
                     </span>
                   </div>
                   <span className="text-[11px] whitespace-nowrap text-gray-500">
-                    {`${new Date(room.updated).getFullYear()}-${String(
-                      new Date(room.updated).getMonth() + 1
+                    {`${new Date(room.updatedAt).getFullYear()}-${String(
+                      new Date(room.updatedAt).getMonth() + 1
                     ).padStart(2, "0")}-${String(
-                      new Date(room.updated).getDate()
+                      new Date(room.updatedAt).getDate()
                     ).padStart(2, "0")}`}
                   </span>
                 </div>

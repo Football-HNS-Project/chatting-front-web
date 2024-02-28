@@ -13,7 +13,7 @@ export type TRoom = {
   name: string;
   memberSize: number;
   message: string;
-  updated: Date;
+  updatedAt: Date;
 };
 /**
  * 채팅 메시지 인터페이스

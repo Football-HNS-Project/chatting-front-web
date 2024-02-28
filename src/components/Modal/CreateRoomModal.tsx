@@ -1,22 +1,47 @@
-import { Fragment } from "react";
+import { Fragment, useContext } from "react";
 import React from "react";
 
 import { Dialog, Transition } from "@headlessui/react";
 import { useAtom, useAtomValue } from "jotai";
 
+import { TRoom } from "@typings/WebsocketMessage";
+
+import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
+
 import { CreateRoomModalAtom } from "@stores/ModalStore";
+import { RoomListAtom } from "@stores/RoomListAtom";
 import { UserAtom, User_Dummy } from "@stores/UserStore";
 
 export const CreateRoomModal = () => {
+  const user = useAtomValue(UserAtom);
   const [isVisibleCreateRoomModal, setIsVisibleCreateRoomModal] =
     useAtom(CreateRoomModalAtom);
+  const { isReady, subscribe, sendRequest, unsubscribe } =
+    useContext(WebSocketContext);
+
+  const [roomList, setRoomList] = useAtom(RoomListAtom);
   const [userList, setUserList] = React.useState<number[]>([]);
-  const user = useAtomValue(UserAtom);
   const [title, setTitle] = React.useState<string>("");
 
   const handleConfirm = () => {
-    // createRoom(title, userList);
-    setIsVisibleCreateRoomModal(false);
+    if (isReady) {
+      sendRequest({
+        type: "CREATE_ROOM_REQUEST",
+        data: {
+          name: title || "임시 방",
+          participants: [user.id, ...userList],
+        },
+      });
+      subscribe("CREATE_ROOM_RESPONSE", (data) => {
+        const newRoomList = [data as TRoom, ...roomList];
+        setRoomList(newRoomList);
+      });
+      setIsVisibleCreateRoomModal(false);
+    }
+
+    return () => {
+      unsubscribe("CREATE_ROOM_RESPONSE");
+    };
   };
 
   const handleCancel = () => {
