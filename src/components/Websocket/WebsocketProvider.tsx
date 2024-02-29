@@ -4,6 +4,7 @@ import { useAtomValue } from "jotai";
 
 import {
   TChatMessage,
+  TChatMessageDetail,
   TMessageReq,
   TMessageRes,
   TMessageResType,
@@ -16,7 +17,7 @@ type WebSocketContextProps = {
   isReady: boolean;
   subscribe: (
     channel: TMessageResType,
-    callback: (data: TRoom[] | TRoom) => void
+    callback: (data: TRoom[] | TRoom | TChatMessage) => void
   ) => void;
   unsubscribe: (channel: TMessageResType) => void;
   sendRequest: (data: TMessageReq) => void;
@@ -40,16 +41,20 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     [key: string]: (data: TRoom | TRoom[]) => void;
   }>({});
   const roomRef = useRef<{
-    [key: string]: (
-      data: { roomId: string; content: TChatMessage[] } | TChatMessage
-    ) => void;
+    [key: string]: (data: TChatMessageDetail | TChatMessage) => void;
   }>({});
 
   const subscribe = (
     channel: TMessageResType,
-    callback: (data: TRoom | TRoom[]) => void
+    callback: (
+      data: TRoom | TRoom[] | TChatMessageDetail | TChatMessage
+    ) => void
   ) => {
-    systemRef.current[channel] = callback;
+    if (channel === "RECEIVE_MESSAGES_IN_ROOM_RESPONSE") {
+      roomRef.current[channel] = callback;
+    } else {
+      systemRef.current[channel] = callback;
+    }
   };
   const unsubscribe = (channel: TMessageResType) => {
     delete systemRef.current[channel];
@@ -80,11 +85,8 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         case "GET_ROOMS_RESPONSE":
         case "CREATE_ROOM_RESPONSE": {
           const action = `${type}`;
-          if (systemRef.current[action]) {
-            systemRef.current[action](data);
-          } else {
-            systemRef.current[action]?.(data);
-          }
+          systemRef.current[action]?.(data);
+
           break;
         }
         // 채팅 방 내부(메시지) 관련 type

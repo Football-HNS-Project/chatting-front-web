@@ -19,12 +19,15 @@ export type TRoom = {
  * 채팅 메시지 인터페이스
  */
 export type TChatMessage = {
+  roomId: string;
+  messages: TChatMessageDetail[];
+};
+export type TChatMessageDetail = {
   id: string;
   messageType: string;
   sender: number;
   createdAt: Date;
   content: string;
-  roomId?: string;
 };
 
 /**
@@ -77,10 +80,7 @@ export type GetMessageListReq = {
  */
 export type GetMessageListRes = {
   type: "RECEIVE_MESSAGES_IN_ROOM_RESPONSE";
-  data: {
-    roomId: string;
-    content: TChatMessage[];
-  };
+  data: TChatMessage;
 };
 
 /**
@@ -103,10 +103,10 @@ export type ReceiveMessageRes = {
   data: TChatMessage;
 };
 
-type TSystemRef =
+type TRoomRef =
   | "RECEIVE_MESSAGES_IN_ROOM_RESPONSE"
   | "RECEIVE_MESSAGE_IN_ROOMS";
-type TRoomRef = "GET_ROOMS_RESPONSE" | "CREATE_ROOM_RESPONSE";
+type TSystemRef = "GET_ROOMS_RESPONSE" | "CREATE_ROOM_RESPONSE";
 
 export type TMessageResType = TSystemRef | TRoomRef;
 export type TMessageReqType =

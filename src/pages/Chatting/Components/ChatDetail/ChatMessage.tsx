@@ -2,15 +2,15 @@ import React from "react";
 
 import { useAtomValue } from "jotai";
 
-import { TChatMessage } from "@typings/WebsocketMessage";
+import { TChatMessageDetail } from "@typings/WebsocketMessage";
 
 import { UserAtom, User_Dummy } from "@stores/UserStore";
 
 type ChatMessageProps = {
-  chatting: TChatMessage[];
+  messages: TChatMessageDetail[];
 };
 
-export const ChatMessage = ({ chatting }: ChatMessageProps) => {
+export const ChatMessage = ({ messages }: ChatMessageProps) => {
   const user = useAtomValue(UserAtom);
   const messageEndRef = React.useRef<HTMLDivElement | null>(null);
   const changeDate = (date: Date) => {
@@ -34,21 +34,21 @@ export const ChatMessage = ({ chatting }: ChatMessageProps) => {
     if (messageEndRef.current) {
       messageEndRef.current.scrollTop = messageEndRef.current.scrollHeight;
     }
-  }, [chatting]);
+  }, [messages]);
 
   return (
     <div
       ref={messageEndRef}
       className="flex flex-col overflow-x-hidden overflow-y-auto p-[20px] gap-[10px]"
     >
-      {chatting.map((chat, index) => {
+      {messages.map((chat, index) => {
         const isCreated = new Date(chat.createdAt);
         let displayTime = true;
         const timeValue = changeDate(chat.createdAt);
-        if (index !== chatting.length - 1) {
-          const nextSender = chatting[index + 1].sender;
+        if (index !== messages.length - 1) {
+          const nextSender = messages[index + 1].sender;
           if (nextSender === chat.sender) {
-            const nextTimeValue = changeDate(chatting[index + 1].createdAt);
+            const nextTimeValue = changeDate(messages[index + 1].createdAt);
             if (timeValue === nextTimeValue) {
               displayTime = false;
             }
@@ -58,8 +58,8 @@ export const ChatMessage = ({ chatting }: ChatMessageProps) => {
         let displayProfile = false;
 
         if (index !== 0) {
-          const prevSender = chatting[index - 1].sender;
-          const prevCreatedDate = new Date(chatting[index - 1].createdAt);
+          const prevSender = messages[index - 1].sender;
+          const prevCreatedDate = new Date(messages[index - 1].createdAt);
           prevCreatedDate.setHours(prevCreatedDate.getHours() - 9);
           if (
             prevSender !== chat.sender ||
