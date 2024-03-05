@@ -6,6 +6,7 @@ import { useAtomValue } from "jotai";
 
 import {
   GetMessagesHistoryRes,
+  GetNewMessageInRoomRes,
   TChatMessageDetail,
 } from "@typings/WebsocketMessage.type";
 
@@ -33,6 +34,16 @@ export const ChatDetail = () => {
 
       subscribe({
         type: "room",
+        channel: `GET_NEW_MESSAGE_IN_${id}`,
+        callbackFn: (data) => {
+          setMessages((prev) => [
+            (data as GetNewMessageInRoomRes["data"]).message,
+            ...prev,
+          ]);
+        },
+      });
+      subscribe({
+        type: "room",
         channel: `GET_MESSAGES_HISTORY_RESPONSE_${id}`,
         callbackFn: (data) => {
           console.log({ data });
@@ -42,6 +53,10 @@ export const ChatDetail = () => {
     }
 
     return () => {
+      unsubscribe({
+        type: "room",
+        channel: `GET_NEW_MESSAGE_IN_${id}`,
+      });
       unsubscribe({
         type: "room",
         channel: `GET_MESSAGES_HISTORY_RESPONSE_${id}`,

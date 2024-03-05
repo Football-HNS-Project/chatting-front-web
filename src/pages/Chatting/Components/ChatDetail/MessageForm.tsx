@@ -1,9 +1,13 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+
+import { useParams } from "react-router-dom";
+
+import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
 
 export const MessageForm = () => {
   const [inputMessage, setInputMessage] = useState("");
-  // const { sendMessage } = useContext(WebSocketContext);
-  // const { id } = useParams<{ id: string }>();
+  const { isReady, sendRequest } = useContext(WebSocketContext);
+  const { id } = useParams<{ id: string }>();
 
   const handleSubmit = (
     e:
@@ -12,11 +16,13 @@ export const MessageForm = () => {
       | React.KeyboardEvent<HTMLTextAreaElement>
   ) => {
     e.preventDefault();
-    // sendMessage({
-    //   type: "SEND_MESSAGE_REQUEST",
-    //   data: { roomId: String(id), message: inputMessage, type: "text" },
-    // });
-    setInputMessage("");
+    if (isReady) {
+      sendRequest({
+        type: "SEND_MESSAGE_REQUEST",
+        data: { type: "text", roomId: String(id), message: inputMessage },
+      });
+      setInputMessage("");
+    }
     return;
   };
 
