@@ -4,7 +4,7 @@ import React from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { useAtom, useAtomValue } from "jotai";
 
-import { TRoom } from "@typings/WebsocketMessage";
+import { CreateRoomRes } from "@typings/WebsocketMessage.type";
 
 import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
 
@@ -32,15 +32,20 @@ export const CreateRoomModal = () => {
           participants: [user.id, ...userList],
         },
       });
-      subscribe("CREATE_ROOM_RESPONSE", (data) => {
-        const newRoomList = [data as TRoom, ...roomList];
-        setRoomList(newRoomList);
+
+      subscribe({
+        type: "system",
+        channel: "CREATE_ROOM_RESPONSE",
+        callbackFn: (data) => {
+          const newRoomList = [data as CreateRoomRes["data"], ...roomList];
+          setRoomList(newRoomList);
+        },
       });
       setIsVisibleCreateRoomModal(false);
     }
 
     return () => {
-      unsubscribe("CREATE_ROOM_RESPONSE");
+      unsubscribe({ type: "system", channel: "CREATE_ROOM_RESPONSE" });
     };
   };
 

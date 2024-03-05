@@ -2,7 +2,7 @@ import React from "react";
 
 import { useAtomValue } from "jotai";
 
-import { TChatMessageDetail } from "@typings/WebsocketMessage";
+import { TChatMessageDetail } from "@typings/WebsocketMessage.type";
 
 import { UserAtom, User_Dummy } from "@stores/UserStore";
 

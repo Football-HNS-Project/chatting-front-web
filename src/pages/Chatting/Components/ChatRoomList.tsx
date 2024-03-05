@@ -7,7 +7,7 @@ import { useAtom, useAtomValue } from "jotai";
 import { CheckedSvg } from "@assets/CheckedSvg";
 import { UnCheckedSvg } from "@assets/UnCheckedSvg";
 
-import { TRoom } from "@typings/WebsocketMessage";
+import { TRoom } from "@typings/WebsocketMessage.type";
 
 import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
 
@@ -28,15 +28,19 @@ export const ChatRoomList = () => {
     if (isReady) {
       sendRequest({
         type: "GET_ROOMS_REQUEST",
-        data: {},
       });
-      subscribe("GET_ROOMS_RESPONSE", (data) => {
-        setRoomList(data as TRoom[]);
+
+      subscribe({
+        type: "system",
+        channel: "GET_ROOMS_RESPONSE",
+        callbackFn: (data) => {
+          setRoomList(data as TRoom[]);
+        },
       });
     }
 
     return () => {
-      unsubscribe("GET_ROOMS_RESPONSE");
+      unsubscribe({ type: "system", channel: "GET_ROOMS_RESPONSE" });
     };
   }, [isReady, sendRequest, setRoomList, subscribe, unsubscribe]);
 

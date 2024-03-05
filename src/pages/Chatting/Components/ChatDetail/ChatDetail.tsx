@@ -4,7 +4,10 @@ import { useParams } from "react-router-dom";
 
 import { useAtomValue } from "jotai";
 
-import { TChatMessage, TChatMessageDetail } from "@typings/WebsocketMessage";
+import {
+  GetMessagesHistoryRes,
+  TChatMessageDetail,
+} from "@typings/WebsocketMessage.type";
 
 import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
 
@@ -24,18 +27,25 @@ export const ChatDetail = () => {
   useEffect(() => {
     if (isReady) {
       sendRequest({
-        type: "RECEIVE_MESSAGE_IN_ROOM",
-        data: { id: String(id) },
+        type: "GET_MESSAGES_HISTORY_REQUEST",
+        data: { roomId: String(id), messageId: "" },
       });
 
-      subscribe(`RECEIVE_MESSAGES_IN_ROOM_RESPONSE_${id}`, (data) => {
-        console.log({ data });
-        setMessages((data as TChatMessage).messages);
+      subscribe({
+        type: "room",
+        channel: `GET_MESSAGES_HISTORY_RESPONSE_${id}`,
+        callbackFn: (data) => {
+          console.log({ data });
+          setMessages((data as GetMessagesHistoryRes["data"]).messages);
+        },
       });
     }
 
     return () => {
-      unsubscribe("RECEIVE_MESSAGES_IN_ROOM_RESPONSE");
+      unsubscribe({
+        type: "room",
+        channel: `GET_MESSAGES_HISTORY_RESPONSE_${id}`,
+      });
     };
   }, [id, isReady, sendRequest, subscribe, unsubscribe]);
 
