@@ -2,7 +2,6 @@ import { createContext, useEffect, useRef, useState } from "react";
 
 import { useAtomValue } from "jotai";
 
-import { CreateRoomRes, GetRoomsRes } from "@typings/WebsocketMessage.type";
 import {
   CallbackProps,
   SendRequestProps,
@@ -32,29 +31,21 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
   const user = useAtomValue(UserAtom);
   const [isReady, setIsReady] = useState(false);
   const ws = useRef<WebSocket | null>(null);
-  const systemRef = useRef<{
-    [key: string]: (data: GetRoomsRes["data"] | CreateRoomRes["data"]) => void;
-  }>({});
-  const roomRef = useRef<{
+  const ref = useRef<{
     [key: string]: (data: CallbackProps) => void;
   }>({});
 
   /**
    * 구독하기
    */
-  const subscribe = ({ type, channel, callbackFn }: subscribeProps) => {
-    if (type === "room") {
-      roomRef.current[channel] = callbackFn;
-    } else {
-      systemRef.current[channel] = callbackFn;
-    }
+  const subscribe = ({ channel, callbackFn }: subscribeProps) => {
+    ref.current[channel] = callbackFn;
   };
   /**
    * 구독 해제
    */
-  const unsubscribe = ({ type, channel }: unsubscribeProps) => {
-    if (type === "room") delete roomRef.current[channel];
-    else delete systemRef.current[channel];
+  const unsubscribe = ({ channel }: unsubscribeProps) => {
+    delete ref.current[channel];
   };
   /**
    * 서버에 요청
@@ -84,7 +75,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         case "GET_ROOMS_RESPONSE":
         case "CREATE_ROOM_RESPONSE": {
           const action = `${type}`;
-          systemRef.current[action]?.(data);
+          ref.current[action]?.(data);
           break;
         }
         // 채팅 방 내부(메시지) 관련 type
@@ -94,7 +85,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         case "GET_NEW_MESSAGE_OUT":
         case "GET_NEW_MESSAGE_IN": {
           const action = `${type}_${data.room.id}`;
-          roomRef.current[action]?.(data);
+          ref.current[action]?.(data);
           break;
         }
       }

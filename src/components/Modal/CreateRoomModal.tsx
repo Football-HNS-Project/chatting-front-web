@@ -34,7 +34,6 @@ export const CreateRoomModal = () => {
       });
 
       subscribe({
-        type: "system",
         channel: "CREATE_ROOM_RESPONSE",
         callbackFn: (data) => {
           sendRequest({
@@ -47,7 +46,7 @@ export const CreateRoomModal = () => {
     }
 
     return () => {
-      unsubscribe({ type: "system", channel: "CREATE_ROOM_RESPONSE" });
+      unsubscribe({ channel: "CREATE_ROOM_RESPONSE" });
     };
   };
 

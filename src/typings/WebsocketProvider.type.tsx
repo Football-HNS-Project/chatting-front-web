@@ -14,8 +14,9 @@ import {
   SendMessageReq,
 } from "@typings/WebsocketMessage.type";
 
-export type TSystemRef = GetRoomsRes["type"] | CreateRoomRes["type"];
-export type TRoomRef =
+export type TRef =
+  | GetRoomsRes["type"]
+  | CreateRoomRes["type"]
   | `${GetMessagesHistoryRes["type"]}_${string}`
   | `${OpenRoomRes["type"]}_${string}`
   | `${GetRoomInfoRes["type"]}_${string}`
@@ -49,8 +50,7 @@ export type CallbackProps =
   | GetNewMessageOutRoomRes["data"];
 
 export type subscribeProps = {
-  type: "system" | "room";
-  channel: TRoomRef | TSystemRef | string;
+  channel: TRef;
   callbackFn: (props: CallbackProps) => void;
 };
 

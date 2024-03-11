@@ -31,7 +31,6 @@ export const ChatRoomList = () => {
       });
 
       subscribe({
-        type: "system",
         channel: "GET_ROOMS_RESPONSE",
         callbackFn: (data) => {
           setRoomList((data as GetRoomsRes["data"]).rooms);
@@ -40,7 +39,7 @@ export const ChatRoomList = () => {
     }
 
     return () => {
-      unsubscribe({ type: "system", channel: "GET_ROOMS_RESPONSE" });
+      unsubscribe({ channel: "GET_ROOMS_RESPONSE" });
     };
   }, [isReady, sendRequest, setRoomList, subscribe, unsubscribe]);
 

@@ -43,7 +43,6 @@ export const ChatDetail = () => {
       });
 
       // subscribe({
-      //   type: "room",
       //   channel: `GET_NEW_MESSAGE_IN_${id}`,
       //   callbackFn: (data) => {
       //     setMessages((prev) => [
@@ -53,7 +52,6 @@ export const ChatDetail = () => {
       //   },
       // });
       subscribe({
-        type: "room",
         channel: `RECEIVE_MESSAGE_IN_ROOM_RESPONSE_${id}`,
         callbackFn: (data) => {
           console.log({ data });
@@ -61,15 +59,13 @@ export const ChatDetail = () => {
         },
       });
       subscribe({
-        type: "room",
         channel: `GET_ROOM_INFO_RESPONSE_${id}`,
         callbackFn: (data) => {
           setRoomInfo((data as GetRoomInfoRes["data"]).room);
         },
       });
       subscribe({
-        type: "room",
-        channel: `OPEN_ROOM_REQUEST_${id}`,
+        channel: `OPEN_ROOM_RESPONSE_${id}`,
         callbackFn: (data) => {
           console.log({ data });
         },
@@ -78,15 +74,12 @@ export const ChatDetail = () => {
 
     return () => {
       unsubscribe({
-        type: "room",
         channel: `GET_NEW_MESSAGE_IN_${id}`,
       });
       unsubscribe({
-        type: "room",
         channel: `RECEIVE_MESSAGE_IN_ROOM_RESPONSE_${id}`,
       });
       unsubscribe({
-        type: "room",
         channel: `GET_ROOM_INFO_RESPONSE_${id}`,
       });
     };
