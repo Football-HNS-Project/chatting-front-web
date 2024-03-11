@@ -1,5 +1,5 @@
 import { atom } from "jotai";
 
-import { TRoom } from "@typings/WebsocketMessage.type";
+import { GetRoomsRes } from "@typings/WebsocketMessage.type";
 
-export const RoomListAtom = atom<TRoom[]>([]);
+export const RoomListAtom = atom<GetRoomsRes["data"]["rooms"]>([]);

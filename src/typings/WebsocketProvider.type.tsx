@@ -5,6 +5,8 @@ import {
   GetMessagesHistoryRes,
   GetNewMessageInRoomRes,
   GetNewMessageOutRoomRes,
+  GetRoomInfoReq,
+  GetRoomInfoRes,
   GetRoomsReq,
   GetRoomsRes,
   SendMessageReq,
@@ -13,6 +15,7 @@ import {
 export type TSystemRef = GetRoomsRes["type"] | CreateRoomRes["type"];
 export type TRoomRef =
   | `${GetMessagesHistoryRes["type"]}_${string}`
+  | `${GetRoomInfoRes["type"]}_${string}`
   | `${GetNewMessageInRoomRes["type"]}_${string}`
   | `${GetNewMessageOutRoomRes["type"]}_${string}`;
 
@@ -20,12 +23,14 @@ export type SendRequestProps =
   | GetRoomsReq
   | CreateRoomReq
   | GetMessagesHistoryReq
+  | GetRoomInfoReq
   | SendMessageReq;
 
 export type TSocketMessage =
   | GetRoomsRes
   | CreateRoomRes
   | GetMessagesHistoryRes
+  | GetRoomInfoRes
   | GetNewMessageInRoomRes
   | GetNewMessageOutRoomRes;
 
@@ -33,6 +38,7 @@ export type CallbackProps =
   | GetRoomsRes["data"]
   | CreateRoomRes["data"]
   | GetMessagesHistoryRes["data"]
+  | GetRoomInfoRes["data"]
   | GetNewMessageInRoomRes["data"]
   | GetNewMessageOutRoomRes["data"];
 

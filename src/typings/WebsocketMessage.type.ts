@@ -48,6 +48,15 @@ export type CreateRoomReq = {
   };
 };
 /**
+ * 채팅방 정보 조회 REQ
+ */
+export type GetRoomInfoReq = {
+  type: "GET_ROOM_INFO_REQUEST";
+  data: {
+    roomId: string;
+  };
+};
+/**
  * 채팅방 내부 이전 메시지 조회 REQ
  */
 export type GetMessagesHistoryReq = {
@@ -74,14 +83,29 @@ export type SendMessageReq = {
  */
 export type GetRoomsRes = {
   type: "GET_ROOMS_RESPONSE";
-  data: TRoom[];
+  data: {
+    rooms: {
+      room: {
+        id: string;
+        name: string;
+        participantCount: number;
+      };
+      message: {
+        id: string;
+        content: string;
+        updatedAt: Date;
+      };
+    }[];
+  };
 };
 /**
  * 채팅방 생성 RES
  */
 export type CreateRoomRes = {
   type: "CREATE_ROOM_RESPONSE";
-  data: TRoom;
+  data: {
+    roomId: string;
+  };
 };
 /**
  * 채팅방 내부 이전 메시지 조회 RES
@@ -93,6 +117,19 @@ export type GetMessagesHistoryRes = {
       id: string;
     };
     messages: TChatMessageDetail[];
+  };
+};
+/**
+ * 채팅방 정보 조회 RES
+ */
+export type GetRoomInfoRes = {
+  type: "GET_ROOM_INFO_RESPONSE";
+  data: {
+    room: {
+      id: string;
+      name: string;
+      participantCount: number;
+    };
   };
 };
 /**

@@ -1,6 +1,8 @@
 import { Fragment, useContext } from "react";
 import React from "react";
 
+import { useNavigate } from "react-router-dom";
+
 import { Dialog, Transition } from "@headlessui/react";
 import { useAtom, useAtomValue } from "jotai";
 
@@ -9,7 +11,6 @@ import { CreateRoomRes } from "@typings/WebsocketMessage.type";
 import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
 
 import { CreateRoomModalAtom } from "@stores/ModalStore";
-import { RoomListAtom } from "@stores/RoomListAtom";
 import { UserAtom, User_Dummy } from "@stores/UserStore";
 
 export const CreateRoomModal = () => {
@@ -18,8 +19,7 @@ export const CreateRoomModal = () => {
     useAtom(CreateRoomModalAtom);
   const { isReady, subscribe, sendRequest, unsubscribe } =
     useContext(WebSocketContext);
-
-  const [roomList, setRoomList] = useAtom(RoomListAtom);
+  const navigate = useNavigate();
   const [userList, setUserList] = React.useState<number[]>([]);
   const [title, setTitle] = React.useState<string>("");
 
@@ -37,8 +37,10 @@ export const CreateRoomModal = () => {
         type: "system",
         channel: "CREATE_ROOM_RESPONSE",
         callbackFn: (data) => {
-          const newRoomList = [data as CreateRoomRes["data"], ...roomList];
-          setRoomList(newRoomList);
+          sendRequest({
+            type: "GET_ROOMS_REQUEST",
+          });
+          navigate(`room/${(data as CreateRoomRes["data"]).roomId}`);
         },
       });
       setIsVisibleCreateRoomModal(false);

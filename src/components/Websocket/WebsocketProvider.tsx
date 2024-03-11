@@ -7,6 +7,7 @@ import {
   GetMessagesHistoryRes,
   GetNewMessageInRoomRes,
   GetNewMessageOutRoomRes,
+  GetRoomInfoRes,
   GetRoomsRes,
 } from "@typings/WebsocketMessage.type";
 import {
@@ -44,6 +45,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     [key: string]: (
       data:
         | GetMessagesHistoryRes["data"]
+        | GetRoomInfoRes["data"]
         | GetNewMessageInRoomRes["data"]
         | GetNewMessageOutRoomRes["data"]
     ) => void;
@@ -53,8 +55,11 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
    * 구독하기
    */
   const subscribe = ({ type, channel, callbackFn }: subscribeProps) => {
-    if (type === "room") roomRef.current[channel] = callbackFn;
-    else systemRef.current[channel] = callbackFn;
+    if (type === "room") {
+      roomRef.current[channel] = callbackFn;
+    } else {
+      systemRef.current[channel] = callbackFn;
+    }
   };
   /**
    * 구독 해제
@@ -74,7 +79,6 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     ws.current = new WebSocket(
       `${import.meta.env.VITE_WEBSOCKET}?userId=${user.id}`
     );
-
     ws.current.onopen = () => {
       setIsReady(true);
       console.log("socket open");
@@ -93,11 +97,11 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         case "CREATE_ROOM_RESPONSE": {
           const action = `${type}`;
           systemRef.current[action]?.(data);
-
           break;
         }
         // 채팅 방 내부(메시지) 관련 type
         case "GET_MESSAGES_HISTORY_RESPONSE":
+        case "GET_ROOM_INFO_RESPONSE":
         case "GET_NEW_MESSAGE_OUT":
         case "GET_NEW_MESSAGE_IN": {
           const action = `${type}_${data.room.id}`;

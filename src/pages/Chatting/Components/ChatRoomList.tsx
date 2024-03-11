@@ -7,7 +7,7 @@ import { useAtom, useAtomValue } from "jotai";
 import { CheckedSvg } from "@assets/CheckedSvg";
 import { UnCheckedSvg } from "@assets/UnCheckedSvg";
 
-import { TRoom } from "@typings/WebsocketMessage.type";
+import { GetRoomsRes } from "@typings/WebsocketMessage.type";
 
 import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
 
@@ -34,7 +34,7 @@ export const ChatRoomList = () => {
         type: "system",
         channel: "GET_ROOMS_RESPONSE",
         callbackFn: (data) => {
-          setRoomList(data as TRoom[]);
+          setRoomList((data as GetRoomsRes["data"]).rooms);
         },
       });
     }
@@ -64,16 +64,16 @@ export const ChatRoomList = () => {
         role="list"
         className="h-[calc(100%-56px)] overflow-x-hidden overflow-y-auto"
       >
-        {roomList.map((room) => (
+        {roomList?.map((room) => (
           <li
-            key={room.id}
+            key={room.room.id}
             onClick={() => {
-              navigate(`room/${room.id}`);
+              navigate(`room/${room.room.id}`);
             }}
           >
             <a
               className={`flex p-[16px] h-[72px] border-b-[1px] chatting-divider items-center overflow-hidden gap-[8px] cursor-pointer hover:bg-gray-100 duration-200 active:transition-colors active:bg-slate-200 ${
-                id === room.id ? "bg-gray-100" : "bg-white"
+                id === room.room.id ? "bg-gray-100" : "bg-white"
               }`}
             >
               <img
@@ -87,23 +87,25 @@ export const ChatRoomList = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex flex-row items-center gap-[4px]">
                     <span className="max-w-[150px] h-[20px] text-[13px] font-bold overflow-x-hidden text-ellipsis whitespace-nowrap">
-                      {room.name}
+                      {room.room.name}
                     </span>
                     <span className="text-[12px] text-gray-500">
-                      {room.memberSize}
+                      {room.room.participantCount}
                     </span>
                   </div>
                   <span className="text-[11px] whitespace-nowrap text-gray-500">
-                    {`${new Date(room.updatedAt).getFullYear()}-${String(
-                      new Date(room.updatedAt).getMonth() + 1
+                    {`${new Date(
+                      room.message.updatedAt
+                    ).getFullYear()}-${String(
+                      new Date(room.message.updatedAt).getMonth() + 1
                     ).padStart(2, "0")}-${String(
-                      new Date(room.updatedAt).getDate()
+                      new Date(room.message.updatedAt).getDate()
                     ).padStart(2, "0")}`}
                   </span>
                 </div>
                 <div className="flex h-[20px] items-center">
                   <span className="overflow-x-hidden text-ellipsis whitespace-nowrap text-[13px] text-gray-700">
-                    {room.message}
+                    {room.message.content}
                   </span>
                 </div>
               </div>
