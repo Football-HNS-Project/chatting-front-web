@@ -3,6 +3,7 @@ import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import {
+  GetMessagesHistoryRes,
   GetRoomInfoRes,
   TChatMessageDetail,
 } from "@typings/WebsocketMessage.type";
@@ -15,7 +16,7 @@ import { MessageForm } from "@pages/Chatting/Components/ChatDetail/MessageForm";
 
 export const ChatDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const [messages] = useState<TChatMessageDetail[]>([]);
+  const [messages, setMessages] = useState<TChatMessageDetail[]>([]);
   const [roomInfo, setRoomInfo] = useState<GetRoomInfoRes["data"]["room"]>(
     {} as GetRoomInfoRes["data"]["room"]
   );
@@ -25,11 +26,17 @@ export const ChatDetail = () => {
   useEffect(() => {
     if (isReady) {
       sendRequest({
-        type: "GET_MESSAGES_HISTORY_REQUEST",
+        type: "RECEIVE_MESSAGE_IN_ROOM_REQUEST",
         data: { roomId: String(id), messageId: "" },
       });
       sendRequest({
         type: "GET_ROOM_INFO_REQUEST",
+        data: {
+          roomId: String(id),
+        },
+      });
+      sendRequest({
+        type: "OPEN_ROOM_REQUEST",
         data: {
           roomId: String(id),
         },
@@ -45,19 +52,26 @@ export const ChatDetail = () => {
       //     ]);
       //   },
       // });
-      // subscribe({
-      //   type: "room",
-      //   channel: `GET_MESSAGES_HISTORY_RESPONSE_${id}`,
-      //   callbackFn: (data) => {
-      //     console.log({ data });
-      //     setMessages((data as GetMessagesHistoryRes["data"]).messages);
-      //   },
-      // });
+      subscribe({
+        type: "room",
+        channel: `RECEIVE_MESSAGE_IN_ROOM_RESPONSE_${id}`,
+        callbackFn: (data) => {
+          console.log({ data });
+          setMessages((data as GetMessagesHistoryRes["data"]).messages);
+        },
+      });
       subscribe({
         type: "room",
         channel: `GET_ROOM_INFO_RESPONSE_${id}`,
         callbackFn: (data) => {
           setRoomInfo((data as GetRoomInfoRes["data"]).room);
+        },
+      });
+      subscribe({
+        type: "room",
+        channel: `OPEN_ROOM_REQUEST_${id}`,
+        callbackFn: (data) => {
+          console.log({ data });
         },
       });
     }
@@ -69,7 +83,7 @@ export const ChatDetail = () => {
       });
       unsubscribe({
         type: "room",
-        channel: `GET_MESSAGES_HISTORY_RESPONSE_${id}`,
+        channel: `RECEIVE_MESSAGE_IN_ROOM_RESPONSE_${id}`,
       });
       unsubscribe({
         type: "room",

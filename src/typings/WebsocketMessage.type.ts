@@ -48,6 +48,15 @@ export type CreateRoomReq = {
   };
 };
 /**
+ * 채팅방 열기 REQ
+ */
+export type OpenRoomReq = {
+  type: "OPEN_ROOM_REQUEST";
+  data: {
+    roomId: string;
+  };
+};
+/**
  * 채팅방 정보 조회 REQ
  */
 export type GetRoomInfoReq = {
@@ -60,7 +69,7 @@ export type GetRoomInfoReq = {
  * 채팅방 내부 이전 메시지 조회 REQ
  */
 export type GetMessagesHistoryReq = {
-  type: "GET_MESSAGES_HISTORY_REQUEST";
+  type: "RECEIVE_MESSAGE_IN_ROOM_REQUEST";
   data: {
     roomId: string;
     messageId: string;
@@ -108,10 +117,21 @@ export type CreateRoomRes = {
   };
 };
 /**
+ * 채팅방 열기 RES
+ */
+export type OpenRoomRes = {
+  type: "OPEN_ROOM_RESPONSE";
+  data: {
+    room: {
+      id: string;
+    };
+  };
+};
+/**
  * 채팅방 내부 이전 메시지 조회 RES
  */
 export type GetMessagesHistoryRes = {
-  type: "GET_MESSAGES_HISTORY_RESPONSE";
+  type: "RECEIVE_MESSAGE_IN_ROOM_RESPONSE";
   data: {
     room: {
       id: string;

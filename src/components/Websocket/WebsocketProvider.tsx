@@ -2,15 +2,9 @@ import { createContext, useEffect, useRef, useState } from "react";
 
 import { useAtomValue } from "jotai";
 
+import { CreateRoomRes, GetRoomsRes } from "@typings/WebsocketMessage.type";
 import {
-  CreateRoomRes,
-  GetMessagesHistoryRes,
-  GetNewMessageInRoomRes,
-  GetNewMessageOutRoomRes,
-  GetRoomInfoRes,
-  GetRoomsRes,
-} from "@typings/WebsocketMessage.type";
-import {
+  CallbackProps,
   SendRequestProps,
   TSocketMessage,
   subscribeProps,
@@ -42,13 +36,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     [key: string]: (data: GetRoomsRes["data"] | CreateRoomRes["data"]) => void;
   }>({});
   const roomRef = useRef<{
-    [key: string]: (
-      data:
-        | GetMessagesHistoryRes["data"]
-        | GetRoomInfoRes["data"]
-        | GetNewMessageInRoomRes["data"]
-        | GetNewMessageOutRoomRes["data"]
-    ) => void;
+    [key: string]: (data: CallbackProps) => void;
   }>({});
 
   /**
@@ -100,7 +88,8 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
           break;
         }
         // 채팅 방 내부(메시지) 관련 type
-        case "GET_MESSAGES_HISTORY_RESPONSE":
+        case "RECEIVE_MESSAGE_IN_ROOM_RESPONSE":
+        case "OPEN_ROOM_RESPONSE":
         case "GET_ROOM_INFO_RESPONSE":
         case "GET_NEW_MESSAGE_OUT":
         case "GET_NEW_MESSAGE_IN": {
