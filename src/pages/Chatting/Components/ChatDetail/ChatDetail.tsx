@@ -3,7 +3,6 @@ import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import {
-  GetMessagesHistoryRes,
   GetRoomInfoRes,
   TChatMessageDetail,
 } from "@typings/WebsocketMessage.type";
@@ -16,7 +15,7 @@ import { MessageForm } from "@pages/Chatting/Components/ChatDetail/MessageForm";
 
 export const ChatDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const [messages, setMessages] = useState<TChatMessageDetail[]>([]);
+  const [messages] = useState<TChatMessageDetail[]>([]);
   const [roomInfo, setRoomInfo] = useState<GetRoomInfoRes["data"]["room"]>(
     {} as GetRoomInfoRes["data"]["room"]
   );
@@ -26,8 +25,10 @@ export const ChatDetail = () => {
   useEffect(() => {
     if (isReady) {
       sendRequest({
-        type: "RECEIVE_MESSAGE_IN_ROOM_REQUEST",
-        data: { roomId: String(id), messageId: "" },
+        type: "OPEN_ROOM_REQUEST",
+        data: {
+          roomId: String(id),
+        },
       });
       sendRequest({
         type: "GET_ROOM_INFO_REQUEST",
@@ -36,51 +37,21 @@ export const ChatDetail = () => {
         },
       });
       sendRequest({
-        type: "OPEN_ROOM_REQUEST",
-        data: {
-          roomId: String(id),
-        },
+        type: "RECEIVE_MESSAGE_IN_ROOM_REQUEST",
+        data: { roomId: String(id), messageId: "" },
       });
 
-      // subscribe({
-      //   channel: `GET_NEW_MESSAGE_IN_${id}`,
-      //   callbackFn: (data) => {
-      //     setMessages((prev) => [
-      //       (data as GetNewMessageInRoomRes["data"]).message,
-      //       ...prev,
-      //     ]);
-      //   },
-      // });
       subscribe({
-        channel: `RECEIVE_MESSAGE_IN_ROOM_RESPONSE_${id}`,
-        callbackFn: (data) => {
-          console.log({ data });
-          setMessages((data as GetMessagesHistoryRes["data"]).messages);
-        },
-      });
-      subscribe({
-        channel: `GET_ROOM_INFO_RESPONSE_${id}`,
+        channel: "GET_ROOM_INFO_RESPONSE",
         callbackFn: (data) => {
           setRoomInfo((data as GetRoomInfoRes["data"]).room);
-        },
-      });
-      subscribe({
-        channel: `OPEN_ROOM_RESPONSE_${id}`,
-        callbackFn: (data) => {
-          console.log({ data });
         },
       });
     }
 
     return () => {
       unsubscribe({
-        channel: `GET_NEW_MESSAGE_IN_${id}`,
-      });
-      unsubscribe({
-        channel: `RECEIVE_MESSAGE_IN_ROOM_RESPONSE_${id}`,
-      });
-      unsubscribe({
-        channel: `GET_ROOM_INFO_RESPONSE_${id}`,
+        channel: "GET_ROOM_INFO_RESPONSE",
       });
     };
   }, [id, isReady, sendRequest, subscribe, unsubscribe]);

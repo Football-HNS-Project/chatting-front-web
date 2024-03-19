@@ -17,6 +17,7 @@ export const MessageForm = () => {
   ) => {
     e.preventDefault();
     if (isReady) {
+      console.log("오잉");
       sendRequest({
         type: "SEND_MESSAGE_REQUEST",
         data: { type: "text", roomId: String(id), message: inputMessage },

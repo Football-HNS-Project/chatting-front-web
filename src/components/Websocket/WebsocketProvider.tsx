@@ -4,6 +4,7 @@ import { useAtomValue } from "jotai";
 
 import {
   CallbackProps,
+  HttpCallbackProps,
   SendRequestProps,
   TSocketMessage,
   subscribeProps,
@@ -32,7 +33,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
   const [isReady, setIsReady] = useState(false);
   const ws = useRef<WebSocket | null>(null);
   const ref = useRef<{
-    [key: string]: (data: CallbackProps) => void;
+    [key: string]: (data: CallbackProps | HttpCallbackProps) => void;
   }>({});
 
   /**
@@ -73,17 +74,15 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
       switch (type) {
         // 채팅 방 외부(시스템) 관련 type
         case "GET_ROOMS_RESPONSE":
-        case "CREATE_ROOM_RESPONSE": {
+        case "GET_ROOM_INFO_RESPONSE": {
           const action = `${type}`;
           ref.current[action]?.(data);
           break;
         }
         // 채팅 방 내부(메시지) 관련 type
         case "RECEIVE_MESSAGE_IN_ROOM_RESPONSE":
-        case "OPEN_ROOM_RESPONSE":
-        case "GET_ROOM_INFO_RESPONSE":
-        case "GET_NEW_MESSAGE_OUT":
-        case "GET_NEW_MESSAGE_IN": {
+        case "ROOM_CHANGED":
+        case "MESSAGE_CREATED": {
           const action = `${type}_${data.room.id}`;
           ref.current[action]?.(data);
           break;

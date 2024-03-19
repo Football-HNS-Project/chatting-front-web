@@ -1,57 +1,74 @@
 import {
+  CloseRoomReq,
+  CloseRoomRes,
   CreateRoomReq,
   CreateRoomRes,
-  GetMessagesHistoryReq,
-  GetMessagesHistoryRes,
-  GetNewMessageInRoomRes,
-  GetNewMessageOutRoomRes,
   GetRoomInfoReq,
   GetRoomInfoRes,
   GetRoomsReq,
   GetRoomsRes,
+  LeaveRoomReq,
+  LeaveRoomRes,
+  MessageCreated,
   OpenRoomReq,
   OpenRoomRes,
+  ReceiveMessageInRoomReq,
+  ReceiveMessageInRoomRes,
+  RoomChanged,
   SendMessageReq,
+  SendMessageRes,
 } from "@typings/WebsocketMessage.type";
 
-export type TRef =
+type TChannel = RoomChanged["type"] | MessageCreated["type"];
+// [todo] http 제거
+type THttpChannel =
   | GetRoomsRes["type"]
   | CreateRoomRes["type"]
-  | `${GetMessagesHistoryRes["type"]}_${string}`
-  | `${OpenRoomRes["type"]}_${string}`
-  | `${GetRoomInfoRes["type"]}_${string}`
-  | `${GetNewMessageInRoomRes["type"]}_${string}`
-  | `${GetNewMessageOutRoomRes["type"]}_${string}`;
+  | GetRoomInfoRes["type"]
+  | SendMessageRes["type"]
+  | ReceiveMessageInRoomRes["type"]
+  | OpenRoomRes["type"]
+  | CloseRoomRes["type"]
+  | LeaveRoomRes["type"];
+
+export type CallbackProps = RoomChanged["data"] | MessageCreated["data"];
+// [todo] http 제거
+export type HttpCallbackProps =
+  | GetRoomsRes["data"]
+  | CreateRoomRes["data"]
+  | GetRoomInfoRes["data"]
+  | SendMessageRes["data"]
+  | ReceiveMessageInRoomRes["data"]
+  | OpenRoomRes["data"]
+  | CloseRoomRes["data"]
+  | LeaveRoomRes["data"];
+
+export type subscribeProps = {
+  channel: TChannel | THttpChannel;
+  callbackFn: (props: CallbackProps | HttpCallbackProps) => void;
+};
+
+export type unsubscribeProps = Omit<subscribeProps, "callbackFn">;
 
 export type SendRequestProps =
   | GetRoomsReq
   | CreateRoomReq
-  | OpenRoomReq
-  | GetMessagesHistoryReq
   | GetRoomInfoReq
-  | SendMessageReq;
+  | SendMessageReq
+  | ReceiveMessageInRoomReq
+  | OpenRoomReq
+  | CloseRoomReq
+  | LeaveRoomReq;
 
 export type TSocketMessage =
+  | RoomChanged
+  | MessageCreated
+  // [todo] http 제거
   | GetRoomsRes
   | CreateRoomRes
-  | OpenRoomRes
-  | GetMessagesHistoryRes
   | GetRoomInfoRes
-  | GetNewMessageInRoomRes
-  | GetNewMessageOutRoomRes;
-
-export type CallbackProps =
-  | GetRoomsRes["data"]
-  | CreateRoomRes["data"]
-  | OpenRoomRes["data"]
-  | GetMessagesHistoryRes["data"]
-  | GetRoomInfoRes["data"]
-  | GetNewMessageInRoomRes["data"]
-  | GetNewMessageOutRoomRes["data"];
-
-export type subscribeProps = {
-  channel: TRef;
-  callbackFn: (props: CallbackProps) => void;
-};
-
-export type unsubscribeProps = Omit<subscribeProps, "callbackFn">;
+  | SendMessageRes
+  | ReceiveMessageInRoomRes
+  | OpenRoomRes
+  | CloseRoomRes
+  | LeaveRoomRes;
