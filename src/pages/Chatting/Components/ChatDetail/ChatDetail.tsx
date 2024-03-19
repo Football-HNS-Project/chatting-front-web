@@ -1,12 +1,60 @@
-import { useAtomValue } from "jotai";
+import { useContext, useEffect, useState } from "react";
 
+import { useParams } from "react-router-dom";
+
+import {
+  GetRoomInfoRes,
+  TChatMessageDetail,
+} from "@typings/WebsocketMessage.type";
+
+import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
+
+import { ChatMessage } from "@pages/Chatting/Components/ChatDetail/ChatMessage";
 import { Dropdown } from "@pages/Chatting/Components/ChatDetail/Dropdown";
 import { MessageForm } from "@pages/Chatting/Components/ChatDetail/MessageForm";
 
-import { UserAtom } from "@stores/UserStore";
-
 export const ChatDetail = () => {
-  const user = useAtomValue(UserAtom);
+  const { id } = useParams<{ id: string }>();
+  const [messages] = useState<TChatMessageDetail[]>([]);
+  const [roomInfo, setRoomInfo] = useState<GetRoomInfoRes["data"]["room"]>(
+    {} as GetRoomInfoRes["data"]["room"]
+  );
+  const { isReady, subscribe, sendRequest, unsubscribe } =
+    useContext(WebSocketContext);
+
+  useEffect(() => {
+    if (isReady) {
+      sendRequest({
+        type: "OPEN_ROOM_REQUEST",
+        data: {
+          roomId: String(id),
+        },
+      });
+      sendRequest({
+        type: "GET_ROOM_INFO_REQUEST",
+        data: {
+          roomId: String(id),
+        },
+      });
+      sendRequest({
+        type: "RECEIVE_MESSAGE_IN_ROOM_REQUEST",
+        data: { roomId: String(id), messageId: "" },
+      });
+
+      subscribe({
+        channel: "GET_ROOM_INFO_RESPONSE",
+        callbackFn: (data) => {
+          setRoomInfo((data as GetRoomInfoRes["data"]).room);
+        },
+      });
+    }
+
+    return () => {
+      unsubscribe({
+        channel: "GET_ROOM_INFO_RESPONSE",
+      });
+    };
+  }, [id, isReady, sendRequest, subscribe, unsubscribe]);
 
   return (
     <div className="flex flex-col w-full h-full">
@@ -20,12 +68,17 @@ export const ChatDetail = () => {
               src="/src/assets/Dummy_Icon.png"
               className="border-[1px] chatting-divider rounded-full"
             />
-            <span className="text-[15px]">{user.name}</span>
+            <div className="flex flex-col">
+              <span className="text-[16px]">{roomInfo.name}</span>
+              <span className="text-[12px] text-gray-600">
+                {roomInfo.participantCount}명
+              </span>
+            </div>
           </div>
           <Dropdown />
         </div>
         {/* 채팅 내용 */}
-        {/* <ChatMessage chatting={messages} /> */}
+        <ChatMessage messages={messages} />
       </div>
       <MessageForm />
     </div>

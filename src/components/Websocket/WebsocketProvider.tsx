@@ -3,25 +3,22 @@ import { createContext, useEffect, useRef, useState } from "react";
 import { useAtomValue } from "jotai";
 
 import {
-  TChatMessage,
-  TMessageReq,
-  TMessageRes,
-  TMessageResType,
-  TRoom,
-} from "@typings/WebsocketMessage";
+  CallbackProps,
+  HttpCallbackProps,
+  SendRequestProps,
+  TSocketMessage,
+  subscribeProps,
+  unsubscribeProps,
+} from "@typings/WebsocketProvider.type";
 
 import { UserAtom } from "@stores/UserStore";
 
 type WebSocketContextProps = {
   isReady: boolean;
-  subscribe: (
-    channel: TMessageResType,
-    callback: (data: TRoom[] | TRoom) => void
-  ) => void;
-  unsubscribe: (channel: TMessageResType) => void;
-  sendRequest: (data: TMessageReq) => void;
+  subscribe: (props: subscribeProps) => void;
+  unsubscribe: (props: unsubscribeProps) => void;
+  sendRequest: (props: SendRequestProps) => void;
 };
-
 export const WebSocketContext = createContext<WebSocketContextProps>(
   {} as WebSocketContextProps
 );
@@ -29,40 +26,39 @@ export const WebSocketContext = createContext<WebSocketContextProps>(
 type WebsocketProviderProps = {
   children: React.ReactNode;
 };
-
 export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
   children,
 }) => {
   const user = useAtomValue(UserAtom);
   const [isReady, setIsReady] = useState(false);
   const ws = useRef<WebSocket | null>(null);
-  const systemRef = useRef<{
-    [key: string]: (data: TRoom | TRoom[]) => void;
-  }>({});
-  const roomRef = useRef<{
-    [key: string]: (
-      data: { roomId: string; content: TChatMessage[] } | TChatMessage
-    ) => void;
+  const ref = useRef<{
+    [key: string]: (data: CallbackProps | HttpCallbackProps) => void;
   }>({});
 
-  const subscribe = (
-    channel: TMessageResType,
-    callback: (data: TRoom | TRoom[]) => void
-  ) => {
-    systemRef.current[channel] = callback;
+  /**
+   * 구독하기
+   */
+  const subscribe = ({ channel, callbackFn }: subscribeProps) => {
+    ref.current[channel] = callbackFn;
   };
-  const unsubscribe = (channel: TMessageResType) => {
-    delete systemRef.current[channel];
+  /**
+   * 구독 해제
+   */
+  const unsubscribe = ({ channel }: unsubscribeProps) => {
+    delete ref.current[channel];
   };
-  const sendRequest = (data: TMessageReq) => {
-    ws.current?.send(JSON.stringify(data));
+  /**
+   * 서버에 요청
+   */
+  const sendRequest = (props: SendRequestProps) => {
+    ws.current?.send(JSON.stringify(props));
   };
 
   useEffect(() => {
     ws.current = new WebSocket(
       `${import.meta.env.VITE_WEBSOCKET}?userId=${user.id}`
     );
-
     ws.current.onopen = () => {
       setIsReady(true);
       console.log("socket open");
@@ -74,24 +70,21 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     };
 
     ws.current.onmessage = (event: MessageEvent) => {
-      const { type, data }: TMessageRes = JSON.parse(event.data);
+      const { type, data }: TSocketMessage = JSON.parse(event.data);
       switch (type) {
         // 채팅 방 외부(시스템) 관련 type
         case "GET_ROOMS_RESPONSE":
-        case "CREATE_ROOM_RESPONSE": {
+        case "GET_ROOM_INFO_RESPONSE": {
           const action = `${type}`;
-          if (systemRef.current[action]) {
-            systemRef.current[action](data);
-          } else {
-            systemRef.current[action]?.(data);
-          }
+          ref.current[action]?.(data);
           break;
         }
         // 채팅 방 내부(메시지) 관련 type
-        case "RECEIVE_MESSAGES_IN_ROOM_RESPONSE":
-        case "RECEIVE_MESSAGE_IN_ROOMS": {
-          const action = `${type}_${data.roomId}`;
-          roomRef.current[action]?.(data);
+        case "RECEIVE_MESSAGE_IN_ROOM_RESPONSE":
+        case "ROOM_CHANGED":
+        case "MESSAGE_CREATED": {
+          const action = `${type}_${data.room.id}`;
+          ref.current[action]?.(data);
           break;
         }
       }
@@ -104,15 +97,15 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     };
   }, [user.id]);
 
-  const ret = {
-    isReady,
-    subscribe,
-    unsubscribe,
-    sendRequest,
-  };
-
   return (
-    <WebSocketContext.Provider value={ret}>
+    <WebSocketContext.Provider
+      value={{
+        isReady,
+        subscribe,
+        unsubscribe,
+        sendRequest,
+      }}
+    >
       {children}
     </WebSocketContext.Provider>
   );

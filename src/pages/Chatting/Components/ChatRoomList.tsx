@@ -2,15 +2,16 @@ import { useContext, useEffect, useState } from "react";
 
 import { useNavigate, useParams } from "react-router-dom";
 
-import { useAtomValue } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 
 import { CheckedSvg } from "@assets/CheckedSvg";
 import { UnCheckedSvg } from "@assets/UnCheckedSvg";
 
-import { GetRoomsReq, TRoom } from "@typings/WebsocketMessage";
+import { GetRoomsRes } from "@typings/WebsocketMessage.type";
 
 import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
 
+import { RoomListAtom } from "@stores/RoomListAtom";
 import { UserAtom } from "@stores/UserStore";
 
 export const ChatRoomList = () => {
@@ -21,23 +22,26 @@ export const ChatRoomList = () => {
     useContext(WebSocketContext);
 
   const [isChecked, setIsChecked] = useState(false);
-  const [roomList, setRoomList] = useState<TRoom[]>([]);
+  const [roomList, setRoomList] = useAtom(RoomListAtom);
 
   useEffect(() => {
     if (isReady) {
       sendRequest({
         type: "GET_ROOMS_REQUEST",
-        data: {},
-      } as GetRoomsReq);
-      subscribe("GET_ROOMS_RESPONSE", (data) => {
-        setRoomList(data as TRoom[]);
+      });
+
+      subscribe({
+        channel: "GET_ROOMS_RESPONSE",
+        callbackFn: (data) => {
+          setRoomList((data as GetRoomsRes["data"]).rooms);
+        },
       });
     }
 
     return () => {
-      unsubscribe("GET_ROOMS_RESPONSE");
+      unsubscribe({ channel: "GET_ROOMS_RESPONSE" });
     };
-  }, [isReady, sendRequest, subscribe, unsubscribe]);
+  }, [isReady, sendRequest, setRoomList, subscribe, unsubscribe]);
 
   return (
     <nav className="flex flex-col border-r-[1px] w-[312px] min-w-[312px]">
@@ -59,16 +63,16 @@ export const ChatRoomList = () => {
         role="list"
         className="h-[calc(100%-56px)] overflow-x-hidden overflow-y-auto"
       >
-        {roomList.map((room) => (
+        {roomList?.map((room) => (
           <li
-            key={room.id}
+            key={room.room.id}
             onClick={() => {
-              navigate(`room/${room.id}`);
+              navigate(`room/${room.room.id}`);
             }}
           >
             <a
               className={`flex p-[16px] h-[72px] border-b-[1px] chatting-divider items-center overflow-hidden gap-[8px] cursor-pointer hover:bg-gray-100 duration-200 active:transition-colors active:bg-slate-200 ${
-                id === room.id ? "bg-gray-100" : "bg-white"
+                id === room.room.id ? "bg-gray-100" : "bg-white"
               }`}
             >
               <img
@@ -82,23 +86,25 @@ export const ChatRoomList = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex flex-row items-center gap-[4px]">
                     <span className="max-w-[150px] h-[20px] text-[13px] font-bold overflow-x-hidden text-ellipsis whitespace-nowrap">
-                      {room.name}
+                      {room.room.name}
                     </span>
                     <span className="text-[12px] text-gray-500">
-                      {room.memberSize}
+                      {room.room.participantCount}
                     </span>
                   </div>
                   <span className="text-[11px] whitespace-nowrap text-gray-500">
-                    {`${new Date(room.updated).getFullYear()}-${String(
-                      new Date(room.updated).getMonth() + 1
+                    {`${new Date(
+                      room.message.updatedAt
+                    ).getFullYear()}-${String(
+                      new Date(room.message.updatedAt).getMonth() + 1
                     ).padStart(2, "0")}-${String(
-                      new Date(room.updated).getDate()
+                      new Date(room.message.updatedAt).getDate()
                     ).padStart(2, "0")}`}
                   </span>
                 </div>
                 <div className="flex h-[20px] items-center">
                   <span className="overflow-x-hidden text-ellipsis whitespace-nowrap text-[13px] text-gray-700">
-                    {room.message}
+                    {room.message.content}
                   </span>
                 </div>
               </div>
