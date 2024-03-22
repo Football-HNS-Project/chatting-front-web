@@ -12,21 +12,23 @@ import {
   MessageCreated,
   OpenRoomReq,
   OpenRoomRes,
-  ReceiveMessageInRoomReq,
-  ReceiveMessageInRoomRes,
+  ReceiveMessagesInRoomReq,
+  ReceiveMessagesInRoomRes,
   RoomChanged,
   SendMessageReq,
   SendMessageRes,
 } from "@typings/WebsocketMessage.type";
 
-type TChannel = RoomChanged["type"] | MessageCreated["type"];
+type TChannel =
+  | `${RoomChanged["type"]}_${string}`
+  | `${MessageCreated["type"]}_${string}`;
 // [todo] http 제거
 type THttpChannel =
   | GetRoomsRes["type"]
   | CreateRoomRes["type"]
   | GetRoomInfoRes["type"]
   | SendMessageRes["type"]
-  | ReceiveMessageInRoomRes["type"]
+  | ReceiveMessagesInRoomRes["type"]
   | OpenRoomRes["type"]
   | CloseRoomRes["type"]
   | LeaveRoomRes["type"];
@@ -38,7 +40,7 @@ export type HttpCallbackProps =
   | CreateRoomRes["data"]
   | GetRoomInfoRes["data"]
   | SendMessageRes["data"]
-  | ReceiveMessageInRoomRes["data"]
+  | ReceiveMessagesInRoomRes["data"]
   | OpenRoomRes["data"]
   | CloseRoomRes["data"]
   | LeaveRoomRes["data"];
@@ -55,7 +57,7 @@ export type SendRequestProps =
   | CreateRoomReq
   | GetRoomInfoReq
   | SendMessageReq
-  | ReceiveMessageInRoomReq
+  | ReceiveMessagesInRoomReq
   | OpenRoomReq
   | CloseRoomReq
   | LeaveRoomReq;
@@ -68,7 +70,7 @@ export type TSocketMessage =
   | CreateRoomRes
   | GetRoomInfoRes
   | SendMessageRes
-  | ReceiveMessageInRoomRes
+  | ReceiveMessagesInRoomRes
   | OpenRoomRes
   | CloseRoomRes
   | LeaveRoomRes;

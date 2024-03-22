@@ -4,6 +4,8 @@ import { useParams } from "react-router-dom";
 
 import {
   GetRoomInfoRes,
+  MessageCreated,
+  ReceiveMessagesInRoomRes,
   TChatMessageDetail,
 } from "@typings/WebsocketMessage.type";
 
@@ -15,7 +17,7 @@ import { MessageForm } from "@pages/Chatting/Components/ChatDetail/MessageForm";
 
 export const ChatDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const [messages] = useState<TChatMessageDetail[]>([]);
+  const [messages, setMessages] = useState<TChatMessageDetail[]>([]);
   const [roomInfo, setRoomInfo] = useState<GetRoomInfoRes["data"]["room"]>(
     {} as GetRoomInfoRes["data"]["room"]
   );
@@ -37,14 +39,20 @@ export const ChatDetail = () => {
         },
       });
       sendRequest({
-        type: "RECEIVE_MESSAGE_IN_ROOM_REQUEST",
-        data: { roomId: String(id), messageId: "" },
+        type: "RECEIVE_MESSAGES_IN_ROOM",
+        data: { roomId: String(id), messageId: null },
       });
 
       subscribe({
         channel: "GET_ROOM_INFO_RESPONSE",
         callbackFn: (data) => {
           setRoomInfo((data as GetRoomInfoRes["data"]).room);
+        },
+      });
+      subscribe({
+        channel: "RECEIVE_MESSAGES_IN_ROOM_RESPONSE",
+        callbackFn: (data) => {
+          setMessages((data as ReceiveMessagesInRoomRes["data"]).messages);
         },
       });
     }
@@ -55,6 +63,23 @@ export const ChatDetail = () => {
       });
     };
   }, [id, isReady, sendRequest, subscribe, unsubscribe]);
+
+  useEffect(() => {
+    subscribe({
+      channel: `MESSAGE_CREATED_${String(id)}`,
+      callbackFn: (data) => {
+        setMessages((prev) => [
+          ...prev,
+          (data as MessageCreated["data"]).message,
+        ]);
+      },
+    });
+    return () => {
+      unsubscribe({
+        channel: `MESSAGE_CREATED_${String(id)}`,
+      });
+    };
+  }, [id, subscribe, unsubscribe]);
 
   return (
     <div className="flex flex-col w-full h-full">

@@ -2,7 +2,7 @@
  * 유저 인터페이스
  */
 export type TUser = {
-  id: string;
+  id: number;
   name: string;
 };
 /**
@@ -12,8 +12,11 @@ export type TRoom = {
   id: string;
   name: string;
   memberSize: number;
-  message: string;
-  updatedAt: Date;
+  lastMessage: {
+    id: number;
+    content: string;
+    updatedAt: Date;
+  };
 };
 /**
  * 채팅 메시지 인터페이스
@@ -28,7 +31,6 @@ export type TChatMessageDetail = {
   sender: number;
   createdAt: Date;
   content: string;
-  unReadCnt: number;
 };
 
 /**
@@ -40,18 +42,7 @@ export type GetRoomsReq = {
 export type GetRoomsRes = {
   type: "GET_ROOMS_RESPONSE";
   data: {
-    rooms: {
-      room: {
-        id: string;
-        name: string;
-        participantCount: number;
-      };
-      message: {
-        id: string;
-        content: string;
-        updatedAt: Date;
-      };
-    }[];
+    rooms: TRoom[];
   };
 };
 
@@ -113,15 +104,15 @@ export type SendMessageRes = {
 /**
  * 채팅방 메시지 목록 조회
  */
-export type ReceiveMessageInRoomReq = {
-  type: "RECEIVE_MESSAGE_IN_ROOM_REQUEST";
+export type ReceiveMessagesInRoomReq = {
+  type: "RECEIVE_MESSAGES_IN_ROOM";
   data: {
     roomId: string;
-    messageId: string;
+    messageId: string | null;
   };
 };
-export type ReceiveMessageInRoomRes = {
-  type: "RECEIVE_MESSAGE_IN_ROOM_RESPONSE";
+export type ReceiveMessagesInRoomRes = {
+  type: "RECEIVE_MESSAGES_IN_ROOM_RESPONSE";
   data: {
     room: {
       id: string;
@@ -184,16 +175,7 @@ export type LeaveRoomRes = {
 export type RoomChanged = {
   type: "ROOM_CHANGED";
   data: {
-    room: {
-      id: string;
-      name: string;
-      memberSize: number;
-      lastMessage: {
-        id: number;
-        content: string;
-        updatedAt: Date;
-      };
-    };
+    room: TRoom;
   };
 };
 
@@ -206,5 +188,6 @@ export type MessageCreated = {
     room: {
       id: string;
     };
+    message: TChatMessageDetail;
   };
 };

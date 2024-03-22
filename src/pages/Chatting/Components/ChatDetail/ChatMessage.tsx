@@ -75,40 +75,47 @@ export const ChatMessage = ({ messages }: ChatMessageProps) => {
         }
 
         return (
-          <div
-            key={chat.id}
-            className={`flex ${
-              chat.sender === user.id
-                ? "self-end flex-row-reverse"
-                : "self-start flex-row"
-            } `}
-          >
-            <div className="flex">
-              {/* 프로필 */}
-              {displayProfile ? (
-                <div className="w-[40px] h-[40px] bg-slate-400 rounded-3xl" />
-              ) : chat.sender !== user.id ? (
-                <div className="w-[40px]" />
-              ) : null}
-              <div className="ml-[5px]">
-                {/* 이름 */}
-                {displayProfile && (
-                  <p className="mb-[5px] text-xl">{userMapping(chat.sender)}</p>
-                )}
-                {/* 내용 */}
-                <div
-                  className={`${
-                    chat.sender === user.id ? "bg-green-300" : "bg-gray-200"
-                  } rounded-2xl max-w-[484px] p-[8px] text-[14px]`}
-                >
-                  {chat.content}
+          <div key={chat.id}>
+            {chat.sender === -1 ? (
+              <div className="flex self-end">{chat.content}</div>
+            ) : (
+              <div
+                className={`flex ${
+                  chat.sender === user.id
+                    ? "self-end flex-row-reverse"
+                    : "self-start flex-row"
+                } `}
+              >
+                <div className="flex">
+                  {/* 프로필 */}
+                  {displayProfile ? (
+                    <div className="w-[40px] h-[40px] bg-slate-400 rounded-3xl" />
+                  ) : chat.sender !== user.id ? (
+                    <div className="w-[40px]" />
+                  ) : null}
+                  <div className="ml-[5px]">
+                    {/* 이름 */}
+                    {displayProfile && (
+                      <p className="mb-[5px] text-xl">
+                        {userMapping(chat.sender)}
+                      </p>
+                    )}
+                    {/* 내용 */}
+                    <div
+                      className={`${
+                        chat.sender === user.id ? "bg-green-300" : "bg-gray-200"
+                      } rounded-2xl max-w-[484px] p-[8px] text-[14px]`}
+                    >
+                      {chat.content}
+                    </div>
+                  </div>
                 </div>
+                {/* 시간 */}
+                {displayTime ? (
+                  <div className="self-end mx-2 text-[10px]">{timeValue}</div>
+                ) : null}
               </div>
-            </div>
-            {/* 시간 */}
-            {displayTime ? (
-              <div className="self-end mx-2 text-[10px]">{timeValue}</div>
-            ) : null}
+            )}
           </div>
         );
       })}
