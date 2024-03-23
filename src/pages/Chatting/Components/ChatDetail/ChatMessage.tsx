@@ -77,7 +77,11 @@ export const ChatMessage = ({ messages }: ChatMessageProps) => {
         return (
           <div key={chat.id}>
             {chat.sender === -1 ? (
-              <div className="flex self-end">{chat.content}</div>
+              <div className="flex justify-center">
+                <span className="bg-slate-200 py-3 px-5 rounded-3xl">
+                  {chat.content}
+                </span>
+              </div>
             ) : (
               <div
                 className={`flex ${
