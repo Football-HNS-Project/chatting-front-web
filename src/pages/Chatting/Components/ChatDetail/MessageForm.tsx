@@ -16,6 +16,8 @@ export const MessageForm = () => {
       | React.KeyboardEvent<HTMLTextAreaElement>
   ) => {
     e.preventDefault();
+    console.log("submit", { e });
+
     if (isReady) {
       sendRequest({
         type: "SEND_MESSAGE_REQUEST",
@@ -40,7 +42,7 @@ export const MessageForm = () => {
           setInputMessage(e.target.value);
         }}
         onKeyDown={(e) => {
-          if (e.key === "Enter") {
+          if (e.key === "Enter" && !e.nativeEvent.isComposing) {
             e.preventDefault();
             handleSubmit(e);
           }
@@ -55,6 +57,7 @@ export const MessageForm = () => {
         <button
           type="submit"
           onClick={(e) => {
+            e.preventDefault();
             handleSubmit(e);
           }}
           disabled={inputMessage.length <= 0}
