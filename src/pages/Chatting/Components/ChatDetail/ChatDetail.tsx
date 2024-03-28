@@ -2,6 +2,8 @@ import { useContext, useEffect, useState } from "react";
 
 import { useParams } from "react-router-dom";
 
+import { makeSection } from "@utils/makeSection";
+
 import {
   GetRoomInfoRes,
   MessageCreated,
@@ -55,31 +57,28 @@ export const ChatDetail = () => {
           setMessages((data as ReceiveMessagesInRoomRes["data"]).messages);
         },
       });
+      subscribe({
+        channel: `MESSAGE_CREATED_${String(id)}`,
+        callbackFn: (data) => {
+          setMessages((prev) => [
+            (data as MessageCreated["data"]).message,
+            ...prev,
+          ]);
+        },
+      });
     }
 
     return () => {
       unsubscribe({
         channel: "GET_ROOM_INFO_RESPONSE",
       });
-    };
-  }, [id, isReady, sendRequest, subscribe, unsubscribe]);
-
-  useEffect(() => {
-    subscribe({
-      channel: `MESSAGE_CREATED_${String(id)}`,
-      callbackFn: (data) => {
-        setMessages((prev) => [
-          ...prev,
-          (data as MessageCreated["data"]).message,
-        ]);
-      },
-    });
-    return () => {
       unsubscribe({
         channel: `MESSAGE_CREATED_${String(id)}`,
       });
     };
-  }, [id, subscribe, unsubscribe]);
+  }, [id, isReady, sendRequest, subscribe, unsubscribe]);
+
+  const chatSections = makeSection([...messages].reverse() ?? []);
 
   return (
     <div className="flex flex-col w-full h-full">
@@ -103,7 +102,7 @@ export const ChatDetail = () => {
           <Dropdown />
         </div>
         {/* 채팅 내용 */}
-        <ChatMessage messages={messages} />
+        <ChatMessage messages={chatSections} />
       </div>
       <MessageForm />
     </div>

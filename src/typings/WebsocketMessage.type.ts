@@ -1,3 +1,5 @@
+import { Dayjs } from "dayjs";
+
 /**
  * 유저 인터페이스
  */
@@ -29,7 +31,7 @@ export type TChatMessageDetail = {
   id: string;
   type: string;
   sender: number;
-  createdAt: Date;
+  createdAt: Dayjs;
   content: string;
 };
 
