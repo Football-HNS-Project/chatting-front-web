@@ -1,7 +1,9 @@
-import { useContext, useEffect, useState } from "react";
+import { Fragment, useContext, useEffect, useState } from "react";
 
 import { useNavigate, useParams } from "react-router-dom";
 
+import { Popover, Transition } from "@headlessui/react";
+import dayjs from "dayjs";
 import { useAtom } from "jotai";
 
 import { GetRoomsRes, RoomChanged } from "@typings/WebsocketMessage.type";
@@ -66,10 +68,7 @@ export const RoomList = () => {
   }, [id, isReady, roomList, setRoomList, subscribe]);
 
   return (
-    <ul
-      role="list"
-      className="h-[calc(100%-56px)] overflow-x-hidden overflow-y-auto"
-    >
+    <ul role="list" className="flex flex-col w-full h-full overflow-auto">
       {roomList?.map((room) => (
         <li
           key={room.id}
@@ -82,92 +81,89 @@ export const RoomList = () => {
           onMouseOut={() => {
             setIsVisibleMenu(null);
           }}
+          className={`${
+            room.id === String(id) ? "bg-slate-200" : "bg-white"
+          } hover:bg-slate-100 flex p-[16px] h-[72px] items-center rounded-xl gap-4 cursor-pointer relative`}
         >
-          <div className="flex relative p-[16px] h-[72px] border-b-[1px] chatting-divider items-center overflow-hidden gap-[8px] cursor-pointer hover:bg-gray-100">
-            <img
-              width={40}
-              height={40}
-              className="border-[1px] chatting-divider rounded-full"
-              src="/src/assets/Dummy_Icon.png"
-            />
-
-            <div className="w-0 flex-grow flex-shrink-0 basis-0">
-              <div className="flex items-center justify-between">
-                <div className="flex flex-row items-center gap-[4px]">
-                  <span className="max-w-[150px] h-[20px] text-[13px] font-bold overflow-x-hidden text-ellipsis whitespace-nowrap">
-                    {room.name}
-                  </span>
-                  <span className="text-[12px] text-gray-500">
-                    {room.memberSize}
-                  </span>
-                </div>
-                {room.id !== isVisibleMenu && (
-                  <span className="text-[11px] whitespace-nowrap text-gray-500">
-                    {`${new Date(
-                      room.lastMessage.updatedAt
-                    ).getFullYear()}-${String(
-                      new Date(room.lastMessage.updatedAt).getMonth() + 1
-                    ).padStart(2, "0")}-${String(
-                      new Date(room.lastMessage.updatedAt).getDate()
-                    ).padStart(2, "0")}`}
-                  </span>
-                )}
-              </div>
-              <div className="flex h-[20px] w-80 items-center">
-                <span className="overflow-x-hidden text-ellipsis whitespace-nowrap text-[13px] text-gray-700">
-                  {room.lastMessage.content}
+          <img
+            width={40}
+            height={40}
+            className="border-[1px] chatting-divider rounded-full"
+            src="/src/assets/Dummy_Icon.png"
+          />
+          <div
+            className={`${
+              isVisibleMenu === room.id ? "w-[19rem]" : "w-[22rem]"
+            }`}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex flex-row items-center gap-[4px]">
+                <span className="max-w-[150px] h-[20px] text-[13px] font-bold overflow-x-hidden text-ellipsis whitespace-nowrap">
+                  {room.name}
+                </span>
+                <span className="text-[12px] text-gray-500">
+                  {room.memberSize}
                 </span>
               </div>
-            </div>
-            {room.id === isVisibleMenu && (
-              <div className="hover:bg-slate-300 rounded-full">
-                <svg
-                  viewBox="0 0 21 21"
-                  fill="currentColor"
-                  height="3em"
-                  width="3em"
-                >
-                  <g fill="currentColor" fillRule="evenodd">
-                    <path d="M11.5 10.5 A1 1 0 0 1 10.5 11.5 A1 1 0 0 1 9.5 10.5 A1 1 0 0 1 11.5 10.5 z" />
-                    <path d="M11.5 5.5 A1 1 0 0 1 10.5 6.5 A1 1 0 0 1 9.5 5.5 A1 1 0 0 1 11.5 5.5 z" />
-                    <path d="M11.5 15.5 A1 1 0 0 1 10.5 16.5 A1 1 0 0 1 9.5 15.5 A1 1 0 0 1 11.5 15.5 z" />
-                  </g>
-                </svg>
-                ``
-              </div>
-            )}
-            {/* <div
-                className="absolute right-0 z-[70px] hover:bg-slate-300"
-                onClick={(e) => {
-                  console.log("WEF");
-                  e.stopPropagation();
-                }}
-              >
-               
-              </div> */}
-            {/* <Popover>
-              {room.id === isVisibleMenu && (
-                <Popover.Button className="hover:bg-slate-300">
-                  <svg
-                    viewBox="0 0 21 21"
-                    fill="currentColor"
-                    height="3em"
-                    width="3em"
-                  >
-                    <g fill="currentColor" fillRule="evenodd">
-                      <path d="M11.5 10.5 A1 1 0 0 1 10.5 11.5 A1 1 0 0 1 9.5 10.5 A1 1 0 0 1 11.5 10.5 z" />
-                      <path d="M11.5 5.5 A1 1 0 0 1 10.5 6.5 A1 1 0 0 1 9.5 5.5 A1 1 0 0 1 11.5 5.5 z" />
-                      <path d="M11.5 15.5 A1 1 0 0 1 10.5 16.5 A1 1 0 0 1 9.5 15.5 A1 1 0 0 1 11.5 15.5 z" />
-                    </g>
-                  </svg>
-                </Popover.Button>
+              {room.id !== isVisibleMenu && (
+                <span className="text-[11px] whitespace-nowrap text-gray-500">
+                  {dayjs()
+                    .startOf("day")
+                    .isSame(dayjs(room.lastMessage.updatedAt).startOf("day"))
+                    ? dayjs(room.lastMessage.updatedAt).hour() < 12
+                      ? `오전 ${dayjs(room.lastMessage.updatedAt).format(
+                          "h:mm"
+                        )}`
+                      : `오후 ${dayjs(room.lastMessage.updatedAt).format(
+                          "h:mm"
+                        )}`
+                    : `${dayjs(room.lastMessage.updatedAt).format(
+                        "YYYY-MM-DD"
+                      )}`}
+                </span>
               )}
-
-              <Popover.Panel static className="absolute z-50">
-                <div className="w-32 h-32 bg-slate-200"></div>
-              </Popover.Panel>
-            </Popover> */}
+            </div>
+            <div className="flex h-[20px] w-full items-center">
+              <span className="overflow-x-hidden text-ellipsis whitespace-nowrap text-[13px] text-gray-700">
+                {room.lastMessage.content}
+              </span>
+            </div>
           </div>
+          <Popover>
+            <Popover.Button
+              className={`${
+                isVisibleMenu !== room.id ? "hidden" : "flex"
+              } hover:bg-slate-300 p-3 rounded-full`}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                className="w-8 h-8"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
+                />
+              </svg>
+            </Popover.Button>
+            <Transition
+              as={Fragment}
+              enter="transition ease-out duration-200"
+              enterFrom="opacity-0 translate-y-1"
+              enterTo="opacity-100 translate-y-0"
+              leave="transition ease-in duration-150"
+              leaveFrom="opacity-100 translate-y-0"
+              leaveTo="opacity-0 translate-y-1"
+            >
+              <Popover.Panel className="fixed z-50 w-32 bg-white">
+                <div>초대하기</div>
+              </Popover.Panel>
+            </Transition>
+          </Popover>
         </li>
       ))}
     </ul>

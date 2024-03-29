@@ -26,7 +26,7 @@ export const router = () =>
             </WebsocketProvider>
           ),
           children: [
-            { index: true, element: <UserView /> },
+            { index: true, element: <ChatView /> },
             { path: "user", element: <UserView /> },
             { path: "user/:id", element: <UserView /> },
             { path: "room", element: <ChatView /> },

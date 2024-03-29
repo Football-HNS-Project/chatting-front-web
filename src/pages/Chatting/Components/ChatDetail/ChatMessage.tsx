@@ -83,7 +83,7 @@ export const ChatMessage = ({ messages }: ChatMessageProps) => {
                             } rounded-2xl max-w-[484px] p-[8px] text-[14px]`}
                           >
                             {chat.content.split("\n").map((line) => (
-                              <span>
+                              <span key={line}>
                                 {line}
                                 <br />
                               </span>

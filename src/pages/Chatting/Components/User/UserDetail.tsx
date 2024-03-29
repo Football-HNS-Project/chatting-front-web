@@ -2,12 +2,13 @@ import { useContext, useEffect } from "react";
 
 import { useNavigate, useParams } from "react-router-dom";
 
-import { useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 
 import { CreateRoomRes } from "@typings/WebsocketMessage.type";
 
 import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
 
+import { TabAtom } from "@stores/TabStore";
 import { UserAtom, User_Dummy } from "@stores/UserStore";
 
 export const UserDetail = () => {
@@ -17,6 +18,7 @@ export const UserDetail = () => {
   const { isReady, sendRequest, subscribe, unsubscribe } =
     useContext(WebSocketContext);
   const navigate = useNavigate();
+  const setTab = useSetAtom(TabAtom);
 
   const handleCreateChat = () => {
     if (isReady) {
@@ -30,6 +32,7 @@ export const UserDetail = () => {
       subscribe({
         channel: "CREATE_ROOM_RESPONSE",
         callbackFn: (data) => {
+          setTab("room");
           navigate(`/chatting/room/${(data as CreateRoomRes["data"]).roomId}`);
         },
       });
