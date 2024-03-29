@@ -82,7 +82,12 @@ export const ChatMessage = ({ messages }: ChatMessageProps) => {
                                 : "bg-gray-200"
                             } rounded-2xl max-w-[484px] p-[8px] text-[14px]`}
                           >
-                            {chat.content}
+                            {chat.content.split("\n").map((line) => (
+                              <span>
+                                {line}
+                                <br />
+                              </span>
+                            ))}
                           </div>
                         </div>
                       </div>

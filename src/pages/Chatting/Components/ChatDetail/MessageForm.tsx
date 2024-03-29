@@ -42,9 +42,13 @@ export const MessageForm = () => {
           setInputMessage(e.target.value);
         }}
         onKeyDown={(e) => {
-          if (e.key === "Enter" && !e.nativeEvent.isComposing) {
-            e.preventDefault();
-            handleSubmit(e);
+          if (e.key === "Enter") {
+            if (!e.nativeEvent.isComposing && !e.shiftKey) {
+              e.preventDefault();
+              if (inputMessage.trim().length > 0) {
+                handleSubmit(e);
+              }
+            }
           }
         }}
       />
@@ -60,9 +64,9 @@ export const MessageForm = () => {
             e.preventDefault();
             handleSubmit(e);
           }}
-          disabled={inputMessage.length <= 0}
+          disabled={inputMessage.trim().length <= 0}
           className={`w-[64px] h-[32px] font-bold text-[14px] text-white rounded-md ${
-            inputMessage.length > 0 ? "bg-green-500" : "bg-gray-300"
+            inputMessage.trim().length > 0 ? "bg-green-500" : "bg-gray-300"
           }`}
         >
           전송
