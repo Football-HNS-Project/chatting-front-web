@@ -5,6 +5,7 @@ import { WebsocketProvider } from "@components/Websocket/WebsocketProvider";
 
 import { ChattingPage } from "@pages/Chatting/ChattingPage";
 import { ChatView } from "@pages/Chatting/Components/ChatDetail/ChatView";
+import { UserView } from "@pages/Chatting/Components/User/UserView";
 import { HomePage } from "@pages/Home/HomePage";
 
 export const router = () =>
@@ -25,14 +26,11 @@ export const router = () =>
             </WebsocketProvider>
           ),
           children: [
-            {
-              index: true,
-              element: <ChatView />,
-            },
-            {
-              path: "room/:id",
-              element: <ChatView />,
-            },
+            { index: true, element: <ChatView /> },
+            { path: "user", element: <UserView /> },
+            { path: "user/:id", element: <UserView /> },
+            { path: "room", element: <ChatView /> },
+            { path: "room/:id", element: <ChatView /> },
           ],
         },
       ],

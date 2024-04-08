@@ -2,8 +2,12 @@ import { useContext, useEffect, useState } from "react";
 
 import { useParams } from "react-router-dom";
 
+import { makeSection } from "@utils/makeSection";
+
 import {
   GetRoomInfoRes,
+  MessageCreated,
+  ReceiveMessagesInRoomRes,
   TChatMessageDetail,
 } from "@typings/WebsocketMessage.type";
 
@@ -15,7 +19,7 @@ import { MessageForm } from "@pages/Chatting/Components/ChatDetail/MessageForm";
 
 export const ChatDetail = () => {
   const { id } = useParams<{ id: string }>();
-  const [messages] = useState<TChatMessageDetail[]>([]);
+  const [messages, setMessages] = useState<TChatMessageDetail[]>([]);
   const [roomInfo, setRoomInfo] = useState<GetRoomInfoRes["data"]["room"]>(
     {} as GetRoomInfoRes["data"]["room"]
   );
@@ -37,8 +41,8 @@ export const ChatDetail = () => {
         },
       });
       sendRequest({
-        type: "RECEIVE_MESSAGE_IN_ROOM_REQUEST",
-        data: { roomId: String(id), messageId: "" },
+        type: "RECEIVE_MESSAGES_IN_ROOM",
+        data: { roomId: String(id), messageId: null },
       });
 
       subscribe({
@@ -47,14 +51,34 @@ export const ChatDetail = () => {
           setRoomInfo((data as GetRoomInfoRes["data"]).room);
         },
       });
+      subscribe({
+        channel: "RECEIVE_MESSAGES_IN_ROOM_RESPONSE",
+        callbackFn: (data) => {
+          setMessages((data as ReceiveMessagesInRoomRes["data"]).messages);
+        },
+      });
+      subscribe({
+        channel: `MESSAGE_CREATED_${String(id)}`,
+        callbackFn: (data) => {
+          setMessages((prev) => [
+            (data as MessageCreated["data"]).message,
+            ...prev,
+          ]);
+        },
+      });
     }
 
     return () => {
       unsubscribe({
         channel: "GET_ROOM_INFO_RESPONSE",
       });
+      unsubscribe({
+        channel: `MESSAGE_CREATED_${String(id)}`,
+      });
     };
   }, [id, isReady, sendRequest, subscribe, unsubscribe]);
+
+  const chatSections = makeSection([...messages].reverse() ?? []);
 
   return (
     <div className="flex flex-col w-full h-full">
@@ -78,7 +102,7 @@ export const ChatDetail = () => {
           <Dropdown />
         </div>
         {/* 채팅 내용 */}
-        <ChatMessage messages={messages} />
+        <ChatMessage messages={chatSections} />
       </div>
       <MessageForm />
     </div>

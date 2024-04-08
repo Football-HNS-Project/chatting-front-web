@@ -1,6 +1,8 @@
 import { atom } from "jotai";
 
-export const User_Dummy = [
+import { TUser } from "@typings/WebsocketMessage.type";
+
+export const User_Dummy: TUser[] = [
   { id: 1, name: "김도현" },
   { id: 2, name: "조현준" },
   { id: 3, name: "노영삼" },

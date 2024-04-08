@@ -16,8 +16,9 @@ export const MessageForm = () => {
       | React.KeyboardEvent<HTMLTextAreaElement>
   ) => {
     e.preventDefault();
+    console.log("submit", { e });
+
     if (isReady) {
-      console.log("오잉");
       sendRequest({
         type: "SEND_MESSAGE_REQUEST",
         data: { type: "text", roomId: String(id), message: inputMessage },
@@ -42,8 +43,12 @@ export const MessageForm = () => {
         }}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
-            e.preventDefault();
-            handleSubmit(e);
+            if (!e.nativeEvent.isComposing && !e.shiftKey) {
+              e.preventDefault();
+              if (inputMessage.trim().length > 0) {
+                handleSubmit(e);
+              }
+            }
           }
         }}
       />
@@ -56,11 +61,12 @@ export const MessageForm = () => {
         <button
           type="submit"
           onClick={(e) => {
+            e.preventDefault();
             handleSubmit(e);
           }}
-          disabled={inputMessage.length <= 0}
+          disabled={inputMessage.trim().length <= 0}
           className={`w-[64px] h-[32px] font-bold text-[14px] text-white rounded-md ${
-            inputMessage.length > 0 ? "bg-green-500" : "bg-gray-300"
+            inputMessage.trim().length > 0 ? "bg-green-500" : "bg-gray-300"
           }`}
         >
           전송
