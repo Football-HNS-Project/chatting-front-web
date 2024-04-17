@@ -20,21 +20,21 @@ export const Gnb: React.FC = () => {
 
   return (
     <div
-      className={`fixed top-0 left-0 w-full h-[64px] z-[50] bg-white ${
+      className={`fixed left-0 top-0 z-[50] h-[64px] w-full bg-white ${
         isChattingPage && "border-b-[1px] border-gray-200"
       }`}
     >
-      <div className="flex flex-row h-full items-center px-[2rem] py-[1.2rem] justify-between max-w-[120rem] my-0 mx-auto">
+      <div className="mx-auto my-0 flex h-full max-w-[120rem] flex-row items-center justify-between px-[2rem] py-[1.2rem]">
         <a className="mr-[3.6rem] items-center" href="/">
           <Logo />
         </a>
 
         {!isChattingPage && (
-          <nav className="hidden md:flex flex-row w-full pr-[4rem]">
-            <ul className="list-none inline-block font-bold">
+          <nav className="hidden w-full flex-row pr-[4rem] md:flex">
+            <ul className="inline-block list-none font-bold">
               {GNB_MENU.map((menu) => (
                 <li key={menu.label} className=" inline-block">
-                  <a className="text-[1.8rem] mr-[3rem]" href={menu.href}>
+                  <a className="mr-[3rem] text-[1.8rem]" href={menu.href}>
                     {menu.label}
                   </a>
                 </li>
@@ -52,7 +52,7 @@ export const Gnb: React.FC = () => {
               <input
                 type="search"
                 placeholder="물품이나 동네를 검색해보세요"
-                className="w-[28.8rem] text-[1.6rem] py-[0.9rem] px-[1.2rem] h-[4rem] bg-gray-100 rounded-md"
+                className="h-[4rem] w-[28.8rem] rounded-md bg-gray-100 px-[1.2rem] py-[0.9rem] text-[1.6rem]"
               />
             </form>
             <button className="md:hidden">
@@ -60,7 +60,7 @@ export const Gnb: React.FC = () => {
             </button>
             <a
               href="/chatting"
-              className="hidden md:block text-[1.6rem] px-[1.6rem] py-[0.8rem] w-fit font-bold whitespace-nowrap rounded-md border-[1px] border-gray-400 hover:bg-gray-100 hover:opacity-[0.7]"
+              className="hidden w-fit whitespace-nowrap rounded-md border-[1px] border-gray-400 px-[1.6rem] py-[0.8rem] text-[1.6rem] font-bold hover:bg-gray-100 hover:opacity-[0.7] md:block"
             >
               채팅하기
             </a>

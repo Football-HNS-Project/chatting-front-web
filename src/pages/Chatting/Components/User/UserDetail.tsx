@@ -45,10 +45,10 @@ export const UserDetail = () => {
   }, [unsubscribe]);
 
   return (
-    <div className="flex flex-col gap-10 items-center justify-center w-full h-full">
+    <div className="flex h-full w-full flex-col items-center justify-center gap-10">
       <span className="text-[21px] font-bold">{userInfo.name}</span>
       <button
-        className="text-[24px] border-[1px] p-5 hover:bg-slate-100"
+        className="border-[1px] p-5 text-[24px] hover:bg-slate-100"
         onClick={handleCreateChat}
       >
         1:1 채팅하기

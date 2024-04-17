@@ -68,7 +68,7 @@ export const RoomList = () => {
   }, [id, isReady, roomList, setRoomList, subscribe]);
 
   return (
-    <ul role="list" className="flex flex-col w-full h-full overflow-auto">
+    <ul role="list" className="flex h-full w-full flex-col overflow-auto">
       {roomList?.map((room) => (
         <li
           key={room.id}
@@ -83,12 +83,12 @@ export const RoomList = () => {
           }}
           className={`${
             room.id === String(id) ? "bg-slate-200" : "bg-white"
-          } hover:bg-slate-100 flex p-[16px] h-[72px] items-center rounded-xl gap-4 cursor-pointer relative`}
+          } relative flex h-[72px] cursor-pointer items-center gap-4 rounded-xl p-[16px] hover:bg-slate-100`}
         >
           <img
             width={40}
             height={40}
-            className="border-[1px] chatting-divider rounded-full"
+            className="chatting-divider rounded-full border-[1px]"
             src="/src/assets/Dummy_Icon.png"
           />
           <div
@@ -98,7 +98,7 @@ export const RoomList = () => {
           >
             <div className="flex items-center justify-between">
               <div className="flex flex-row items-center gap-[4px]">
-                <span className="max-w-[150px] h-[20px] text-[13px] font-bold overflow-x-hidden text-ellipsis whitespace-nowrap">
+                <span className="h-[20px] max-w-[150px] overflow-x-hidden text-ellipsis whitespace-nowrap text-[13px] font-bold">
                   {room.name}
                 </span>
                 <span className="text-[12px] text-gray-500">
@@ -106,7 +106,7 @@ export const RoomList = () => {
                 </span>
               </div>
               {room.id !== isVisibleMenu && (
-                <span className="text-[11px] whitespace-nowrap text-gray-500">
+                <span className="whitespace-nowrap text-[11px] text-gray-500">
                   {dayjs()
                     .startOf("day")
                     .isSame(dayjs(room.lastMessage.updatedAt).startOf("day"))
@@ -133,7 +133,7 @@ export const RoomList = () => {
             <Popover.Button
               className={`${
                 isVisibleMenu !== room.id ? "hidden" : "flex"
-              } hover:bg-slate-300 p-3 rounded-full`}
+              } rounded-full p-3 hover:bg-slate-300`}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -141,7 +141,7 @@ export const RoomList = () => {
                 viewBox="0 0 24 24"
                 strokeWidth="1.5"
                 stroke="currentColor"
-                className="w-8 h-8"
+                className="h-8 w-8"
               >
                 <path
                   strokeLinecap="round"

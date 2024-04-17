@@ -27,12 +27,12 @@ export const ChatMessage = ({ messages }: ChatMessageProps) => {
   return (
     <div
       ref={messageEndRef}
-      className="overflow-x-hidden overflow-y-auto p-[20px]"
+      className="overflow-y-auto overflow-x-hidden p-[20px]"
     >
       {Object.entries(messages).map(([date, chats]) => {
         return (
           <div key={date} className="flex flex-col gap-[10px]">
-            <div className="self-center bg-slate-200 text-lg px-9 py-1 rounded-xl">
+            <div className="self-center rounded-xl bg-slate-200 px-9 py-1 text-lg">
               {date}
             </div>
             {chats.map((chat, index) => {
@@ -51,7 +51,7 @@ export const ChatMessage = ({ messages }: ChatMessageProps) => {
                 <div key={chat.id}>
                   {chat?.sender === -1 ? (
                     <div className="flex justify-center">
-                      <span className="bg-slate-200 py-3 px-5 rounded-3xl">
+                      <span className="rounded-3xl bg-slate-200 px-5 py-3">
                         {chat.content}
                       </span>
                     </div>
@@ -59,13 +59,13 @@ export const ChatMessage = ({ messages }: ChatMessageProps) => {
                     <div
                       className={`flex ${
                         chat?.sender === user.id
-                          ? "self-end flex-row-reverse"
-                          : "self-start flex-row"
+                          ? "flex-row-reverse self-end"
+                          : "flex-row self-start"
                       } `}
                     >
                       <div className="flex">
                         {displayProfile ? (
-                          <div className="w-[40px] h-[40px] bg-slate-400 rounded-3xl" />
+                          <div className="h-[40px] w-[40px] rounded-3xl bg-slate-400" />
                         ) : chat?.sender !== user.id ? (
                           <div className="w-[40px]" />
                         ) : null}
@@ -80,7 +80,7 @@ export const ChatMessage = ({ messages }: ChatMessageProps) => {
                               chat?.sender === user.id
                                 ? "bg-green-300"
                                 : "bg-gray-200"
-                            } rounded-2xl max-w-[484px] p-[8px] text-[14px]`}
+                            } max-w-[484px] rounded-2xl p-[8px] text-[14px]`}
                           >
                             {chat.content.split("\n").map((line) => (
                               <span key={line}>
@@ -92,7 +92,7 @@ export const ChatMessage = ({ messages }: ChatMessageProps) => {
                         </div>
                       </div>
                       {displayTime ? (
-                        <div className="self-end mx-2 text-[10px]">
+                        <div className="mx-2 self-end text-[10px]">
                           {timeValue}
                         </div>
                       ) : null}

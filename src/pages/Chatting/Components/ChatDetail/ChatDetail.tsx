@@ -81,16 +81,16 @@ export const ChatDetail = () => {
   const chatSections = makeSection([...messages].reverse() ?? []);
 
   return (
-    <div className="flex flex-col w-full h-full">
+    <div className="flex h-full w-full flex-col">
       {/* 상단부 */}
       <div className="flex flex-shrink grow basis-0 flex-col overflow-hidden">
-        <div className="flex justify-between items-center min-h-[64px] border-b-[1px] chatting-divider px-[20px]">
+        <div className="chatting-divider flex min-h-[64px] items-center justify-between border-b-[1px] px-[20px]">
           <div className="flex items-center gap-[12px]">
             <img
               width={40}
               height={40}
               src="/src/assets/Dummy_Icon.png"
-              className="border-[1px] chatting-divider rounded-full"
+              className="chatting-divider rounded-full border-[1px]"
             />
             <div className="flex flex-col">
               <span className="text-[16px]">{roomInfo.name}</span>

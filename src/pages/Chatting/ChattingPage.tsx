@@ -6,8 +6,8 @@ import { LeftBar } from "@pages/Chatting/Components/LeftBar";
 
 export const ChattingPage = () => {
   return (
-    <div className="flex flex-col justify-center w-full h-[calc(100vh-64px)] bg-gray-100 overflow-hidden">
-      <div className="flex relative h-full my-0 mx-auto bg-white">
+    <div className="flex h-[calc(100vh-64px)] w-full flex-col justify-center overflow-hidden bg-gray-100">
+      <div className="relative mx-auto my-0 flex h-full bg-white">
         <div className="flex">
           <LeftBar />
           <Outlet />

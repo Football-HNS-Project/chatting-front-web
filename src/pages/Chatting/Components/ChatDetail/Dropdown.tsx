@@ -8,7 +8,7 @@ export const Dropdown = () => {
   return (
     <Menu as="div" className="relative inline-block text-left">
       <>
-        <Menu.Button className="inline-flex justify-center items-center rounded-[4px] w-[24px] h-[24px] cursor-pointer hover:bg-gray-200 hover:transition-colors hover:duration-500">
+        <Menu.Button className="inline-flex h-[24px] w-[24px] cursor-pointer items-center justify-center rounded-[4px] hover:bg-gray-200 hover:transition-colors hover:duration-500">
           <EllipsisVerticalSvg />
         </Menu.Button>
         <Transition
@@ -22,7 +22,7 @@ export const Dropdown = () => {
         >
           <Menu.Items
             static
-            className="absolute right-0 mt-5 p-[10px] w-[200px] border-[1px] border-gray-600 rounded-lg bg-gray-50"
+            className="absolute right-0 mt-5 w-[200px] rounded-lg border-[1px] border-gray-600 bg-gray-50 p-[10px]"
           >
             <div className="chatting-detail-dropdown-menu">
               <Menu.Item>
@@ -43,7 +43,7 @@ export const Dropdown = () => {
                   onClick={(e) => {
                     e.preventDefault();
                   }}
-                  className="chatting-detail-dropdown-button hover:bg-gray-200 mt-[4px]"
+                  className="chatting-detail-dropdown-button mt-[4px] hover:bg-gray-200"
                 >
                   대화상대 차단하기
                 </button>
@@ -56,7 +56,7 @@ export const Dropdown = () => {
                   onClick={(e) => {
                     e.preventDefault();
                   }}
-                  className="chatting-detail-dropdown-button hover:bg-gray-200 mt-[4px]"
+                  className="chatting-detail-dropdown-button mt-[4px] hover:bg-gray-200"
                 >
                   채팅방 나가기
                 </button>

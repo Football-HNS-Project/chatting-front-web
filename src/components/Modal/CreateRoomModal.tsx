@@ -92,7 +92,7 @@ export const CreateRoomModal = () => {
                   </Dialog.Title>
                   <div className="mt-4">
                     <input
-                      className="border-[1px] w-full h-full p-4 text-xl"
+                      className="h-full w-full border-[1px] p-4 text-xl"
                       placeholder="방 제목을 입력하세요."
                       value={title}
                       onChange={(e) => {
@@ -116,7 +116,7 @@ export const CreateRoomModal = () => {
                               setUserList((prev) => [...prev, v.id]);
                             }
                           }}
-                          className={`px-3 py-5 text-xl hover:bg-gray-300 cursor-pointer ${
+                          className={`cursor-pointer px-3 py-5 text-xl hover:bg-gray-300 ${
                             userList.includes(v.id) && "bg-slate-200"
                           }`}
                         >
@@ -126,17 +126,17 @@ export const CreateRoomModal = () => {
                     </div>
                   </div>
 
-                  <div className="flex justify-center mt-10 gap-4">
+                  <div className="mt-10 flex justify-center gap-4">
                     <button
                       type="button"
-                      className="w-full inline-flex justify-center items-center rounded-md border border-gray-400 bg-transparent px-4 py-2 text-[14px] font-medium text-gray-900 hover:bg-gray-200 focus:outline-none"
+                      className="inline-flex w-full items-center justify-center rounded-md border border-gray-400 bg-transparent px-4 py-2 text-[14px] font-medium text-gray-900 hover:bg-gray-200 focus:outline-none"
                       onClick={handleCancel}
                     >
                       취소
                     </button>
                     <button
                       type="button"
-                      className="w-full inline-flex justify-center items-center rounded-md border border-transparent bg-green-500 px-4 py-2 text-[14px] font-medium text-white hover:bg-green-400 focus:outline-none"
+                      className="inline-flex w-full items-center justify-center rounded-md border border-transparent bg-green-500 px-4 py-2 text-[14px] font-medium text-white hover:bg-green-400 focus:outline-none"
                       onClick={handleConfirm}
                     >
                       확인

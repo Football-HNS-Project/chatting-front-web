@@ -1,26 +1,29 @@
 {
-    "semi": true,
-    "jsxSingleQuote": false,
-    "trailingComma": "es5",
-    "arrowParens": "always",
-    "endOfLine": "lf",
-    "plugins": ["@trivago/prettier-plugin-sort-imports"],
-    "importOrder": [
-        "^react$",
-        "^react(.*)",
-        "<THIRD_PARTY_MODULES>",
-        "^@assets/(.*)$",
-        "^@routers/(.*)$",
-        "^@apis/(.*)$",
-        "^@utils/(.*)$",
-        "^@hooks/(.*)$",
-        "^@typings/(.*)$",
-        "^@components/(.*)$",
-        "^@pages/(.*)$",
-        "^@stores/(.*)$",
-        "@/(.*)",
-        "^[./]"
-    ],
-    "importOrderSeparation": true,
-    "importOrderSortSpecifiers": true
+  "semi": true,
+  "jsxSingleQuote": false,
+  "trailingComma": "es5",
+  "arrowParens": "always",
+  "endOfLine": "lf",
+  "plugins": [
+    "@trivago/prettier-plugin-sort-imports",
+    "prettier-plugin-tailwindcss"
+  ],
+  "importOrder": [
+    "^react$",
+    "^react(.*)",
+    "<THIRD_PARTY_MODULES>",
+    "^@assets/(.*)$",
+    "^@routers/(.*)$",
+    "^@apis/(.*)$",
+    "^@utils/(.*)$",
+    "^@hooks/(.*)$",
+    "^@typings/(.*)$",
+    "^@components/(.*)$",
+    "^@pages/(.*)$",
+    "^@stores/(.*)$",
+    "@/(.*)",
+    "^[./]"
+  ],
+  "importOrderSeparation": true,
+  "importOrderSortSpecifiers": true
 }

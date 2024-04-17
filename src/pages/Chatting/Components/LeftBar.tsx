@@ -12,19 +12,19 @@ export const LeftBar = () => {
   const [tab, setTab] = useAtom(TabAtom);
 
   return (
-    <nav className="flex flex-col border-r-[1px] w-[312px] min-w-[312px]">
-      <div className="flex h-[64px] min-h-[64px] items-center px-[20px] border-b-[1px] chatting-divider">
-        <span className="font-bold text-[16px]">{user.name}</span>
+    <nav className="flex w-[312px] min-w-[312px] flex-col border-r-[1px]">
+      <div className="chatting-divider flex h-[64px] min-h-[64px] items-center border-b-[1px] px-[20px]">
+        <span className="text-[16px] font-bold">{user.name}</span>
       </div>
       {/* 탭 */}
       <div className="flex h-[50px] flex-shrink-0">
         {TAB_MENU.map((t) => (
           <div
             key={t.path}
-            className={`flex items-center justify-center w-1/2 cursor-pointer text-[12px] ${
+            className={`flex w-1/2 cursor-pointer items-center justify-center text-[12px] ${
               tab === t.path
-                ? "bg-white font-bold border-b-[3px] border-slate-400"
-                : "bg-white border-b-[1px]"
+                ? "border-b-[3px] border-slate-400 bg-white font-bold"
+                : "border-b-[1px] bg-white"
             }`}
             onClick={() => {
               setTab(t.path);
