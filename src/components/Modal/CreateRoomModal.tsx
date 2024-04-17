@@ -29,7 +29,7 @@ export const CreateRoomModal = () => {
         type: "CREATE_ROOM_REQUEST",
         data: {
           name: title || "임시 방",
-          participants: [user.id, ...userList],
+          participants: userList,
         },
       });
 
