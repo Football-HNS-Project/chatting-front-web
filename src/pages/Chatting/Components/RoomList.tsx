@@ -93,7 +93,7 @@ export const RoomList = () => {
           />
           <div
             className={`${
-              isVisibleMenu === room.id ? "w-[19rem]" : "w-[22rem]"
+              isVisibleMenu === room.id ? "w-[17rem]" : "w-[22rem]"
             }`}
           >
             <div className="flex items-center justify-between">

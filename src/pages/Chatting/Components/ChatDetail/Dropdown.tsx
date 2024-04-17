@@ -2,7 +2,7 @@ import { Fragment } from "react";
 
 import { Menu, Transition } from "@headlessui/react";
 
-import { EllipsisVerticalSvg } from "@assets/EllipsisVerticalSvg";
+import { EllipsisVerticalSvg } from "@assets/Svg/EllipsisVerticalSvg";
 
 export const Dropdown = () => {
   return (

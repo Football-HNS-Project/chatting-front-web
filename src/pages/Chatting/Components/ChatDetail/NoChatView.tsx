@@ -1,4 +1,4 @@
-import { NoChatSvg } from "@assets/NoChatSvg";
+import { NoChatSvg } from "@assets/Svg/NoChatSvg";
 
 export const NoChatView = () => {
   return (

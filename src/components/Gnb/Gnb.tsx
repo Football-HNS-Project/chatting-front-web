@@ -3,8 +3,8 @@ import { useLocation } from "react-router-dom";
 import { useSetAtom } from "jotai";
 
 import { Logo } from "@assets/Logo";
-import { MenuSvg } from "@assets/MenuSvg";
-import { SearchSvg } from "@assets/SearchSvg";
+import { MenuSvg } from "@assets/Svg/MenuSvg";
+import { SearchSvg } from "@assets/Svg/SearchSvg";
 
 import { Dropdown } from "@components/Gnb/Dropdown";
 import { GNB_MENU } from "@components/Gnb/GNB_MENU";
