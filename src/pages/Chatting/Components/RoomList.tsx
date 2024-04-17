@@ -1,14 +1,15 @@
-import { Fragment, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import { useNavigate, useParams } from "react-router-dom";
 
-import { Popover, Transition } from "@headlessui/react";
 import dayjs from "dayjs";
 import { useAtom } from "jotai";
 
 import { GetRoomsRes, RoomChanged } from "@typings/WebsocketMessage.type";
 
 import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
+
+import { RoomPopover } from "@pages/Chatting/Components/RoomPopover";
 
 import { RoomListAtom } from "@stores/RoomListAtom";
 
@@ -19,6 +20,7 @@ export const RoomList = () => {
     useContext(WebSocketContext);
   const [roomList, setRoomList] = useAtom(RoomListAtom);
   const [isVisibleMenu, setIsVisibleMenu] = useState<string | null>(null);
+  const [hoveredMenu, setHoveredMenu] = useState<string | null>(null);
 
   useEffect(() => {
     if (isReady) {
@@ -76,10 +78,10 @@ export const RoomList = () => {
             navigate(`room/${room.id}`);
           }}
           onMouseOver={() => {
-            setIsVisibleMenu(room.id);
+            setHoveredMenu(room.id);
           }}
           onMouseOut={() => {
-            setIsVisibleMenu(null);
+            setHoveredMenu(null);
           }}
           className={`${
             room.id === String(id) ? "bg-slate-200" : "bg-white"
@@ -93,7 +95,9 @@ export const RoomList = () => {
           />
           <div
             className={`${
-              isVisibleMenu === room.id ? "w-[17rem]" : "w-[22rem]"
+              hoveredMenu === room.id || isVisibleMenu === room.id
+                ? "w-[17rem]"
+                : "w-[22rem]"
             }`}
           >
             <div className="flex items-center justify-between">
@@ -105,7 +109,7 @@ export const RoomList = () => {
                   {room.memberSize}
                 </span>
               </div>
-              {room.id !== isVisibleMenu && (
+              {room.id !== hoveredMenu && room.id !== isVisibleMenu && (
                 <span className="whitespace-nowrap text-[11px] text-gray-500">
                   {dayjs()
                     .startOf("day")
@@ -129,41 +133,10 @@ export const RoomList = () => {
               </span>
             </div>
           </div>
-          <Popover>
-            <Popover.Button
-              className={`${
-                isVisibleMenu !== room.id ? "hidden" : "flex"
-              } rounded-full p-3 hover:bg-slate-300`}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                className="h-8 w-8"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z"
-                />
-              </svg>
-            </Popover.Button>
-            <Transition
-              as={Fragment}
-              enter="transition ease-out duration-200"
-              enterFrom="opacity-0 translate-y-1"
-              enterTo="opacity-100 translate-y-0"
-              leave="transition ease-in duration-150"
-              leaveFrom="opacity-100 translate-y-0"
-              leaveTo="opacity-0 translate-y-1"
-            >
-              <Popover.Panel className="fixed z-50 w-32 bg-white">
-                <div>초대하기</div>
-              </Popover.Panel>
-            </Transition>
-          </Popover>
+
+          {(hoveredMenu === room.id || isVisibleMenu === room.id) && (
+            <RoomPopover setIsVisibleMenu={setIsVisibleMenu} roomId={room.id} />
+          )}
         </li>
       ))}
     </ul>
