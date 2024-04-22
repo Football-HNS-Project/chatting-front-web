@@ -4,7 +4,7 @@ import { setInterceptors } from "@apis/AxiosInterceptors";
 
 const createInstance = () => {
   const instance: AxiosInstance = axios.create({
-    baseURL: "/api/pms",
+    baseURL: "/api",
     withCredentials: true,
     headers: {
       Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
