@@ -1,4 +1,4 @@
-import { Fragment, useContext } from "react";
+import { Fragment } from "react";
 import React from "react";
 
 import { useNavigate } from "react-router-dom";
@@ -6,9 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { Dialog, Transition } from "@headlessui/react";
 import { useAtom, useAtomValue } from "jotai";
 
-import { CreateRoomRes } from "@typings/WebsocketMessage.type";
-
-import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
+import { useCreateRoom } from "@apis/Room/useCreateRoom";
 
 import { CreateRoomModalAtom } from "@stores/ModalStore";
 import { UserAtom, User_Dummy } from "@stores/UserStore";
@@ -17,37 +15,22 @@ export const CreateRoomModal = () => {
   const user = useAtomValue(UserAtom);
   const [isVisibleCreateRoomModal, setIsVisibleCreateRoomModal] =
     useAtom(CreateRoomModalAtom);
-  const { isReady, subscribe, sendRequest, unsubscribe } =
-    useContext(WebSocketContext);
-  const navigate = useNavigate();
+
   const [userList, setUserList] = React.useState<number[]>([]);
   const [title, setTitle] = React.useState<string>("");
+  const navigate = useNavigate();
+  const { mutate } = useCreateRoom();
 
   const handleConfirm = () => {
-    if (isReady) {
-      sendRequest({
-        type: "CREATE_ROOM_REQUEST",
-        data: {
-          name: title || "임시 방",
-          participants: userList,
+    mutate(
+      { name: title, participants: userList },
+      {
+        onSuccess: (res) => {
+          setIsVisibleCreateRoomModal(false);
+          navigate(`/chatting${res.headers.location}`);
         },
-      });
-
-      subscribe({
-        channel: "CREATE_ROOM_RESPONSE",
-        callbackFn: (data) => {
-          sendRequest({
-            type: "GET_ROOMS_REQUEST",
-          });
-          navigate(`room/${(data as CreateRoomRes["data"]).roomId}`);
-        },
-      });
-      setIsVisibleCreateRoomModal(false);
-    }
-
-    return () => {
-      unsubscribe({ channel: "CREATE_ROOM_RESPONSE" });
-    };
+      }
+    );
   };
 
   const handleCancel = () => {

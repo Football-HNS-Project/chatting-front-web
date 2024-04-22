@@ -1,10 +1,18 @@
 import { Fragment } from "react";
 
+import { useNavigate, useParams } from "react-router-dom";
+
 import { Menu, Transition } from "@headlessui/react";
 
 import { EllipsisVerticalSvg } from "@assets/Svg/EllipsisVerticalSvg";
 
+import { useOutRoom } from "@apis/Room/useOutRoom";
+
 export const Dropdown = () => {
+  const { mutate } = useOutRoom();
+  const { id } = useParams();
+  const navigate = useNavigate();
+
   return (
     <Menu as="div" className="relative inline-block text-left">
       <>
@@ -55,6 +63,16 @@ export const Dropdown = () => {
                 <button
                   onClick={(e) => {
                     e.preventDefault();
+                    mutate(
+                      {
+                        roomId: String(id),
+                      },
+                      {
+                        onSuccess: () => {
+                          navigate("/chatting");
+                        },
+                      }
+                    );
                   }}
                   className="chatting-detail-dropdown-button mt-[4px] hover:bg-gray-200"
                 >

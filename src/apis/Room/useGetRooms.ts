@@ -14,6 +14,7 @@ type GetRoomsRes = {
 
 const getRooms = async (): Promise<GetRoomsRes> => {
   const { data } = await instance.get<GetRoomsRes>("/rooms");
+
   return data;
 };
 
