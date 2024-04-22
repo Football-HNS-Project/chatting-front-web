@@ -3,9 +3,9 @@ import { Navigate, createBrowserRouter } from "react-router-dom";
 import { RootLayout } from "@components/Router/RootLayout";
 import { WebsocketProvider } from "@components/Websocket/WebsocketProvider";
 
-import { ChattingPage } from "@pages/Chatting/ChattingPage";
-import { ChatView } from "@pages/Chatting/Components/ChatDetail/ChatView";
-import { UserView } from "@pages/Chatting/Components/User/UserView";
+import { ChatPage } from "@pages/Chat/ChatPage";
+import { ChatView } from "@pages/Chat/Components/ChatView/ChatView";
+import { UserView } from "@pages/Chat/Components/User/UserView";
 import { HomePage } from "@pages/Home/HomePage";
 
 export const router = () =>
@@ -22,7 +22,7 @@ export const router = () =>
           path: "/chatting",
           element: (
             <WebsocketProvider>
-              <ChattingPage />
+              <ChatPage />
             </WebsocketProvider>
           ),
           children: [

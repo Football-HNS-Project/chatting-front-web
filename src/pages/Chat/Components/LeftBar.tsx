@@ -1,6 +1,6 @@
 import { useAtom, useAtomValue } from "jotai";
 
-import { RoomList } from "@pages/Chatting/Components/RoomList";
+import { RoomList } from "@pages/Chat/Components/RoomList";
 
 import { TAB_MENU, TabAtom } from "@stores/TabStore";
 import { UserAtom } from "@stores/UserStore";

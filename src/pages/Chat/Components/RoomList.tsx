@@ -5,41 +5,31 @@ import { useNavigate, useParams } from "react-router-dom";
 import dayjs from "dayjs";
 import { useAtom } from "jotai";
 
-import { GetRoomsRes, RoomChanged } from "@typings/WebsocketMessage.type";
+import { useGetRooms } from "@apis/Room/useGetRooms";
+
+import { RoomChanged } from "@typings/WebsocketMessage.type";
 
 import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
 
-import { RoomPopover } from "@pages/Chatting/Components/RoomPopover";
+import { RoomPopover } from "@pages/Chat/Components/RoomPopover";
 
 import { RoomListAtom } from "@stores/RoomListAtom";
 
 export const RoomList = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const { isReady, subscribe, unsubscribe, sendRequest } =
-    useContext(WebSocketContext);
+  const { isReady, subscribe } = useContext(WebSocketContext);
   const [roomList, setRoomList] = useAtom(RoomListAtom);
   const [isVisibleMenu, setIsVisibleMenu] = useState<string | null>(null);
   const [hoveredMenu, setHoveredMenu] = useState<string | null>(null);
 
+  const { data, isLoading, isError } = useGetRooms();
+
   useEffect(() => {
-    if (isReady) {
-      sendRequest({
-        type: "GET_ROOMS_REQUEST",
-      });
-
-      subscribe({
-        channel: "GET_ROOMS_RESPONSE",
-        callbackFn: (data) => {
-          setRoomList((data as GetRoomsRes["data"]).rooms);
-        },
-      });
+    if (data) {
+      setRoomList(data.data.rooms);
     }
-
-    return () => {
-      unsubscribe({ channel: "GET_ROOMS_RESPONSE" });
-    };
-  }, [isReady, sendRequest, setRoomList, subscribe, unsubscribe]);
+  }, [data, setRoomList]);
 
   useEffect(() => {
     if (isReady) {
@@ -68,6 +58,9 @@ export const RoomList = () => {
       });
     }
   }, [id, isReady, roomList, setRoomList, subscribe]);
+
+  if (isLoading) return <div>로딩중...</div>;
+  if (isError) return <div>에러</div>;
 
   return (
     <ul role="list" className="flex h-full w-full flex-col overflow-auto">

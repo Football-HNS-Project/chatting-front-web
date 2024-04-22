@@ -13,9 +13,9 @@ import {
 
 import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
 
-import { ChatMessage } from "@pages/Chatting/Components/ChatDetail/ChatMessage";
-import { Dropdown } from "@pages/Chatting/Components/ChatDetail/Dropdown";
-import { MessageForm } from "@pages/Chatting/Components/ChatDetail/MessageForm";
+import { ChatMessage } from "@pages/Chat/Components/ChatView/ChatMessage";
+import { Dropdown } from "@pages/Chat/Components/ChatView/Dropdown";
+import { MessageForm } from "@pages/Chat/Components/ChatView/MessageForm";
 
 export const ChatDetail = () => {
   const { id } = useParams<{ id: string }>();
