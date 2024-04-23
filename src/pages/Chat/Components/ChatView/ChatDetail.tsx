@@ -16,6 +16,7 @@ import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
 import { ChatMessage } from "@pages/Chat/Components/ChatView/ChatMessage";
 import { Dropdown } from "@pages/Chat/Components/ChatView/Dropdown";
 import { MessageForm } from "@pages/Chat/Components/ChatView/MessageForm";
+import { UsersDropdown } from "@pages/Chat/Components/ChatView/UsersDropdown";
 
 export const ChatDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -94,9 +95,7 @@ export const ChatDetail = () => {
             />
             <div className="flex flex-col">
               <span className="text-[16px]">{roomInfo.name}</span>
-              <span className="text-[12px] text-gray-600">
-                {roomInfo.participantCount}명
-              </span>
+              <UsersDropdown participantCount={roomInfo.participantCount} />
             </div>
           </div>
           <Dropdown />

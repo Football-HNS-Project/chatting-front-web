@@ -49,23 +49,6 @@ export type GetRoomsRes = {
 };
 
 /**
- * 채팅방 생성
- */
-export type CreateRoomReq = {
-  type: "CREATE_ROOM_REQUEST";
-  data: {
-    name: string;
-    participants: number[];
-  };
-};
-export type CreateRoomRes = {
-  type: "CREATE_ROOM_RESPONSE";
-  data: {
-    roomId: string;
-  };
-};
-
-/**
  * 채팅방 정보 조회
  */
 export type GetRoomInfoReq = {
