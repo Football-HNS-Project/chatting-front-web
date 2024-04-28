@@ -6,20 +6,21 @@ import { WebsocketProvider } from "@components/Websocket/WebsocketProvider";
 import { ChatPage } from "@pages/Chat/ChatPage";
 import { ChatView } from "@pages/Chat/Components/ChatView/ChatView";
 import { UserView } from "@pages/Chat/Components/User/UserView";
-import { HomePage } from "@pages/Home/HomePage";
+import { LoginPage } from "@pages/Login/LoginPage";
+
+import { AuthRoute } from "./AuthRoute";
 
 export const router = () =>
   createBrowserRouter([
     {
       path: "/",
-      element: <RootLayout />,
+      element: (
+        <AuthRoute>
+          <RootLayout />
+        </AuthRoute>
+      ),
       children: [
         {
-          index: true,
-          element: <HomePage />,
-        },
-        {
-          path: "/chatting",
           element: (
             <WebsocketProvider>
               <ChatPage />
@@ -34,6 +35,10 @@ export const router = () =>
           ],
         },
       ],
+    },
+    {
+      path: "/login",
+      element: <LoginPage />,
     },
     {
       path: "*",
