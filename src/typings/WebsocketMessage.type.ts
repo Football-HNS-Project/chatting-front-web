@@ -1,25 +1,7 @@
 import { Dayjs } from "dayjs";
 
-/**
- * 유저 인터페이스
- */
-export type TUser = {
-  id: number;
-  name: string;
-};
-/**
- * 채팅방 인터페이스
- */
-export type TRoom = {
-  id: string;
-  name: string;
-  memberSize: number;
-  lastMessage: {
-    id: number;
-    content: string;
-    updatedAt: Date;
-  };
-};
+import { TRoom } from "./Room";
+
 /**
  * 채팅 메시지 인터페이스
  */
@@ -63,7 +45,7 @@ export type GetRoomInfoRes = {
     room: {
       id: string;
       name: string;
-      participantCount: number;
+      memberSize: number;
     };
   };
 };

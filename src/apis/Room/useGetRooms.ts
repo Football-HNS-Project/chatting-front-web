@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { instance } from "@apis/AxiosInstance";
 
-import { TRoom } from "@typings/WebsocketMessage.type";
+import { TRoom } from "@typings/Room";
 
 import { ErrorResponse } from "@/typings/Error";
 
@@ -14,7 +14,6 @@ type GetRoomsRes = {
 
 const getRooms = async (): Promise<GetRoomsRes> => {
   const { data } = await instance.get<GetRoomsRes>("/rooms");
-
   return data;
 };
 

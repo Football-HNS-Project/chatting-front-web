@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { instance } from "@apis/AxiosInstance";
 
-import { TUser } from "@typings/WebsocketMessage.type";
+import { TUser } from "@typings/User";
 
 import { ErrorResponse } from "@/typings/Error";
 

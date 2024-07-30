@@ -16,21 +16,18 @@ export const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const handleLoginBtn = () => {
-    sessionStorage.setItem("accessToken", "test accessToken");
-    navigate("/");
-
-    // mutate(
-    //   { username, password },
-    //   {
-    //     onSuccess: (res) => {
-    //       console.log(res);
-    //       instance.defaults.headers["Authorization"] =
-    //         `Bearer ${res.accessToken}`;
-    //       sessionStorage.setItem("accessToken", res.accessToken);
-    //       navigate("/");
-    //     },
-    //   }
-    // );
+    mutate(
+      { username, password },
+      {
+        onSuccess: (res) => {
+          console.log(res);
+          instance.defaults.headers["Authorization"] =
+            `Bearer ${res.accessToken}`;
+          sessionStorage.setItem("accessToken", res.accessToken);
+          navigate("/");
+        },
+      }
+    );
   };
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center gap-5">

@@ -13,7 +13,7 @@ import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
 
 import { RoomPopover } from "@pages/Chat/Components/RoomPopover";
 
-import { RoomListAtom } from "@stores/RoomListAtom";
+import { RoomListAtom } from "@stores/RoomStore";
 
 export const RoomList = () => {
   const navigate = useNavigate();

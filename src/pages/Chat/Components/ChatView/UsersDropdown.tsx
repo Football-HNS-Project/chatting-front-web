@@ -11,10 +11,10 @@ import {
 } from "@components/ui/dropdown-menu";
 
 type UsersDropdownProps = {
-  participantCount: number;
+  memberSize: number;
 };
 
-export const UsersDropdown = ({ participantCount }: UsersDropdownProps) => {
+export const UsersDropdown = ({ memberSize }: UsersDropdownProps) => {
   const { id } = useParams();
   const [isOn, setIsOn] = useState(false);
   const { data } = useGetUsersInRoom({ roomId: String(id), isOn });
@@ -28,7 +28,7 @@ export const UsersDropdown = ({ participantCount }: UsersDropdownProps) => {
     >
       <DropdownMenuTrigger className="text-left outline-none">
         <span className="select-none text-[12px] text-gray-600">
-          {participantCount}명
+          {memberSize}명
         </span>
       </DropdownMenuTrigger>
       <DropdownMenuContent

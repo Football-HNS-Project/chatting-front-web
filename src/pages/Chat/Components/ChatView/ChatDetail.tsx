@@ -95,7 +95,7 @@ export const ChatDetail = () => {
             />
             <div className="flex flex-col">
               <span className="text-[16px]">{roomInfo.name}</span>
-              <UsersDropdown participantCount={roomInfo.participantCount} />
+              <UsersDropdown memberSize={roomInfo.memberSize} />
             </div>
           </div>
           <Dropdown />
