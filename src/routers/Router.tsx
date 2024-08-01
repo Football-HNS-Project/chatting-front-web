@@ -1,42 +1,47 @@
 import { Navigate, createBrowserRouter } from "react-router-dom";
 
-import { RootLayout } from "@components/Router/RootLayout";
+import { RootLayout } from "@routers/RootLayout";
+
 import { WebsocketProvider } from "@components/Websocket/WebsocketProvider";
 
-import { ChattingPage } from "@pages/Chatting/ChattingPage";
-import { ChatView } from "@pages/Chatting/Components/ChatDetail/ChatView";
-import { UserView } from "@pages/Chatting/Components/User/UserView";
-import { HomePage } from "@pages/Home/HomePage";
+import { ChatPage } from "@pages/Chat/ChatPage";
+import { ChatView } from "@pages/Chat/Components/ChatView/ChatView";
+import { UserView } from "@pages/Chat/Components/User/UserView";
+import { LoginPage } from "@pages/Login/LoginPage";
 
-export const router = () =>
-  createBrowserRouter([
-    {
-      path: "/",
-      element: <RootLayout />,
-      children: [
-        {
-          index: true,
-          element: <HomePage />,
-        },
-        {
-          path: "/chatting",
-          element: (
-            <WebsocketProvider>
-              <ChattingPage />
-            </WebsocketProvider>
-          ),
-          children: [
-            { index: true, element: <ChatView /> },
-            { path: "user", element: <UserView /> },
-            { path: "user/:id", element: <UserView /> },
-            { path: "room", element: <ChatView /> },
-            { path: "room/:id", element: <ChatView /> },
-          ],
-        },
-      ],
-    },
-    {
-      path: "*",
-      element: <Navigate to="/" replace />,
-    },
-  ]);
+import { AuthRoute } from "./AuthRoute";
+
+export const router = createBrowserRouter([
+  {
+    path: "/",
+    element: (
+      <AuthRoute>
+        <RootLayout />
+      </AuthRoute>
+    ),
+    children: [
+      {
+        element: (
+          <WebsocketProvider>
+            <ChatPage />
+          </WebsocketProvider>
+        ),
+        children: [
+          { index: true, element: <ChatView /> },
+          { path: "user", element: <UserView /> },
+          { path: "user/:id", element: <UserView /> },
+          { path: "room", element: <ChatView /> },
+          { path: "room/:id", element: <ChatView /> },
+        ],
+      },
+    ],
+  },
+  {
+    path: "/login",
+    element: <LoginPage />,
+  },
+  {
+    path: "*",
+    element: <Navigate to="/" replace />,
+  },
+]);

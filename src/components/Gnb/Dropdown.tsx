@@ -19,12 +19,12 @@ export const Dropdown = () => {
           <Menu.Button
             className={`${
               open && "bg-gray-100"
-            } inline-flex w-full items-center justify-center h-[44px] gap-[9px] px-[12px] text-[16px] font-bold rounded hover:bg-gray-100 duration-300`}
+            } inline-flex h-[44px] w-full items-center justify-center gap-[9px] rounded px-[12px] text-[16px] font-bold duration-300 hover:bg-gray-100`}
           >
             <img
               width={32}
               height={32}
-              className="border-[1px] image-divider rounded-full"
+              className="image-divider rounded-full border-[1px]"
               src="/src/assets/Profile.png"
             />
             {user.name}
@@ -32,7 +32,7 @@ export const Dropdown = () => {
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               fill="currentColor"
-              className="w-6 h-6"
+              className="h-6 w-6"
             >
               <path
                 fillRule="evenodd"
@@ -52,7 +52,7 @@ export const Dropdown = () => {
           >
             <Menu.Items
               static
-              className="absolute right-0 mt-2 w-[220px] divide-y divide-gray-200 border-[1px] border-gray-600 rounded-lg bg-gray-50 shadow-md"
+              className="absolute right-0 mt-2 w-[220px] divide-y divide-gray-200 rounded-lg border-[1px] border-gray-600 bg-gray-50 shadow-md"
             >
               <div className="dropdown-menu">
                 <Menu.Item>
@@ -64,7 +64,7 @@ export const Dropdown = () => {
                       }}
                       className={`${
                         active ? "bg-gray-200" : "text-gray-900"
-                      } flex w-full justify-between items-center rounded-md p-[7px] text-[16px] cursor-pointer`}
+                      } flex w-full cursor-pointer items-center justify-between rounded-md p-[7px] text-[16px]`}
                     >
                       채팅 알림
                       <Switch
@@ -95,7 +95,7 @@ export const Dropdown = () => {
                       }}
                       className={`${
                         active ? "bg-gray-200" : "text-gray-900"
-                      } flex w-full justify-between items-center rounded-md p-[7px] text-[16px] cursor-pointer`}
+                      } flex w-full cursor-pointer items-center justify-between rounded-md p-[7px] text-[16px]`}
                     >
                       채팅방 생성
                     </div>
@@ -112,7 +112,7 @@ export const Dropdown = () => {
                       }}
                       className={`${
                         active ? "bg-gray-200" : "text-gray-900"
-                      } flex w-full justify-between items-center rounded-md p-[7px] text-[16px]`}
+                      } flex w-full items-center justify-between rounded-md p-[7px] text-[16px]`}
                     >
                       로그아웃
                     </button>

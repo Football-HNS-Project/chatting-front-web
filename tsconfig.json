@@ -23,16 +23,7 @@
     /* Import Paths */
     "baseUrl": "./src",
     "paths": {
-      "@assets/*": ["./assets/*"],
-      "@routers/*": ["./routers/*"],
-      "@apis/*": ["./apis/*"],
-      "@utils/*": ["./utils/*"],
-      "@typings/*": ["./typings/*"],
-      "@components/*": ["./components/*"],
-      "@hooks/*": ["./hooks/*"],
-      "@pages/*": ["./pages/*"],
-      "@stores/*": ["./stores/*"],
-      "@/*": ["./*"]
+      "@*": ["./*"]
     }
   },
   "include": ["src"],

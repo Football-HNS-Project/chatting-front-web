@@ -1,25 +1,7 @@
 import { Dayjs } from "dayjs";
 
-/**
- * 유저 인터페이스
- */
-export type TUser = {
-  id: number;
-  name: string;
-};
-/**
- * 채팅방 인터페이스
- */
-export type TRoom = {
-  id: string;
-  name: string;
-  memberSize: number;
-  lastMessage: {
-    id: number;
-    content: string;
-    updatedAt: Date;
-  };
-};
+import { TRoom } from "./Room";
+
 /**
  * 채팅 메시지 인터페이스
  */
@@ -49,23 +31,6 @@ export type GetRoomsRes = {
 };
 
 /**
- * 채팅방 생성
- */
-export type CreateRoomReq = {
-  type: "CREATE_ROOM_REQUEST";
-  data: {
-    name: string;
-    participants: number[];
-  };
-};
-export type CreateRoomRes = {
-  type: "CREATE_ROOM_RESPONSE";
-  data: {
-    roomId: string;
-  };
-};
-
-/**
  * 채팅방 정보 조회
  */
 export type GetRoomInfoReq = {
@@ -80,7 +45,7 @@ export type GetRoomInfoRes = {
     room: {
       id: string;
       name: string;
-      participantCount: number;
+      memberSize: number;
     };
   };
 };

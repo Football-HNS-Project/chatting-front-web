@@ -1,8 +1,6 @@
 import {
   CloseRoomReq,
   CloseRoomRes,
-  CreateRoomReq,
-  CreateRoomRes,
   GetRoomInfoReq,
   GetRoomInfoRes,
   GetRoomsReq,
@@ -25,7 +23,6 @@ type TChannel =
 // [todo] http 제거
 type THttpChannel =
   | GetRoomsRes["type"]
-  | CreateRoomRes["type"]
   | GetRoomInfoRes["type"]
   | SendMessageRes["type"]
   | ReceiveMessagesInRoomRes["type"]
@@ -37,7 +34,6 @@ export type CallbackProps = RoomChanged["data"] | MessageCreated["data"];
 // [todo] http 제거
 export type HttpCallbackProps =
   | GetRoomsRes["data"]
-  | CreateRoomRes["data"]
   | GetRoomInfoRes["data"]
   | SendMessageRes["data"]
   | ReceiveMessagesInRoomRes["data"]
@@ -54,7 +50,6 @@ export type unsubscribeProps = Omit<subscribeProps, "callbackFn">;
 
 export type SendRequestProps =
   | GetRoomsReq
-  | CreateRoomReq
   | GetRoomInfoReq
   | SendMessageReq
   | ReceiveMessagesInRoomReq
@@ -67,7 +62,6 @@ export type TSocketMessage =
   | MessageCreated
   // [todo] http 제거
   | GetRoomsRes
-  | CreateRoomRes
   | GetRoomInfoRes
   | SendMessageRes
   | ReceiveMessagesInRoomRes
