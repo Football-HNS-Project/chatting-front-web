@@ -7,7 +7,7 @@ import { WebsocketProvider } from "@components/Websocket/WebsocketProvider";
 import { ChatPage } from "@pages/Chat/ChatPage";
 import { ChatView } from "@pages/Chat/Components/ChatView/ChatView";
 import { UserView } from "@pages/Chat/Components/User/UserView";
-import { LoginPage } from "@pages/Login/LoginPage";
+import { LoginPage } from "@pages/Login";
 
 import { AuthRoute } from "./AuthRoute";
 
