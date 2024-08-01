@@ -2,14 +2,12 @@ import axios, { AxiosInstance } from "axios";
 
 import { setInterceptors } from "@apis/AxiosInterceptors";
 
-const createInstance = () => {
-  const instance: AxiosInstance = axios.create({
-    baseURL: "/api",
+const createInstance = (): AxiosInstance => {
+  const instance = axios.create({
+    baseURL: `${import.meta.env.VITE_SERVER_BASE_URL}/pms`,
     withCredentials: true,
-    headers: {
-      Authorization: `Bearer ${sessionStorage.getItem("accessToken")}`,
-    },
   });
   return setInterceptors(instance);
 };
+
 export const instance = createInstance();

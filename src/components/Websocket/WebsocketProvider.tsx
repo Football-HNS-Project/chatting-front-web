@@ -74,7 +74,6 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
       switch (type) {
         case "GET_ROOMS_RESPONSE":
         case "GET_ROOM_INFO_RESPONSE":
-        case "CREATE_ROOM_RESPONSE":
         case "RECEIVE_MESSAGES_IN_ROOM_RESPONSE": {
           const action = `${type}`;
           ref.current[action]?.(data);

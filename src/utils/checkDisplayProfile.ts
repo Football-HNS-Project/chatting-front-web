@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 
-import { TChatMessageDetail, TUser } from "@typings/WebsocketMessage.type";
+import { TUser } from "@typings/User";
+import { TChatMessageDetail } from "@typings/WebsocketMessage.type";
 
 export const checkDisplayProfile = (
   chats: TChatMessageDetail[],

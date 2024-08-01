@@ -1,12 +1,11 @@
+import { PropsWithChildren } from "react";
+
 import { Navigate } from "react-router-dom";
 
-type AuthRouteProps = {
-  children: React.ReactNode;
-};
+export const AuthRoute = ({ children }: PropsWithChildren) => {
+  const accessToken = localStorage.getItem("accessToken");
 
-export const AuthRoute = ({ children }: AuthRouteProps) => {
-  const isAuth = sessionStorage.getItem("accessToken");
+  if (!accessToken) return <Navigate to="/login" />;
 
-  if (isAuth) return <div>{children}</div>;
-  return <Navigate to="/login" />;
+  return children;
 };

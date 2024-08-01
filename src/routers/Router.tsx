@@ -11,37 +11,32 @@ import { LoginPage } from "@pages/Login/LoginPage";
 
 import { AuthRoute } from "./AuthRoute";
 
-export const router = createBrowserRouter([
-  {
-    path: "/",
-    element: (
-      <AuthRoute>
-        <RootLayout />
-      </AuthRoute>
-    ),
-    children: [
-      {
-        element: (
-          <WebsocketProvider>
-            <ChatPage />
-          </WebsocketProvider>
-        ),
-        children: [
-          { index: true, element: <ChatView /> },
-          { path: "user", element: <UserView /> },
-          { path: "user/:id", element: <UserView /> },
-          { path: "room", element: <ChatView /> },
-          { path: "room/:id", element: <ChatView /> },
-        ],
-      },
-    ],
-  },
-  {
-    path: "/login",
-    element: <LoginPage />,
-  },
-  {
-    path: "*",
-    element: <Navigate to="/" replace />,
-  },
-]);
+export const router = () =>
+  createBrowserRouter([
+    {
+      path: "/",
+      element: (
+        <AuthRoute>
+          <RootLayout />
+        </AuthRoute>
+      ),
+      children: [
+        {
+          element: (
+            <WebsocketProvider>
+              <ChatPage />
+            </WebsocketProvider>
+          ),
+          children: [
+            { index: true, element: <ChatView /> },
+            { path: "user", element: <UserView /> },
+            { path: "user/:id", element: <UserView /> },
+            { path: "room", element: <ChatView /> },
+            { path: "room/:id", element: <ChatView /> },
+          ],
+        },
+      ],
+    },
+    { path: "/login", element: <LoginPage /> },
+    { path: "*", element: <Navigate to="/" replace /> },
+  ]);
