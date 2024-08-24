@@ -2,8 +2,6 @@ import { Navigate, createBrowserRouter } from "react-router-dom";
 
 import { RootLayout } from "@routers/RootLayout";
 
-import { WebsocketProvider } from "@components/Websocket/WebsocketProvider";
-
 import { ChatPage } from "@pages/Chat/ChatPage";
 import { ChatView } from "@pages/Chat/Components/ChatView/ChatView";
 import { UserView } from "@pages/Chat/Components/User/UserView";
@@ -22,11 +20,7 @@ export const router = () =>
       ),
       children: [
         {
-          element: (
-            <WebsocketProvider>
-              <ChatPage />
-            </WebsocketProvider>
-          ),
+          element: <ChatPage />,
           children: [
             { index: true, element: <ChatView /> },
             { path: "user", element: <UserView /> },
