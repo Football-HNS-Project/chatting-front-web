@@ -4,7 +4,7 @@ import { setInterceptors } from "@apis/AxiosInterceptors";
 
 const createInstance = (): AxiosInstance => {
   const instance = axios.create({
-    baseURL: `${import.meta.env.VITE_SERVER_BASE_URL}/pms`,
+    baseURL: `${import.meta.env.VITE_HTTP_SERVER}/chat`,
     withCredentials: true,
   });
   return setInterceptors(instance);
