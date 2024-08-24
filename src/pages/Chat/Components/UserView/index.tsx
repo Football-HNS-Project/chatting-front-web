@@ -1,9 +1,10 @@
 import { useParams } from "react-router-dom";
 
 import { NoChatView } from "@pages/Chat/Components/ChatView/NoChatView";
-import { UserDetail } from "@pages/Chat/Components/User/UserDetail";
 
-export const UserView = () => {
+import { UserDetail } from "./UserDetail";
+
+export const UserViewPage = () => {
   const { id } = useParams<{ id: string }>();
 
   return (

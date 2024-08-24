@@ -8,5 +8,10 @@ export const QUERY_KEYS = {
   USER: {
     all: () => ["user"],
     myInfo: () => [...QUERY_KEYS.USER.all(), "my_info"],
+    list: () => [...QUERY_KEYS.USER.all(), "list"],
+  },
+  ROOM: {
+    all: () => ["room"],
+    list: () => [...QUERY_KEYS.ROOM.all(), "list"],
   },
 } as const;

@@ -4,14 +4,11 @@ import { instance } from "@apis/AxiosInstance";
 import { QUERY_KEYS } from "@apis/QUERY_KEYS";
 
 import { TErrorRes } from "@typings/Axios";
+import { TUser } from "@typings/User";
 
 type GetMyInfoReq = object;
 
-type GetMyInfoRes = {
-  id: string;
-  name: string;
-  email: string;
-};
+type GetMyInfoRes = TUser;
 
 const getMyInfo = async () => {
   return await instance.get<GetMyInfoReq, GetMyInfoRes>("/users/me");

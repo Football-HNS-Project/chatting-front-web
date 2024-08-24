@@ -50,9 +50,7 @@ export const ModalProvider: React.FC<React.PropsWithChildren> = ({
           onClick={handleBackdropClick}
         >
           <div className="fixed left-1/2 top-1/2 z-[501] -translate-x-1/2 -translate-y-1/2">
-            <div className="relative flex h-fit rounded-lg bg-white shadow-md">
-              {customModalInfo.CustomModal}
-            </div>
+            {customModalInfo.CustomModal}
           </div>
         </div>
       )}

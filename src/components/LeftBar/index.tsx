@@ -1,25 +1,30 @@
+import { useNavigate } from "react-router-dom";
+
 import { useAtom } from "jotai";
 import { PlusCircle } from "lucide-react";
 
 import { useGetMyInfo } from "@apis/User/useGetMyInfo";
 
+import { RoomList } from "@components/LeftBar/RoomList";
+import { useModal } from "@components/Modal/useModal";
 import { QueryWrapper } from "@components/QueryWrapper";
 import { Input } from "@components/ui";
 
-import { RoomList } from "@pages/Chat/Components/RoomList";
-
 import { TAB_MENU, TabAtom } from "@stores/TabStore";
 
+import { CreateRoomModal } from "./CreateRoomModal";
 import { UserList } from "./UserList";
 
 export const LeftBar = () => {
   const [tab, setTab] = useAtom(TabAtom);
   const query = useGetMyInfo();
+  const navigate = useNavigate();
+  const { showCustomModal, closeCustomModal } = useModal();
 
   return (
     <QueryWrapper query={query}>
       {(data) => (
-        <nav className="flex w-[312px] min-w-[312px] flex-col border-r border-gray-200 bg-white shadow-lg">
+        <nav className="flex w-[312px] min-w-[312px] flex-col overflow-hidden border-r border-gray-200 bg-white shadow-lg">
           {/* 유저 정보 */}
           <div className="flex h-16 flex-shrink-0 items-center justify-between border-b border-gray-200 px-4">
             <span className="text-lg font-bold text-gray-800">{data.name}</span>
@@ -31,7 +36,20 @@ export const LeftBar = () => {
           {/* 검색 및 채팅방 추가 */}
           <div className="flex items-center space-x-2 p-4">
             <Input className="flex-grow" placeholder="채팅방 검색..." />
-            <button className="text-gray-600 transition-colors duration-200 hover:text-blue-500 focus:outline-none">
+            <button
+              className="text-gray-600 transition-colors duration-200 hover:text-blue-500 focus:outline-none"
+              onClick={() => {
+                showCustomModal({
+                  displayComponent: (
+                    <CreateRoomModal
+                      closeModal={closeCustomModal}
+                      navigate={navigate}
+                    />
+                  ),
+                  isBackDrop: true,
+                });
+              }}
+            >
               <PlusCircle size={24} />
             </button>
           </div>
@@ -54,8 +72,8 @@ export const LeftBar = () => {
           </div>
 
           {/* 패널 */}
-          <div className="flex-1 overflow-y-auto">
-            {tab === "user" ? <UserList /> : <RoomList />}
+          <div className="flex-1 overflow-y-hidden">
+            {tab === "user" ? <UserList myInfo={data} /> : <RoomList />}
           </div>
         </nav>
       )}

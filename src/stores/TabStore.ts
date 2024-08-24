@@ -8,5 +8,5 @@ export const TAB_MENU: TTabMenu[] = [
 ];
 
 export const TabAtom = atom<TTabMenu["path"]>(
-  location.pathname.split("/")[2] === "user" ? "user" : "room"
+  location.pathname.split("/")[1] === "user" ? "user" : "room"
 );
