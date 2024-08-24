@@ -108,10 +108,6 @@
   }
 }
 
-:root {
-  font-size: 10px;
-}
-
 input:focus {
   outline: none;
 }
