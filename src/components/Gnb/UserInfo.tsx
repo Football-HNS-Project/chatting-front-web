@@ -1,33 +1,26 @@
-import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
 
 import { ChevronDown, LogOutIcon, UserIcon } from "lucide-react";
 
-import { usePostLogout } from "@apis/Auth/usePostLogout";
-import { instance } from "@apis/AxiosInstance";
 import { useGetMyInfo } from "@apis/User/useGetMyInfo";
 
+import { LogoutModal } from "@components/Gnb/LogoutModal";
+import { useModal } from "@components/Modal/useModal";
 import { QueryWrapper } from "@components/QueryWrapper";
 import { Popover, PopoverContent, PopoverTrigger } from "@components/ui";
 
 export const UserInfo = () => {
   const query = useGetMyInfo();
-  const { mutate } = usePostLogout();
-  const [, , removeCookie] = useCookies(["refreshToken"]);
   const navigate = useNavigate();
+  const { showCustomModal, closeCustomModal } = useModal();
 
   const handleLogout = () => {
-    mutate(
-      {},
-      {
-        onSuccess: () => {
-          localStorage.removeItem("accessToken");
-          removeCookie("refreshToken", { path: "/" });
-          instance.defaults.headers["Authorization"] = null;
-          navigate("/login");
-        },
-      }
-    );
+    showCustomModal({
+      displayComponent: (
+        <LogoutModal closeModal={closeCustomModal} navigate={navigate} />
+      ),
+      isBackDrop: true,
+    });
   };
 
   return (
