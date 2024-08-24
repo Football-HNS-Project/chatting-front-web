@@ -1,9 +1,8 @@
 import { Outlet } from "react-router-dom";
 
 import { Gnb } from "@components/Gnb";
+import { LeftBar } from "@components/LeftBar";
 import { WebsocketProvider } from "@components/Websocket/WebsocketProvider";
-
-import { LeftBar } from "@pages/Chat/Components/LeftBar";
 
 export const RootLayout: React.FC = () => {
   return (

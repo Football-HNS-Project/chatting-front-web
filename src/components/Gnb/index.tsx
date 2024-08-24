@@ -4,6 +4,7 @@ import { UserInfo } from "./UserInfo";
 
 export const Gnb: React.FC = () => {
   const navigate = useNavigate();
+
   return (
     <div className="fixed top-0 z-[50] flex h-[64px] w-full items-center justify-between bg-white px-6 shadow-md">
       {/* 로고 */}
