@@ -13,5 +13,7 @@ export const QUERY_KEYS = {
   ROOM: {
     all: () => ["room"],
     list: () => [...QUERY_KEYS.ROOM.all(), "list"],
+    create: () => [...QUERY_KEYS.ROOM.all(), "create"],
+    leave: () => [...QUERY_KEYS.ROOM.all(), "leave"],
   },
 } as const;

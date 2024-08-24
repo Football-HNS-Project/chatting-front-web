@@ -2,8 +2,7 @@ import { Navigate, createBrowserRouter } from "react-router-dom";
 
 import { RootLayout } from "@routers/RootLayout";
 
-import { ChatViewPage } from "@pages/Chat/Components/ChatView";
-import { UserViewPage } from "@pages/Chat/Components/UserView";
+import { ChatPage } from "@pages/Chat";
 import { LoginPage } from "@pages/Login";
 
 import { AuthRoute } from "./AuthRoute";
@@ -18,13 +17,23 @@ export const router = () =>
         </AuthRoute>
       ),
       children: [
-        { index: true, element: <ChatViewPage /> },
-        { path: "user", element: <UserViewPage /> },
-        { path: "user/:id", element: <UserViewPage /> },
-        { path: "room", element: <ChatViewPage /> },
-        { path: "room/:id", element: <ChatViewPage /> },
+        { index: true, element: <ChatPage /> },
+        {
+          path: "user",
+          children: [
+            { index: true, element: <ChatPage /> },
+            { path: ":id", element: <ChatPage /> },
+          ],
+        },
+        {
+          path: "room",
+          children: [
+            { index: true, element: <ChatPage /> },
+            { path: ":id", element: <ChatPage /> },
+          ],
+        },
       ],
     },
-    { path: "/login", element: <LoginPage /> },
-    { path: "*", element: <Navigate to="/" replace /> },
+    { path: "login", element: <LoginPage /> },
+    { path: "*", element: <Navigate to="/room" replace /> },
   ]);

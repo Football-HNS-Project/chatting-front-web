@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 import { useNavigate } from "react-router-dom";
 
 import { useAtom } from "jotai";
@@ -20,11 +22,16 @@ export const LeftBar = () => {
   const query = useGetMyInfo();
   const navigate = useNavigate();
   const { showCustomModal, closeCustomModal } = useModal();
+  const currenPath = location.pathname.split("/")[1] as "user" | "room";
+
+  useEffect(() => {
+    setTab(currenPath);
+  }, [currenPath, setTab]);
 
   return (
     <QueryWrapper query={query}>
       {(data) => (
-        <nav className="flex w-[312px] min-w-[312px] flex-col overflow-hidden border-r border-gray-200 bg-white shadow-lg">
+        <nav className="flex w-[350px] min-w-[350px] flex-col overflow-hidden border-r border-gray-200 bg-white shadow-lg">
           {/* 유저 정보 */}
           <div className="flex h-16 flex-shrink-0 items-center justify-between border-b border-gray-200 px-4">
             <span className="text-lg font-bold text-gray-800">{data.name}</span>

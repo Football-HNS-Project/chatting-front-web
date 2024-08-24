@@ -1,28 +1,26 @@
 import { useMutation } from "@tanstack/react-query";
-import { AxiosResponse } from "axios";
 
 import { instance } from "@apis/AxiosInstance";
+import { QUERY_KEYS } from "@apis/QUERY_KEYS";
+
+import { TErrorRes } from "@typings/Axios";
 
 type CreateRoomReq = {
   name: string;
-  participants: number[];
+  memberIds: string[];
 };
 
-type CreateRoomRes = AxiosResponse;
+type CreateRoomRes = {
+  roomId: string;
+};
 
-const createRoom = async ({
-  name,
-  participants,
-}: CreateRoomReq): Promise<CreateRoomRes> => {
-  return await instance
-    .post("/room", { name, participants })
-    .then((res) => res);
+const createRoom = async (params: CreateRoomReq) => {
+  return await instance.post<CreateRoomReq, CreateRoomRes>("/rooms", params);
 };
 
 export const useCreateRoom = () => {
-  return useMutation({
-    mutationKey: ["CREATE_ROOM"],
-    mutationFn: async ({ name, participants }: CreateRoomReq) =>
-      createRoom({ name, participants }),
+  return useMutation<CreateRoomRes, TErrorRes, CreateRoomReq>({
+    mutationKey: QUERY_KEYS.ROOM.create(),
+    mutationFn: (params: CreateRoomReq) => createRoom(params),
   });
 };

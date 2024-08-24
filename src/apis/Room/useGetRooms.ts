@@ -1,25 +1,22 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { instance } from "@apis/AxiosInstance";
+import { QUERY_KEYS } from "@apis/QUERY_KEYS";
 
+import { TErrorRes } from "@typings/Axios";
 import { TRoom } from "@typings/Room";
 
-import { ErrorResponse } from "@/typings/Error";
+type GetRoomsReq = object;
 
-type GetRoomsRes = {
-  data: {
-    rooms: TRoom[];
-  };
-};
+type GetRoomsRes = TRoom[];
 
-const getRooms = async (): Promise<GetRoomsRes> => {
-  const { data } = await instance.get<GetRoomsRes>("/rooms");
-  return data;
+const getRooms = async () => {
+  return await instance.get<GetRoomsReq, GetRoomsRes>("/rooms");
 };
 
 export const useGetRooms = () => {
-  return useQuery<GetRoomsRes, ErrorResponse>({
-    queryKey: ["GET_ROOMS"],
-    queryFn: async () => getRooms(),
+  return useQuery<GetRoomsRes, TErrorRes>({
+    queryKey: QUERY_KEYS.ROOM.list(),
+    queryFn: () => getRooms(),
   });
 };
