@@ -5,6 +5,8 @@ import { Provider } from "jotai";
 
 import { router } from "@routers/Router";
 
+import { ModalProvider } from "@components/Modal/ModalProvider";
+
 export const App: React.FC = () => {
   const queryClient = new QueryClient({
     defaultOptions: {},
@@ -13,7 +15,9 @@ export const App: React.FC = () => {
   return (
     <Provider>
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router()} />
+        <ModalProvider>
+          <RouterProvider router={router()} />
+        </ModalProvider>
       </QueryClientProvider>
     </Provider>
   );
