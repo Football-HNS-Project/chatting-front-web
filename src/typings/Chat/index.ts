@@ -1,9 +1,21 @@
-import { Dayjs } from "dayjs";
-
 export type TChatMessageDetail = {
   id: string;
-  type: string;
-  sender: number;
-  createdAt: Dayjs;
+  roomId: string;
   content: string;
+  messageType: "text";
+  createdAt: string;
+  sender: {
+    id: string;
+    name: string;
+  };
+};
+
+export type TPageable = {
+  pageable: {
+    pageNumber: number;
+    pageSize: number;
+  };
+  totalElements: number;
+  totalPages: number;
+  isLast: boolean;
 };

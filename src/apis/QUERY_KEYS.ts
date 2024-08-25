@@ -28,4 +28,12 @@ export const QUERY_KEYS = {
     leave: () => [...QUERY_KEYS.ROOM.all(), "leave"],
     invite: () => [...QUERY_KEYS.ROOM.all(), "invite"],
   },
+  CHAT: {
+    all: () => ["chat"],
+    messages: (params: string) => [
+      ...QUERY_KEYS.CHAT.all(),
+      "messages",
+      params,
+    ],
+  },
 } as const;
