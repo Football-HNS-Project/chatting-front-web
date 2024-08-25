@@ -4,7 +4,7 @@ import { MessageCircle } from "lucide-react";
 
 import { useModal } from "@components/Modal/useModal";
 
-import { CreateRoomModal } from "./CreateRoomModal";
+import { CreateRoomModal } from "../CreateRoomModal";
 
 export const EmptyRoomList = () => {
   const { showCustomModal, closeCustomModal } = useModal();

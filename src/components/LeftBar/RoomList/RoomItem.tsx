@@ -1,0 +1,81 @@
+import { useState } from "react";
+
+import dayjs from "dayjs";
+import { EllipsisVertical } from "lucide-react";
+
+import { TRoom } from "@typings/Room";
+
+import { RoomPopover } from "./RoomPopover";
+
+type RoomItemProps = {
+  room: TRoom;
+  isActive: boolean;
+  onRoomClick: (roomId: string) => void;
+};
+
+const formatDate = (date: string): string => {
+  const messageDate = dayjs(date);
+  const today = dayjs().startOf("day");
+
+  if (messageDate.isSame(today, "day")) {
+    return messageDate.format("A h:mm");
+  }
+  return messageDate.format("YYYY-MM-DD");
+};
+
+export const RoomItem = ({ room, isActive, onRoomClick }: RoomItemProps) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const [showPopover, setShowPopover] = useState(false);
+  const formattedDate = formatDate(room.latestMessage.createdAt);
+
+  return (
+    <li
+      onClick={() => onRoomClick(room.id)}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => {
+        setIsHovered(false);
+        if (!showPopover) setShowPopover(false);
+      }}
+      className={`relative flex h-20 cursor-pointer items-center gap-4 rounded-xl p-4 transition-colors duration-200 ${
+        isActive ? "bg-blue-50" : "bg-white hover:bg-gray-50"
+      }`}
+    >
+      <img
+        width={48}
+        height={48}
+        className="rounded-full border border-gray-200 object-cover"
+        src="/src/assets/HNS.png"
+        alt={`${room.name} icon`}
+      />
+      <div className="flex-grow overflow-hidden">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="max-w-[150px] truncate text-sm font-semibold text-gray-800">
+              {room.name}
+            </span>
+            <span className="text-xs text-gray-500">{room.members.length}</span>
+          </div>
+          {!isHovered && (
+            <span className="text-xs text-gray-500">{formattedDate}</span>
+          )}
+        </div>
+        <p className="mt-1 truncate text-sm text-gray-600">
+          {room.latestMessage.content}
+        </p>
+      </div>
+
+      {(isHovered || showPopover) && (
+        <RoomPopover roomId={room.id} onClose={() => setShowPopover(false)}>
+          <button
+            className="flex h-8 w-8 items-center justify-center rounded-full text-gray-600 transition-colors duration-200 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-300"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            <EllipsisVertical size={18} />
+          </button>
+        </RoomPopover>
+      )}
+    </li>
+  );
+};

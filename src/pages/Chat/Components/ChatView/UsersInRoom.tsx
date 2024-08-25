@@ -64,12 +64,10 @@ export const UsersInRoom = ({ memberSize }: UsersInRoomProps) => {
                   <p className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 font-semibold text-blue-500">
                     {user.name.charAt(0).toUpperCase()}
                   </p>
-                  <div className="flex items-center text-sm font-medium text-gray-700">
+                  <div className="flex items-center gap-1 text-sm font-medium text-gray-700">
                     {user.name}
                     {myInfo.id === user.id && (
-                      <div className="ml-2 flex h-5 w-5 items-center justify-center rounded-full bg-gray-800 text-gray-200">
-                        <p className="text-[10px]">나</p>
-                      </div>
+                      <span className="text-xs text-blue-600">(You)</span>
                     )}
                   </div>
                 </div>

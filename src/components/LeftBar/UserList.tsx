@@ -59,7 +59,7 @@ export const UserList = ({ myInfo }: UserListProps) => {
     <QueryWrapper query={query}>
       {(data) => (
         // TODO : 스크롤 적용
-        <div className="h-full overflow-y-auto bg-gray-50">
+        <div className="h-full overflow-y-auto bg-white">
           <ul className="divide-y divide-gray-200">
             <UserItem user={myInfo} isMe={true} isCurrent={myInfo.id === id} />
             {data
