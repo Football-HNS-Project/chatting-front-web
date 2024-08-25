@@ -1,5 +1,7 @@
 import { useParams } from "react-router-dom";
 
+import { ChatView } from "./Components/ChatView";
+import { NoChatView } from "./Components/NoChatView";
 import { UserInfo } from "./Components/UserInfo";
 
 export const ChatPage = () => {
@@ -15,7 +17,7 @@ export const ChatPage = () => {
   } else {
     return (
       <section className="flex h-full min-w-[812px] flex-col">
-        룸{/* {id ? <ChatDetail /> : <NoChatView />} */}
+        {id ? <ChatView /> : <NoChatView />}
       </section>
     );
   }

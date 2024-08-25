@@ -56,7 +56,7 @@ const RoomItem = ({
         width={48}
         height={48}
         className="rounded-full border border-gray-200 object-cover"
-        src="/src/assets/Dummy_Icon.png"
+        src="/src/assets/HNS.png"
         alt={`${room.name} icon`}
       />
       <div className="flex-grow overflow-hidden">

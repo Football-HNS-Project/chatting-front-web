@@ -2,20 +2,20 @@ import React from "react";
 
 import { useAtomValue } from "jotai";
 
-import { checkDisplayProfile } from "@utils/checkDisplayProfile";
+// import { checkDisplayProfile } from "@utils/checkDisplayProfile";
 import { checkDisplayTime } from "@utils/checkDisplayTime";
-import { userMapping } from "@utils/userMapping";
 
+// import { userMapping } from "@utils/userMapping";
 import { TChatMessageDetail } from "@typings/WebsocketMessage.type";
 
-import { UserAtom } from "@stores/UserStore";
+// import { MyInfoAtom } from "@stores/UserStore";
 
 type ChatMessageProps = {
   messages: { [key: string]: TChatMessageDetail[] };
 };
 
 export const ChatMessage = ({ messages }: ChatMessageProps) => {
-  const user = useAtomValue(UserAtom);
+  // const user = useAtomValue(MyInfoAtom);
   const messageEndRef = React.useRef<HTMLDivElement | null>(null);
 
   React.useEffect(() => {
@@ -41,15 +41,15 @@ export const ChatMessage = ({ messages }: ChatMessageProps) => {
                 chat,
                 index
               );
-              const displayProfile = checkDisplayProfile(
-                chats,
-                chat,
-                index,
-                user
-              );
+              // const displayProfile = checkDisplayProfile(
+              //   chats,
+              //   chat,
+              //   index,
+              //   user
+              // );
               return (
                 <div key={chat.id}>
-                  {chat?.sender === -1 ? (
+                  {/* {chat?.sender === -1 ? (
                     <div className="flex justify-center">
                       <span className="rounded-3xl bg-slate-200 px-5 py-3">
                         {chat.content}
@@ -97,7 +97,7 @@ export const ChatMessage = ({ messages }: ChatMessageProps) => {
                         </div>
                       ) : null}
                     </div>
-                  )}
+                  )} */}
                 </div>
               );
             })}

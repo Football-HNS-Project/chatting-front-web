@@ -1,34 +1,29 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { instance } from "@apis/AxiosInstance";
+import { QUERY_KEYS } from "@apis/QUERY_KEYS";
 
+import { TErrorRes } from "@typings/Axios";
 import { TUser } from "@typings/User";
-
-import { ErrorResponse } from "@/typings/Error";
 
 type GetUsersInRoomReq = {
   roomId: string;
   isOn: boolean;
 };
-type GetUsersInRoomRes = {
-  data: {
-    users: TUser[];
-  };
-};
 
-const getUsersInRoom = async ({
-  roomId,
-}: GetUsersInRoomReq): Promise<GetUsersInRoomRes> => {
-  const { data } = await instance.get<GetUsersInRoomRes>(
-    `/room/${roomId}/participants`
+type GetUsersInRoomRes = Omit<TUser, "email">[];
+
+const getUsersInRoom = async (params: GetUsersInRoomReq) => {
+  const { roomId } = params;
+  return await instance.get<GetUsersInRoomReq, GetUsersInRoomRes>(
+    `/rooms/${roomId}/members`
   );
-  return data;
 };
 
-export const useGetUsersInRoom = ({ roomId, isOn }: GetUsersInRoomReq) => {
-  return useQuery<GetUsersInRoomRes, ErrorResponse>({
-    queryKey: ["GET_USERS_IN_ROOM", roomId, isOn],
-    queryFn: async () => getUsersInRoom({ roomId, isOn }),
-    enabled: isOn,
+export const useGetUsersInRoom = (params: GetUsersInRoomReq) => {
+  return useQuery<GetUsersInRoomRes, TErrorRes>({
+    queryKey: QUERY_KEYS.ROOM.roomMemberList(JSON.stringify(params)),
+    queryFn: async () => getUsersInRoom(params),
+    enabled: params.isOn,
   });
 };

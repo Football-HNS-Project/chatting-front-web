@@ -1,3 +1,5 @@
 import { atom } from "jotai";
 
-export const UserAtom = atom({ id: 1, name: "김도현" });
+import { TUser } from "@typings/User";
+
+export const MyInfoAtom = atom<TUser | null>(null);
