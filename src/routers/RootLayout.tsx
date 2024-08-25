@@ -7,9 +7,9 @@ import { WebsocketProvider } from "@components/Websocket/WebsocketProvider";
 export const RootLayout: React.FC = () => {
   return (
     <WebsocketProvider>
-      <div className="flex min-h-screen flex-col">
+      <div className="flex min-h-screen flex-col overflow-hidden">
         <Gnb />
-        <div className="flex flex-1 pt-[64px]">
+        <div className="flex flex-1 overflow-hidden pt-[64px]">
           <LeftBar />
           <main className="flex-1 overflow-auto">
             <Outlet />

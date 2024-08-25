@@ -25,7 +25,7 @@ export const checkDisplayProfile = (
   } else {
     displayProfile = true;
   }
-  if (chat?.sender === user.id) {
+  if (String(chat?.sender) === user.id) {
     displayProfile = false;
   }
 

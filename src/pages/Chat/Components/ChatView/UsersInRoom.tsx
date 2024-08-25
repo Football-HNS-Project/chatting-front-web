@@ -44,7 +44,7 @@ export const UsersInRoom = ({ memberSize }: UsersInRoomProps) => {
       }}
     >
       <PopoverTrigger asChild>
-        <button className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-700 transition-colors duration-200 hover:bg-gray-100 focus:outline-none">
+        <button className="flex flex-shrink-0 items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-700 transition-colors duration-200 hover:bg-gray-100 focus:outline-none">
           <Users size={18} />
           <span className="select-none">{memberSize}명</span>
         </button>
