@@ -15,6 +15,8 @@ import { Spinner } from "@components/Spinner";
 
 import { RoomListAtom } from "@stores/RoomStore";
 
+import { EmptyRoomList } from "./EmptyRoomList";
+
 type RoomItemProps = {
   room: TRoom;
   isActive: boolean;
@@ -111,14 +113,18 @@ export const RoomList: React.FC = () => {
 
   return (
     <ul className="flex h-full w-full flex-col space-y-2 overflow-auto p-2">
-      {roomList.map((room) => (
-        <RoomItem
-          key={room.id}
-          room={room}
-          isActive={room.id === id}
-          onRoomClick={handleRoomClick}
-        />
-      ))}
+      {roomList.length === 0 ? (
+        <EmptyRoomList />
+      ) : (
+        roomList.map((room) => (
+          <RoomItem
+            key={room.id}
+            room={room}
+            isActive={room.id === id}
+            onRoomClick={handleRoomClick}
+          />
+        ))
+      )}
     </ul>
   );
 };
