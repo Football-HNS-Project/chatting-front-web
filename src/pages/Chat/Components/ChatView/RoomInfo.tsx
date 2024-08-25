@@ -22,7 +22,7 @@ export const RoomInfo = () => {
               className="chatting-divider rounded-full border-[1px]"
             />
             <div className="flex w-full items-center justify-between pr-6">
-              <div className="w-[600px] overflow-hidden text-ellipsis whitespace-nowrap bg-red-200">
+              <div className="w-[600px] overflow-hidden text-ellipsis whitespace-nowrap">
                 <span className="text-[16px] font-semibold">{data.name}</span>
               </div>
 

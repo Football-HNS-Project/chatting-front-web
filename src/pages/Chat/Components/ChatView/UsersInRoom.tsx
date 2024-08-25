@@ -13,7 +13,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@components/ui";
 
 import { MyInfoAtom } from "@stores/UserStore";
 
-import { AddUserModal } from "./AddUserModal";
+import { InviteUserModal } from "./InviteUserModal";
 
 type UsersInRoomProps = {
   memberSize: number;
@@ -29,7 +29,7 @@ export const UsersInRoom = ({ memberSize }: UsersInRoomProps) => {
   const handleAddUser = () => {
     showCustomModal({
       displayComponent: (
-        <AddUserModal closeModal={closeCustomModal} roomId={id ?? ""} />
+        <InviteUserModal closeModal={closeCustomModal} roomId={id ?? ""} />
       ),
       isBackDrop: true,
     });

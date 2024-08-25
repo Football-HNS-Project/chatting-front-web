@@ -1,32 +1,27 @@
-import { useContext, useEffect, useState } from "react";
-
-import { useParams } from "react-router-dom";
-
-import { makeSection } from "@utils/makeSection";
-
-import {
-  GetRoomInfoRes,
-  MessageCreated,
-  ReceiveMessagesInRoomRes,
-  TChatMessageDetail,
-} from "@typings/WebsocketMessage.type";
-
-import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
-
-import { ChatMessage } from "@pages/Chat/Components/ChatView/ChatMessage";
+// import { useContext, useEffect, useState } from "react";
+// import { useParams } from "react-router-dom";
+// import { makeSection } from "@utils/makeSection";
+// import {
+//   GetRoomInfoRes,
+//   MessageCreated,
+//   ReceiveMessagesInRoomRes,
+//   TChatMessageDetail,
+// } from "@typings/WebsocketMessage.type";
+// import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
+// import { ChatMessage } from "@pages/Chat/Components/ChatView/ChatMessage";
 import { MessageForm } from "@pages/Chat/Components/ChatView/MessageForm";
-import { UsersDropdown } from "@pages/Chat/Components/ChatView/UsersInRoom";
 
+// import { UsersDropdown } from "@pages/Chat/Components/ChatView/UsersInRoom";
 import { RoomInfo } from "./RoomInfo";
 
 export const ChatView = () => {
-  const { id } = useParams<{ id: string }>();
-  const [messages, setMessages] = useState<TChatMessageDetail[]>([]);
-  const [roomInfo, setRoomInfo] = useState<GetRoomInfoRes["data"]["room"]>(
-    {} as GetRoomInfoRes["data"]["room"]
-  );
-  const { isReady, subscribe, sendRequest, unsubscribe } =
-    useContext(WebSocketContext);
+  // const { id } = useParams<{ id: string }>();
+  // const [messages, setMessages] = useState<TChatMessageDetail[]>([]);
+  // const [roomInfo, setRoomInfo] = useState<GetRoomInfoRes["data"]["room"]>(
+  //   {} as GetRoomInfoRes["data"]["room"]
+  // );
+  // const { isReady, subscribe, sendRequest, unsubscribe } =
+  //   useContext(WebSocketContext);
 
   // useEffect(() => {
   //   if (isReady) {
@@ -80,7 +75,7 @@ export const ChatView = () => {
   //   };
   // }, [id, isReady, sendRequest, subscribe, unsubscribe]);
 
-  const chatSections = makeSection([...messages].reverse() ?? []);
+  // const chatSections = makeSection([...messages].reverse() ?? []);
 
   return (
     <div className="flex h-full w-full flex-col">
@@ -88,7 +83,7 @@ export const ChatView = () => {
       <div className="flex flex-shrink grow basis-0 flex-col overflow-hidden">
         <RoomInfo />
         {/* 채팅 내용 */}
-        <ChatMessage messages={chatSections} />
+        {/* <ChatMessage messages={chatSections} /> */}
       </div>
       <MessageForm />
     </div>

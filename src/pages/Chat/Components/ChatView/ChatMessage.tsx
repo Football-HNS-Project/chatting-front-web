@@ -1,10 +1,7 @@
 import React from "react";
 
-import { useAtomValue } from "jotai";
-
 // import { checkDisplayProfile } from "@utils/checkDisplayProfile";
-import { checkDisplayTime } from "@utils/checkDisplayTime";
-
+// import { checkDisplayTime } from "@utils/checkDisplayTime";
 // import { userMapping } from "@utils/userMapping";
 import { TChatMessageDetail } from "@typings/WebsocketMessage.type";
 
@@ -29,7 +26,7 @@ export const ChatMessage = ({ messages }: ChatMessageProps) => {
       ref={messageEndRef}
       className="overflow-y-auto overflow-x-hidden p-[20px]"
     >
-      {Object.entries(messages).map(([date, chats]) => {
+      {/* {Object.entries(messages).map(([date, chats]) => {
         return (
           <div key={date} className="flex flex-col gap-[10px]">
             <div className="self-center rounded-xl bg-slate-200 px-9 py-1 text-lg">
@@ -41,15 +38,15 @@ export const ChatMessage = ({ messages }: ChatMessageProps) => {
                 chat,
                 index
               );
-              // const displayProfile = checkDisplayProfile(
-              //   chats,
-              //   chat,
-              //   index,
-              //   user
-              // );
+              const displayProfile = checkDisplayProfile(
+                chats,
+                chat,
+                index,
+                user
+              );
               return (
                 <div key={chat.id}>
-                  {/* {chat?.sender === -1 ? (
+                  {chat?.sender === -1 ? (
                     <div className="flex justify-center">
                       <span className="rounded-3xl bg-slate-200 px-5 py-3">
                         {chat.content}
@@ -97,13 +94,13 @@ export const ChatMessage = ({ messages }: ChatMessageProps) => {
                         </div>
                       ) : null}
                     </div>
-                  )} */}
+                  )}
                 </div>
               );
             })}
           </div>
         );
-      })}
+      })} */}
     </div>
   );
 };

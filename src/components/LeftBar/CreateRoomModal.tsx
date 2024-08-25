@@ -1,123 +1,131 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { NavigateFunction } from "react-router-dom";
 
-import { useAtom } from "jotai";
+import { useQueryClient } from "@tanstack/react-query";
+import { useAtomValue } from "jotai";
+import { Search, User } from "lucide-react";
 
+import { QUERY_KEYS } from "@apis/QUERY_KEYS";
 import { useCreateRoom } from "@apis/Room/useCreateRoom";
+import { useGetUsers } from "@apis/User/useGetUsers";
 
-// import { CreateRoomModalAtom } from "@stores/ModalStore";
+import { TUser } from "@typings/User";
 
-// import { UserAtom, User_Dummy } from "@stores/UserStore";
+import { QueryWrapper } from "@components/QueryWrapper";
+
+import { MyInfoAtom } from "@stores/UserStore";
 
 type CreateRoomModalProps = {
-  navigate: NavigateFunction;
   closeModal: () => void;
+  navigate: NavigateFunction;
 };
 
-export const CreateRoomModal = ({
-  navigate,
+export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
   closeModal,
-}: CreateRoomModalProps) => {
-  // const user = useAtomValue(UserAtom);
-  // const [isVisibleCreateRoomModal, setIsVisibleCreateRoomModal] =
-  //   useAtom(CreateRoomModalAtom);
-
-  const [userList, setUserList] = React.useState<number[]>([]);
-  const [title, setTitle] = React.useState<string>("");
+  navigate,
+}) => {
+  const query = useGetUsers();
+  const [selectedUsers, setSelectedUsers] = useState<Omit<TUser, "email">[]>(
+    []
+  );
+  const myInfo = useAtomValue(MyInfoAtom);
+  const [searchTerm, setSearchTerm] = useState("");
   const { mutate } = useCreateRoom();
+  const queryClient = useQueryClient();
 
-  // const handleConfirm = () => {
-  //   mutate(
-  //     { name: title, participants: userList },
-  //     {
-  //       onSuccess: (res) => {
-  //         setIsVisibleCreateRoomModal(false);
-  //         navigate(`/chatting${res.headers.location}`);
-  //       },
-  //     }
-  //   );
-  // };
+  const handleUserToggle = (user: Omit<TUser, "email">) => {
+    setSelectedUsers((prev) =>
+      prev.map((v) => v.id).includes(user.id)
+        ? prev.filter((v) => v.id !== user.id)
+        : [...prev, user]
+    );
+  };
 
-  // const handleCancel = () => {
-  //   setIsVisibleCreateRoomModal(false);
-  // };
+  const handleCreate = () => {
+    mutate(
+      {
+        name: selectedUsers.map((v) => v.name).join(", "),
+        memberIds: selectedUsers.map((v) => v.id),
+      },
+      {
+        onSuccess: (res) => {
+          queryClient.refetchQueries({ queryKey: QUERY_KEYS.ROOM.all() });
+          closeModal();
+          navigate(`/room/${res.roomId}`);
+        },
+      }
+    );
+  };
 
-  // React.useEffect(() => {
-  //   setTitle("");
-  //   setUserList([]);
-  // }, [isVisibleCreateRoomModal]);
+  if (!myInfo) return null;
 
   return (
-    <div className="flex h-[600px] w-[400px] flex-col items-center justify-between rounded-lg bg-white p-5 shadow-2xl">
+    <div className="flex h-[600px] w-[400px] flex-col items-center rounded-lg bg-white p-8 shadow-2xl">
       <h2 className="mb-4 text-xl font-bold text-gray-800">채팅방 생성</h2>
-
-      <div className="">
-        <input
-          className="h-full w-full border-[1px] p-4 text-xl"
-          placeholder="유저 이름 검색"
-          value={title}
-          onChange={(e) => {
-            setTitle(e.target.value);
-          }}
-        />
+      <div className="mb-2 self-start text-sm text-gray-500">
+        초대할 사용자 {selectedUsers.length}명 선택됨
       </div>
-      {/* <div className="flex min-h-full items-center justify-center p-4 text-center">
-        <div className="w-full max-w-xl transform overflow-hidden rounded-2xl bg-white p-10 text-left align-middle shadow-xl transition-all">
-          <div className="mt-4">
-            <input
-              className="h-full w-full border-[1px] p-4 text-xl"
-              placeholder="방 제목을 입력하세요."
-              value={title}
-              onChange={(e) => {
-                setTitle(e.target.value);
-              }}
-            />
-          </div>
-          <div className="mt-3">
-            <p className="mb-2 p-3 text-gray-500">유저 목록</p>
-            <div className="h-60 overflow-y-auto">
-              {User_Dummy.filter((v) => v.id !== user.id).map((v) => (
-                        <div
-                          key={v.id}
-                          onClick={() => {
-                            if (userList.includes(v.id)) {
-                              const idx = userList.findIndex((u) => u === v.id);
-                              const checkedUserList = [...userList];
-                              checkedUserList.splice(idx, 1);
-                              setUserList(checkedUserList);
-                            } else {
-                              setUserList((prev) => [...prev, v.id]);
-                            }
-                          }}
-                          className={`cursor-pointer px-3 py-5 text-xl hover:bg-gray-300 ${
-                            userList.includes(v.id) && "bg-slate-200"
-                          }`}
-                        >
-                          {v.name}
-                        </div>
-                      ))}
+      <div className="relative mb-4 w-full">
+        <input
+          type="text"
+          placeholder="사용자 검색..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full rounded-md border border-gray-300 py-2 pl-10 pr-4 focus:border-gray-700"
+        />
+        <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+      </div>
+      <QueryWrapper query={query}>
+        {(data) => (
+          <div className="w-full flex-grow overflow-y-auto">
+            <div className="overflow-y-auto pr-2">
+              {data
+                .filter((v) => v.id !== myInfo.id)
+                .map((user) => (
+                  <div
+                    key={user.id}
+                    className="flex items-center space-x-3 rounded-md p-2 hover:bg-gray-100"
+                  >
+                    <input
+                      type="checkbox"
+                      id={`user-${user.id}`}
+                      checked={selectedUsers.map((v) => v.id).includes(user.id)}
+                      onChange={() => handleUserToggle(user)}
+                      className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <label
+                      htmlFor={`user-${user.id}`}
+                      className="flex flex-grow cursor-pointer items-center"
+                    >
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-gray-600">
+                        <User size={20} />
+                      </div>
+                      <span className="ml-2 text-sm font-medium text-gray-700">
+                        {user.name}
+                      </span>
+                    </label>
+                  </div>
+                ))}
             </div>
           </div>
-
-          <div className="mt-10 flex justify-center gap-4">
-            <button
-              type="button"
-              className="inline-flex w-full items-center justify-center rounded-md border border-gray-400 bg-transparent px-4 py-2 text-[14px] font-medium text-gray-900 hover:bg-gray-200 focus:outline-none"
-              onClick={handleCancel}
-            >
-              취소
-            </button>
-            <button
-              type="button"
-              className="inline-flex w-full items-center justify-center rounded-md border border-transparent bg-green-500 px-4 py-2 text-[14px] font-medium text-white hover:bg-green-400 focus:outline-none"
-              onClick={handleConfirm}
-            >
-              확인
-            </button>
-          </div>
-        </div>
-      </div> */}
+        )}
+      </QueryWrapper>
+      <div className="mt-4 flex w-full justify-end space-x-2">
+        <button
+          onClick={closeModal}
+          className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        >
+          취소
+        </button>
+        <button
+          onClick={handleCreate}
+          disabled={selectedUsers.length === 0}
+          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-gray-300"
+        >
+          초대하기
+        </button>
+      </div>
     </div>
   );
 };

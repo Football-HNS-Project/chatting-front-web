@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -19,8 +19,6 @@ type RoomItemProps = {
   room: TRoom;
   isActive: boolean;
   onRoomClick: (roomId: string) => void;
-  activeRoomId: string | null;
-  setActiveRoomId: (roomId: string | null) => void;
 };
 
 const formatDate = (date: string): string => {
@@ -33,21 +31,19 @@ const formatDate = (date: string): string => {
   return messageDate.format("YYYY-MM-DD");
 };
 
-const RoomItem = ({
-  room,
-  isActive,
-  onRoomClick,
-  activeRoomId,
-  setActiveRoomId,
-}: RoomItemProps) => {
-  const formattedDate = () => formatDate(room.latestMessage.createdAt);
-  const isActiveRoom = activeRoomId === room.id;
+const RoomItem = ({ room, isActive, onRoomClick }: RoomItemProps) => {
+  const [isHovered, setIsHovered] = useState(false);
+  const [showPopover, setShowPopover] = useState(false);
+  const formattedDate = formatDate(room.latestMessage.createdAt);
 
   return (
     <li
       onClick={() => onRoomClick(room.id)}
-      onMouseEnter={() => setActiveRoomId(room.id)}
-      onMouseLeave={() => !isActiveRoom && setActiveRoomId(null)}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => {
+        setIsHovered(false);
+        if (!showPopover) setShowPopover(false);
+      }}
       className={`relative flex h-20 cursor-pointer items-center gap-4 rounded-xl p-4 transition-colors duration-200 ${
         isActive ? "bg-blue-50" : "bg-white hover:bg-gray-50"
       }`}
@@ -67,8 +63,8 @@ const RoomItem = ({
             </span>
             <span className="text-xs text-gray-500">{room.members.length}</span>
           </div>
-          {!isActiveRoom && (
-            <span className="text-xs text-gray-500">{formattedDate()}</span>
+          {!isHovered && (
+            <span className="text-xs text-gray-500">{formattedDate}</span>
           )}
         </div>
         <p className="mt-1 truncate text-sm text-gray-600">
@@ -76,9 +72,14 @@ const RoomItem = ({
         </p>
       </div>
 
-      {isActiveRoom && (
-        <RoomPopover roomId={room.id} onClose={() => setActiveRoomId(null)}>
-          <button className="flex h-8 w-8 items-center justify-center rounded-full text-gray-600 transition-colors duration-200 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-300">
+      {(isHovered || showPopover) && (
+        <RoomPopover roomId={room.id} onClose={() => setShowPopover(false)}>
+          <button
+            className="flex h-8 w-8 items-center justify-center rounded-full text-gray-600 transition-colors duration-200 hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-300"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
             <EllipsisVertical size={18} />
           </button>
         </RoomPopover>
@@ -91,8 +92,6 @@ export const RoomList: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id?: string }>();
   const [roomList, setRoomList] = useAtom(RoomListAtom);
-  const [activeRoomId, setActiveRoomId] = useState<string | null>(null);
-  const roomListRef = useRef<HTMLUListElement>(null);
 
   const { data, isLoading, error } = useGetRooms();
 
@@ -106,22 +105,6 @@ export const RoomList: React.FC = () => {
     }
   }, [data, setRoomList]);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        roomListRef.current &&
-        !roomListRef.current.contains(event.target as Node)
-      ) {
-        setActiveRoomId(null);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
   if (isLoading) return <Spinner />;
   if (error) throw error;
   if (!data) return <div>데이터가 없습니다.</div>;
@@ -134,13 +117,12 @@ export const RoomList: React.FC = () => {
           room={room}
           isActive={room.id === id}
           onRoomClick={handleRoomClick}
-          activeRoomId={activeRoomId}
-          setActiveRoomId={setActiveRoomId}
         />
       ))}
     </ul>
   );
 };
+
 // useEffect(() => {
 //   if (isReady) {
 //     subscribe({

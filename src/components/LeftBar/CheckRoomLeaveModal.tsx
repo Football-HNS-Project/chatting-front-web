@@ -10,12 +10,14 @@ type CheckRoomLeaveModalProps = {
   roomId: string;
   closeModal: () => void;
   navigate: NavigateFunction;
+  currentRoomId: string;
 };
 
 export const CheckRoomLeaveModal = ({
   roomId,
   closeModal,
   navigate,
+  currentRoomId,
 }: CheckRoomLeaveModalProps) => {
   const { mutate } = useLeaveRoom();
   const queryClient = useQueryClient();
@@ -27,14 +29,17 @@ export const CheckRoomLeaveModal = ({
         onSuccess: () => {
           closeModal();
           queryClient.refetchQueries({ queryKey: QUERY_KEYS.ROOM.list() });
-          navigate("/room");
+          console.log(currentRoomId, roomId);
+          if (currentRoomId === roomId) {
+            navigate("/room");
+          }
         },
       }
     );
   };
 
   return (
-    <div className="flex h-fit w-[400px] transform flex-col items-center justify-between rounded-lg bg-white p-8 shadow-2xl transition-all duration-300 ease-in-out hover:scale-105">
+    <div className="flex h-fit w-[400px] flex-col items-center justify-between rounded-lg bg-white p-8 shadow-2xl">
       <h2 className="mb-4 text-3xl font-bold text-gray-800">채팅방 나가기</h2>
 
       <div className="relative flex-auto p-6">

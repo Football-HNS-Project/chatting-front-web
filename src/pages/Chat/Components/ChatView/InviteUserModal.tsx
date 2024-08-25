@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 import { useQueryClient } from "@tanstack/react-query";
-import { User } from "lucide-react";
+import { Search, User } from "lucide-react";
 
 import { QUERY_KEYS } from "@apis/QUERY_KEYS";
 import { useInviteRoom } from "@apis/Room/useInviteRoom";
@@ -9,17 +9,18 @@ import { useGetInvitableUsers } from "@apis/User/useGetInvitableUsers";
 
 import { QueryWrapper } from "@components/QueryWrapper";
 
-type AddUserModalProps = {
+type InviteUserModalProps = {
   closeModal: () => void;
   roomId: string;
 };
 
-export const AddUserModal: React.FC<AddUserModalProps> = ({
+export const InviteUserModal: React.FC<InviteUserModalProps> = ({
   closeModal,
   roomId,
 }) => {
   const query = useGetInvitableUsers({ roomId });
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const { mutate } = useInviteRoom();
   const queryClient = useQueryClient();
 
@@ -45,9 +46,19 @@ export const AddUserModal: React.FC<AddUserModalProps> = ({
 
   return (
     <div className="flex h-[500px] w-[400px] flex-col items-center rounded-lg bg-white p-8 shadow-2xl">
-      <h2 className="mb-4 text-2xl font-bold text-gray-800">대화 상대 초대</h2>
+      <h2 className="mb-4 text-xl font-bold text-gray-800">대화 상대 초대</h2>
       <div className="mb-2 self-start text-sm text-gray-500">
         초대할 사용자 {selectedUsers.length}명 선택됨
+      </div>
+      <div className="relative mb-4 w-full">
+        <input
+          type="text"
+          placeholder="사용자 검색..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full rounded-md border border-gray-300 py-2 pl-10 pr-4 focus:border-gray-700"
+        />
+        <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
       </div>
       <QueryWrapper query={query}>
         {(data) => (

@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import { Info, LogOut } from "lucide-react";
 
@@ -20,12 +20,14 @@ export const RoomPopover = ({
 }: RoomPopoverProps) => {
   const navigate = useNavigate();
   const { showCustomModal, closeCustomModal } = useModal();
+  const { id } = useParams<{ id: string }>();
 
   const handleLeaveRoom = () => {
     showCustomModal({
       displayComponent: (
         <CheckRoomLeaveModal
           roomId={roomId}
+          currentRoomId={id ?? ""}
           closeModal={closeCustomModal}
           navigate={navigate}
         />
@@ -39,7 +41,9 @@ export const RoomPopover = ({
       <PopoverTrigger asChild>{children}</PopoverTrigger>
       <PopoverContent
         className="w-48 overflow-hidden rounded-lg border border-gray-200 bg-white p-1 shadow-lg"
-        onClick={(e) => e.stopPropagation()}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
       >
         <div className="flex flex-col">
           <button
