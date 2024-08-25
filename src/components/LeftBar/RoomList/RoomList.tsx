@@ -35,20 +35,22 @@ export const RoomList: React.FC = () => {
   if (!data) return <div>데이터가 없습니다.</div>;
 
   return (
-    <ul className="flex h-full w-full flex-col space-y-2 overflow-auto p-2">
+    <div className="flex h-full w-full items-center justify-center">
       {roomList.length === 0 ? (
         <EmptyRoomList />
       ) : (
-        roomList.map((room) => (
-          <RoomItem
-            key={room.id}
-            room={room}
-            isActive={room.id === id}
-            onRoomClick={handleRoomClick}
-          />
-        ))
+        <ul className="absolute flex h-full w-full flex-col space-y-2 overflow-auto p-2">
+          {roomList.map((room) => (
+            <RoomItem
+              key={room.id}
+              room={room}
+              isActive={room.id === id}
+              onRoomClick={handleRoomClick}
+            />
+          ))}
+        </ul>
       )}
-    </ul>
+    </div>
   );
 };
 

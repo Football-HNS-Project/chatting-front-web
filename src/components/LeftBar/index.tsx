@@ -60,7 +60,7 @@ export const LeftBar = () => {
       </div>
 
       {/* 탭 */}
-      <div className="flex h-12 border-b border-gray-200">
+      <div className="flex h-12 flex-shrink-0 border-b border-gray-200">
         {TAB_MENU.map((t) => (
           <button
             key={t.path}
@@ -77,7 +77,7 @@ export const LeftBar = () => {
       </div>
 
       {/* 패널 */}
-      <div className="flex-1 overflow-y-hidden">
+      <div className="relative h-full overflow-hidden">
         {tab === "user" ? <UserList myInfo={myInfo} /> : <RoomList />}
       </div>
     </nav>
