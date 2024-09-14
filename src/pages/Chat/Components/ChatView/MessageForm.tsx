@@ -1,14 +1,13 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 
 import { useParams } from "react-router-dom";
 
-import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
+import { useCreateMessage } from "@apis/Chat/useCreateMessage";
 
 export const MessageForm = () => {
   const [inputMessage, setInputMessage] = useState("");
-  const { isReady, sendRequest } = useContext(WebSocketContext);
   const { id } = useParams<{ id: string }>();
-
+  const { mutate } = useCreateMessage();
   const handleSubmit = (
     e:
       | React.FormEvent<HTMLFormElement>
@@ -16,16 +15,23 @@ export const MessageForm = () => {
       | React.KeyboardEvent<HTMLTextAreaElement>
   ) => {
     e.preventDefault();
-    console.log("submit", { e });
-
-    if (isReady) {
-      sendRequest({
-        type: "SEND_MESSAGE_REQUEST",
-        data: { type: "text", roomId: String(id), message: inputMessage },
-      });
-      setInputMessage("");
-    }
-    return;
+    mutate(
+      {
+        roomId: id ?? "",
+        messageInfo: {
+          plainText: inputMessage,
+          messageType: "TEXT",
+          options: [],
+          files: [],
+          replyTo: null,
+        },
+      },
+      {
+        onSuccess: () => {
+          setInputMessage("");
+        },
+      }
+    );
   };
 
   return (

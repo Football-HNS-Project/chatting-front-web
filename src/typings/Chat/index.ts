@@ -1,23 +1,27 @@
+import { TUser } from "@typings/User";
+
 export type TChatMessageDetail = {
   id: string;
   roomId: string;
-  content: string;
-  messageType: "text";
+  messageType: TMessageType;
+  senderType: TSenderType;
+  sender: Omit<TUser, "email">;
   createdAt: string;
-  sender: {
-    id: string;
-    name: string;
-  };
+  updatedAt: string;
+  plainText: string;
+  files: TFile[];
+  options: string[];
+  reactions: string[];
+  replyTo: string | null;
 };
 
-export type TPageable = {
-  pageable: {
-    pageNumber: number;
-    pageSize: number;
-  };
-  totalElements: number;
-  totalPages: number;
-  isLast: boolean;
+type TFile = {
+  id: string;
+  name: string;
+  size: number;
+  mimType: string;
+  url: string;
+  uploadedAt: Date;
 };
 
 export type TLastMessage = {

@@ -1,22 +1,9 @@
-// import { useContext, useEffect, useState } from "react";
-// import { useParams } from "react-router-dom";
-// import { makeSection } from "@utils/makeSection";
-// import {
-//   GetRoomInfoRes,
-//   MessageCreated,
-//   ReceiveMessagesInRoomRes,
-//   TChatMessageDetail,
-// } from "@typings/WebsocketMessage.type";
-// import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
-// import { ChatMessage } from "@pages/Chat/Components/ChatView/ChatMessage";
 import { MessageForm } from "@pages/Chat/Components/ChatView/MessageForm";
 
-// import { UsersDropdown } from "@pages/Chat/Components/ChatView/UsersInRoom";
+import { ChatMessage } from "./ChatMessage";
 import { RoomInfo } from "./RoomInfo";
 
 export const ChatView = () => {
-  // const { id } = useParams<{ id: string }>();
-  // const [messages, setMessages] = useState<TChatMessageDetail[]>([]);
   // const [roomInfo, setRoomInfo] = useState<GetRoomInfoRes["data"]["room"]>(
   //   {} as GetRoomInfoRes["data"]["room"]
   // );
@@ -75,15 +62,13 @@ export const ChatView = () => {
   //   };
   // }, [id, isReady, sendRequest, subscribe, unsubscribe]);
 
-  // const chatSections = makeSection([...messages].reverse() ?? []);
-
   return (
     <div className="flex h-full w-full flex-col">
-      {/* 상단부 */}
       <div className="flex flex-shrink grow basis-0 flex-col overflow-hidden">
+        {/* 상단부 */}
         <RoomInfo />
         {/* 채팅 내용 */}
-        {/* <ChatMessage messages={chatSections} /> */}
+        <ChatMessage />
       </div>
       <MessageForm />
     </div>

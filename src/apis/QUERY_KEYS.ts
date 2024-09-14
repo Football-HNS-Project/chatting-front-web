@@ -40,5 +40,6 @@ export const QUERY_KEYS = {
       "messages",
       params,
     ],
+    create: () => [...QUERY_KEYS.CHAT.all(), "create"],
   },
 } as const;

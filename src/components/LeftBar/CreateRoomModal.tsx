@@ -2,11 +2,9 @@ import React, { useState } from "react";
 
 import { NavigateFunction } from "react-router-dom";
 
-import { useQueryClient } from "@tanstack/react-query";
 import { useAtomValue } from "jotai";
 import { Search, User } from "lucide-react";
 
-import { QUERY_KEYS } from "@apis/QUERY_KEYS";
 import { useCreateRoom } from "@apis/Room/useCreateRoom";
 import { useGetUsers } from "@apis/User/useGetUsers";
 
@@ -32,7 +30,6 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
   const myInfo = useAtomValue(MyInfoAtom);
   const [searchTerm, setSearchTerm] = useState("");
   const { mutate } = useCreateRoom();
-  const queryClient = useQueryClient();
 
   const handleUserToggle = (user: Omit<TUser, "email">) => {
     setSelectedUsers((prev) =>
@@ -51,7 +48,6 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
       },
       {
         onSuccess: (res) => {
-          queryClient.refetchQueries({ queryKey: QUERY_KEYS.ROOM.all() });
           closeModal();
           navigate(`/room/${res.roomId}`);
         },

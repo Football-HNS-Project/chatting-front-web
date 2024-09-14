@@ -4,20 +4,26 @@ import { instance } from "@apis/AxiosInstance";
 import { QUERY_KEYS } from "@apis/QUERY_KEYS";
 
 import { TErrorRes } from "@typings/Axios";
-import { TChatMessageDetail, TPageable } from "@typings/Chat";
+import { TChatMessageDetail } from "@typings/Chat";
 
 type GetMessagesReq = {
   roomId: string;
+  messageId: string | null;
+  direction: "asc" | "desc";
 };
 
-type GetMessagesRes = TPageable & {
-  contents: TChatMessageDetail[];
+type GetMessagesRes = {
+  beforeMessages: TChatMessageDetail[];
+  afterMessages: TChatMessageDetail[];
+  standardMessage: TChatMessageDetail;
+  hasPreviousMessages: boolean;
+  hasNextMessages: boolean;
 };
 
 const getMessages = async (params: GetMessagesReq) => {
   const { roomId } = params;
   return await instance.get<GetMessagesReq, GetMessagesRes>(
-    `/messages/${roomId}`
+    `/rooms/${roomId}/messages`
   );
 };
 

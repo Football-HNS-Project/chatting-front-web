@@ -50,17 +50,17 @@ export const RoomItem = ({ room, isActive, onRoomClick }: RoomItemProps) => {
       <div className="flex-grow overflow-hidden">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="max-w-[150px] truncate text-sm font-semibold text-gray-800">
+            <span className="max-w-[130px] truncate text-sm font-semibold text-gray-800">
               {room.name}
             </span>
-            <span className="text-xs text-gray-500">{room.members.length}</span>
+            <span className="text-xs text-gray-600">{room.members.length}</span>
           </div>
           {!isHovered && (
-            <span className="text-xs text-gray-500">{formattedDate}</span>
+            <span className="text-xs text-gray-400">{formattedDate}</span>
           )}
         </div>
         <p className="mt-1 truncate text-sm text-gray-600">
-          {room.latestMessage.content}
+          {room.latestMessage.plainText}
         </p>
       </div>
 

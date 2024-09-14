@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useAtom, useAtomValue } from "jotai";
 import { PlusCircle } from "lucide-react";
 
-import { RoomList } from "@components/LeftBar/RoomList/RoomList";
+import { RoomList } from "@components/LeftBar/RoomList";
 import { useModal } from "@components/Modal/useModal";
 import { Input } from "@components/ui";
 
