@@ -8,10 +8,12 @@ export const ChatPage = () => {
   const { id } = useParams<{ id: string }>();
   const currenPath = location.pathname.split("/")[1] as "user" | "room";
 
+  if (!id) return null;
+
   if (currenPath === "user") {
     return (
       <section className="flex h-full min-w-[812px] flex-col">
-        <UserInfo userId={id ?? ""} />
+        <UserInfo userId={id} />
       </section>
     );
   } else {

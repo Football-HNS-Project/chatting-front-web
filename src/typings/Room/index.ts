@@ -7,9 +7,13 @@ export type TRoom = {
   createdAt: string;
   latestMessage: {
     id: string;
-    content: string;
+    messageType: "TEXT" | "IMAGE" | "FILE";
+    senderType: "USER" | "SYSTEM";
+    senderId: string;
     createdAt: string;
+    plainText: string;
   };
+  unread: number;
 };
 
 export type TRoomInfo = {
