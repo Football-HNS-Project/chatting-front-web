@@ -13,7 +13,8 @@ type RoomItemProps = {
   onRoomClick: (roomId: string) => void;
 };
 
-const formatDate = (date: string): string => {
+const formatDate = (date: string | undefined): string => {
+  if (!date) return "";
   const messageDate = dayjs(date);
   const today = dayjs().startOf("day");
 
@@ -26,7 +27,7 @@ const formatDate = (date: string): string => {
 export const RoomItem = ({ room, isActive, onRoomClick }: RoomItemProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const [showPopover, setShowPopover] = useState(false);
-  const formattedDate = formatDate(room.latestMessage.createdAt);
+  const formattedDate = formatDate(room.latestMessage?.createdAt);
 
   return (
     <li
@@ -53,14 +54,16 @@ export const RoomItem = ({ room, isActive, onRoomClick }: RoomItemProps) => {
             <span className="max-w-[130px] truncate text-sm font-semibold text-gray-800">
               {room.name}
             </span>
-            <span className="text-xs text-gray-600">{room.members.length}</span>
+            <span className="text-xs text-gray-600">
+              {room.memberIds.length}
+            </span>
           </div>
-          {!isHovered && (
+          {!isHovered && formattedDate && (
             <span className="text-xs text-gray-400">{formattedDate}</span>
           )}
         </div>
         <p className="mt-1 truncate text-sm text-gray-600">
-          {room.latestMessage.plainText}
+          {room.latestMessage?.plainText || "No messages yet"}
         </p>
       </div>
 

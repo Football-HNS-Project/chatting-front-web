@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useContext, useEffect } from "react";
 
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -6,7 +6,12 @@ import { useAtom } from "jotai";
 
 import { useGetRooms } from "@apis/Room/useGetRooms";
 
+import { TRoom } from "@typings/Room";
+import { CreateRoomEvent } from "@typings/WebsocketMessage.type";
+import { CallbackProps } from "@typings/WebsocketProvider.type";
+
 import { Spinner } from "@components/Spinner";
+import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
 
 import { RoomListAtom } from "@stores/RoomStore";
 
@@ -17,8 +22,8 @@ export const RoomList: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id?: string }>();
   const [roomList, setRoomList] = useAtom(RoomListAtom);
-
   const { data, isLoading, error } = useGetRooms();
+  const { isReady, subscribe, unsubscribe } = useContext(WebSocketContext);
 
   const handleRoomClick = (roomId: string) => {
     navigate(`room/${roomId}`);
@@ -29,6 +34,41 @@ export const RoomList: React.FC = () => {
       setRoomList(data);
     }
   }, [data, setRoomList]);
+
+  const handleRoomCreate = useCallback(
+    (data: CallbackProps) => {
+      const room = data as CreateRoomEvent["data"];
+      setRoomList((prevRooms) => {
+        if (prevRooms.some((prevRoom) => prevRoom.id === room.id)) {
+          return prevRooms;
+        }
+        const newRoom: TRoom = {
+          id: room.id,
+          name: room.name,
+          memberIds: room.memberIds,
+          createdAt: room.createdAt,
+          unread: 0,
+        };
+        return [newRoom, ...prevRooms];
+      });
+    },
+    [setRoomList]
+  );
+
+  useEffect(() => {
+    if (isReady) {
+      subscribe({
+        channel: "ROOM_CREATED",
+        callbackFn: handleRoomCreate,
+      });
+    }
+
+    return () => {
+      if (isReady) {
+        unsubscribe({ channel: "ROOM_CREATED" });
+      }
+    };
+  }, [isReady, subscribe, unsubscribe, handleRoomCreate]);
 
   if (isLoading) return <Spinner />;
   if (error) throw error;
@@ -53,31 +93,3 @@ export const RoomList: React.FC = () => {
     </div>
   );
 };
-
-// useEffect(() => {
-//   if (isReady) {
-//     subscribe({
-//       channel: `ROOM_CHANGED_${String(id)}`,
-//       callbackFn: (data) => {
-//         const roomIds = roomList.map((v) => v.id);
-//         // roomList에 이미 id가 있으면 -> 이미 있는 채팅방 -> 맨 위로 옮기기
-//         if (roomIds.includes((data as RoomChanged["data"]).room.id)) {
-//           const newRoomList = [...roomList];
-//           const foundRoomIdx = roomIds.findIndex(
-//             (v) => v === (data as RoomChanged["data"]).room.id
-//           );
-//           newRoomList.splice(foundRoomIdx, 1);
-//           newRoomList.unshift((data as RoomChanged["data"]).room);
-//           setRoomList(newRoomList);
-//         }
-//         // roomList에 id가 없음 -> 새로운 채팅방임 -> 맨 위로 생성
-//         else {
-//           setRoomList((prev) => [
-//             (data as RoomChanged["data"]).room,
-//             ...prev,
-//           ]);
-//         }
-//       },
-//     });
-//   }
-// }, [id, isReady, roomList, setRoomList, subscribe]);

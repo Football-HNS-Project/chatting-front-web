@@ -1,12 +1,11 @@
 import { TLastMessage } from "@typings/Chat";
-import { TUser } from "@typings/User";
 
 export type TRoom = {
   id: string;
   name: string;
-  members: Omit<TUser, "email">[];
+  memberIds: string[];
   createdAt: string;
-  latestMessage: TLastMessage;
+  latestMessage?: TLastMessage;
   unread: number;
 };
 

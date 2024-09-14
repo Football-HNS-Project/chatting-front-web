@@ -1,9 +1,17 @@
-import { createContext, useEffect, useRef, useState } from "react";
+import React, {
+  createContext,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+
+import { useHeartbeatInterval } from "@hooks/useHeartbeatInterval";
 
 import {
   CallbackProps,
-  HttpCallbackProps,
   SendRequestProps,
+  TSocketMessage,
   subscribeProps,
   unsubscribeProps,
 } from "@typings/WebsocketProvider.type";
@@ -14,6 +22,7 @@ type WebSocketContextProps = {
   unsubscribe: (props: unsubscribeProps) => void;
   sendRequest: (props: SendRequestProps) => void;
 };
+
 export const WebSocketContext = createContext<WebSocketContextProps>(
   {} as WebSocketContextProps
 );
@@ -21,16 +30,17 @@ export const WebSocketContext = createContext<WebSocketContextProps>(
 type WebsocketProviderProps = {
   children: React.ReactNode;
 };
+
 export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
   children,
 }) => {
   const [isReady, setIsReady] = useState(false);
   const ws = useRef<WebSocket | null>(null);
-  const ref = useRef<{
-    [key: string]: (data: CallbackProps | HttpCallbackProps) => void;
+  const subscribers = useRef<{
+    [key: string]: (data: CallbackProps) => void;
   }>({});
 
-  useEffect(() => {
+  const connect = useCallback(() => {
     const accessToken = localStorage.getItem("accessToken");
 
     if (!accessToken) {
@@ -47,44 +57,67 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
       console.log("WebSocket connection opened");
     };
 
-    ws.current.onclose = () => {
+    ws.current.onclose = (event) => {
       setIsReady(false);
-      console.log("WebSocket connection closed");
+      console.log(`WebSocket connection closed: ${event.code} ${event.reason}`);
+      // Attempt to reconnect after a delay
+      setTimeout(connect, 5000);
+    };
+
+    ws.current.onerror = (error) => {
+      console.error("WebSocket error:", error);
     };
 
     ws.current.onmessage = (event: MessageEvent) => {
-      console.log(event);
+      try {
+        const message: TSocketMessage = JSON.parse(event.data);
+        const channel = message.type;
+
+        if (subscribers.current[channel]) {
+          subscribers.current[channel](message.data);
+        }
+      } catch (error) {
+        console.error("Error processing WebSocket message:", error);
+      }
     };
+  }, []);
+
+  useEffect(() => {
+    connect();
 
     return () => {
       if (ws.current) {
         ws.current.close();
       }
     };
+  }, [connect]);
+
+  const subscribe = useCallback(({ channel, callbackFn }: subscribeProps) => {
+    subscribers.current[channel] = callbackFn;
   }, []);
 
-  /**
-   * 구독하기
-   */
-  const subscribe = ({ channel, callbackFn }: subscribeProps) => {
-    ref.current[channel] = callbackFn;
-  };
-  /**
-   * 구독 해제
-   */
-  const unsubscribe = ({ channel }: unsubscribeProps) => {
-    delete ref.current[channel];
-  };
-  /**
-   * 서버에 요청
-   */
-  const sendRequest = (props: SendRequestProps) => {
-    if (ws.current?.readyState === WebSocket.OPEN) {
-      ws.current?.send(JSON.stringify(props));
-    } else {
-      console.error("Websocket is not connected");
-    }
-  };
+  const unsubscribe = useCallback(({ channel }: unsubscribeProps) => {
+    delete subscribers.current[channel];
+  }, []);
+
+  const sendRequest = useCallback(
+    (props: SendRequestProps) => {
+      if (ws.current?.readyState === WebSocket.OPEN) {
+        ws.current?.send(JSON.stringify(props));
+      } else {
+        console.error("WebSocket is not connected. Attempting to reconnect...");
+        connect();
+      }
+    },
+    [connect]
+  );
+
+  useHeartbeatInterval(
+    () => {
+      sendRequest({ type: "HEART_BEAT" });
+    },
+    isReady ? 40000 : null
+  );
 
   return (
     <WebSocketContext.Provider
