@@ -1,3 +1,4 @@
+import { TLastMessage } from "@typings/Chat";
 import { TUser } from "@typings/User";
 
 export type TRoom = {
@@ -5,14 +6,7 @@ export type TRoom = {
   name: string;
   members: Omit<TUser, "email">[];
   createdAt: string;
-  latestMessage: {
-    id: string;
-    messageType: "TEXT" | "IMAGE" | "FILE";
-    senderType: "USER" | "SYSTEM";
-    senderId: string;
-    createdAt: string;
-    plainText: string;
-  };
+  latestMessage: TLastMessage;
   unread: number;
 };
 
@@ -21,3 +15,5 @@ export type TRoomInfo = {
   name: string;
   memberSize: number;
 };
+
+export type TRoomType = "GROUP" | "DIRECT";

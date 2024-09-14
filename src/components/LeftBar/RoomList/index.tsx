@@ -19,7 +19,7 @@ export const RoomList: React.FC = () => {
   const [roomList, setRoomList] = useAtom(RoomListAtom);
 
   const { data, isLoading, error } = useGetRooms();
-  console.log(data);
+
   const handleRoomClick = (roomId: string) => {
     navigate(`room/${roomId}`);
   };

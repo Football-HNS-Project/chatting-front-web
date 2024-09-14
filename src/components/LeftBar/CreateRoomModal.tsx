@@ -47,6 +47,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
       {
         name: selectedUsers.map((v) => v.name).join(", "),
         memberIds: selectedUsers.map((v) => v.id),
+        roomType: selectedUsers.length === 1 ? "DIRECT" : "GROUP",
       },
       {
         onSuccess: (res) => {

@@ -19,3 +19,14 @@ export type TPageable = {
   totalPages: number;
   isLast: boolean;
 };
+
+export type TLastMessage = {
+  id: string;
+  messageType: TMessageType;
+  senderType: TSenderType;
+  senderId: string;
+  createdAt: string;
+  plainText: string;
+};
+export type TMessageType = "TEXT" | "IMAGE" | "FILE";
+export type TSenderType = "USER" | "SYSTEM";

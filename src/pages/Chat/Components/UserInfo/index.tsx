@@ -42,7 +42,7 @@ export const UserInfo = ({ userId }: UserInfoProps) => {
 
   const handleCreateRoom = () => {
     mutate(
-      { name: userId, memberIds: [userId] },
+      { name: userId, memberIds: [userId], roomType: "DIRECT" },
       {
         onSuccess: (res) => {
           navigate(`/room/${res.roomId}`);

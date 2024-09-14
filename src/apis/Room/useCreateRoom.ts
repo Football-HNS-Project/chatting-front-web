@@ -4,10 +4,12 @@ import { instance } from "@apis/AxiosInstance";
 import { QUERY_KEYS } from "@apis/QUERY_KEYS";
 
 import { TErrorRes } from "@typings/Axios";
+import { TRoomType } from "@typings/Room";
 
 type CreateRoomReq = {
   name: string;
   memberIds: string[];
+  roomType: TRoomType;
 };
 
 type CreateRoomRes = {
