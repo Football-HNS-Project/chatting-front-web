@@ -10,10 +10,4 @@ export type TRoom = {
   unread: number;
 };
 
-export type TRoomInfo = {
-  id: string;
-  name: string;
-  memberSize: number;
-};
-
 export type TRoomType = "GROUP" | "DIRECT";

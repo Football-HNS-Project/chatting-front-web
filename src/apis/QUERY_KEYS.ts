@@ -8,6 +8,11 @@ export const QUERY_KEYS = {
   USER: {
     all: () => ["user"],
     myInfo: () => [...QUERY_KEYS.USER.all(), "my_info"],
+    userInfo: (params: string) => [
+      ...QUERY_KEYS.USER.all(),
+      "user_info",
+      params,
+    ],
     list: () => [...QUERY_KEYS.USER.all(), "list"],
   },
   ROOM: {
