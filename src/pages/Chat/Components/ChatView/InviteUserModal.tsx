@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 
-import { useQueryClient } from "@tanstack/react-query";
 import { Search, User } from "lucide-react";
 
-import { QUERY_KEYS } from "@apis/QUERY_KEYS";
 import { useInviteRoom } from "@apis/Room/useInviteRoom";
 import { useGetInvitableUsers } from "@apis/User/useGetInvitableUsers";
 
@@ -22,7 +20,6 @@ export const InviteUserModal: React.FC<InviteUserModalProps> = ({
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const { mutate } = useInviteRoom();
-  const queryClient = useQueryClient();
 
   const handleUserToggle = (userId: string) => {
     setSelectedUsers((prev) =>
@@ -37,7 +34,6 @@ export const InviteUserModal: React.FC<InviteUserModalProps> = ({
       { roomId, memberIds: selectedUsers },
       {
         onSuccess: () => {
-          queryClient.refetchQueries({ queryKey: QUERY_KEYS.ROOM.all() });
           closeModal();
         },
       }

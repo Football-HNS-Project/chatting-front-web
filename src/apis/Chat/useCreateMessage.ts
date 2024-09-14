@@ -17,7 +17,6 @@ type CreateMessageReq = {
 type CreateMessageRes = object;
 
 const createMessage = async (params: CreateMessageReq) => {
-  console.log(params);
   const { roomId } = params;
   return await instance.post<CreateMessageReq, CreateMessageRes>(
     `/rooms/${roomId}/messages`,

@@ -7,6 +7,8 @@ import { useAtom } from "jotai";
 
 import { useGetMessages } from "@apis/Chat/useGetMessages";
 
+import { changeDate } from "@utils/changeDate";
+
 import { TChatMessageDetail } from "@typings/Chat";
 import { TUser } from "@typings/User";
 
@@ -68,7 +70,7 @@ export const ChatMessage = () => {
   };
 
   const groupedMessages = groupMessagesByDate(messages);
-  console.log(groupedMessages);
+
   return (
     <div
       ref={containerRef}
@@ -88,7 +90,8 @@ export const ChatMessage = () => {
             );
             const isCurrentUser = message.sender.id === user?.id;
             const isSystemMessage = message.senderType === "SYSTEM";
-            const timeValue = dayjs(message.createdAt).format("HH:mm");
+            // const timeValue = dayjs(message.createdAt).format("HH:mm");
+            const timeValue = changeDate(dayjs(message.createdAt));
 
             if (isSystemMessage) {
               return (
