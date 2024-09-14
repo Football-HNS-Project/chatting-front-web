@@ -41,9 +41,9 @@ export const ChatMessage = () => {
   useEffect(() => {
     if (data) {
       const allMessages = [
-        ...data.beforeMessages,
-        data.standardMessage,
-        ...data.afterMessages,
+        ...(data.beforeMessages.length > 0 ? data.beforeMessages : []),
+        ...(data.standardMessage !== null ? [data.standardMessage] : []),
+        ...(data.afterMessages.length > 0 ? data.afterMessages : []),
       ];
       setMessages(allMessages);
     }
