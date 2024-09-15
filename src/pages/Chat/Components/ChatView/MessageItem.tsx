@@ -9,6 +9,7 @@ export const MessageItem: React.FC<{
   isStandardMessage: boolean;
   timeValue: string;
   standardMessageRef: React.RefObject<HTMLDivElement>;
+  showTime: boolean;
 }> = React.memo(
   ({
     message,
@@ -17,6 +18,7 @@ export const MessageItem: React.FC<{
     isStandardMessage,
     timeValue,
     standardMessageRef,
+    showTime,
   }) => {
     if (message.senderType === "SYSTEM") {
       return (
@@ -49,18 +51,15 @@ export const MessageItem: React.FC<{
             <div
               className={`${
                 isCurrentUser ? "bg-green-300" : "bg-gray-200"
-              } max-w-[484px] rounded-2xl p-[8px] text-[14px]`}
+              } overflow-wrap-anywhere w-fit max-w-[484px] whitespace-pre-wrap break-words rounded-2xl p-[8px] text-[14px]`}
             >
-              {message.plainText.split("\n").map((line, i) => (
-                <span key={i}>
-                  {line}
-                  <br />
-                </span>
-              ))}
+              {message.plainText}
             </div>
           </div>
         </div>
-        <div className="mx-2 self-end text-[10px]">{timeValue}</div>
+        {showTime && (
+          <div className="mx-2 self-end text-[10px]">{timeValue}</div>
+        )}
       </div>
     );
   }
