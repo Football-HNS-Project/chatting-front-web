@@ -7,7 +7,7 @@ export const groupMessagesByDate = (
 ): Record<string, TChatMessageDetail[]> => {
   return messages.reduce(
     (acc, message) => {
-      const date = dayjs(message.createdAt).format("YYYY년 M월 d일");
+      const date = dayjs(message.createdAt).format("YYYY년 M월 D일");
       if (!acc[date]) {
         acc[date] = [];
       }
