@@ -37,7 +37,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
   const [isReady, setIsReady] = useState(false);
   const ws = useRef<WebSocket | null>(null);
   const subscribers = useRef<{
-    [key: string]: (data: CallbackProps) => void;
+    [key: string]: Set<(data: CallbackProps) => void>;
   }>({});
 
   const connect = useCallback(() => {
@@ -61,7 +61,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
       setIsReady(false);
       console.log(`WebSocket connection closed: ${event.code} ${event.reason}`);
       // Attempt to reconnect after a delay
-      setTimeout(connect, 5000);
+      // setTimeout(connect, 5000);
     };
 
     ws.current.onerror = (error) => {
@@ -72,9 +72,15 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
       try {
         const message: TSocketMessage = JSON.parse(event.data);
         const channel = message.type;
-
         if (subscribers.current[channel]) {
-          subscribers.current[channel](message.data);
+          console.log(
+            "Subscribers for channel:",
+            channel,
+            subscribers.current[channel]
+          );
+          subscribers.current[channel].forEach((callback) =>
+            callback(message.data)
+          );
         }
       } catch (error) {
         console.error("Error processing WebSocket message:", error);
@@ -93,11 +99,21 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
   }, [connect]);
 
   const subscribe = useCallback(({ channel, callbackFn }: subscribeProps) => {
-    subscribers.current[channel] = callbackFn;
+    if (!subscribers.current[channel]) {
+      subscribers.current[channel] = new Set();
+    }
+    subscribers.current[channel].add(callbackFn);
+    console.log(
+      `Subscribed to ${channel}. Total subscribers:`,
+      subscribers.current[channel].size
+    );
   }, []);
 
   const unsubscribe = useCallback(({ channel }: unsubscribeProps) => {
-    delete subscribers.current[channel];
+    if (subscribers.current[channel]) {
+      delete subscribers.current[channel];
+      console.log(`Unsubscribed from ${channel}. Channel removed.`);
+    }
   }, []);
 
   const sendRequest = useCallback(

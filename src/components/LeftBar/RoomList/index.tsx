@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -6,12 +6,16 @@ import { useAtom } from "jotai";
 
 import { useGetRooms } from "@apis/Room/useGetRooms";
 
+import { useWebSocketSubscription } from "@hooks/useWebSocketSubscription";
+
 import { TRoom } from "@typings/Room";
-import { CreateRoomEvent } from "@typings/WebsocketMessage.type";
+import {
+  CreateMessageEvent,
+  CreateRoomEvent,
+} from "@typings/WebsocketMessage.type";
 import { CallbackProps } from "@typings/WebsocketProvider.type";
 
 import { Spinner } from "@components/Spinner";
-import { WebSocketContext } from "@components/Websocket/WebsocketProvider";
 
 import { RoomListAtom } from "@stores/RoomStore";
 
@@ -20,18 +24,29 @@ import { RoomItem } from "./RoomItem";
 
 export const RoomList: React.FC = () => {
   const navigate = useNavigate();
-  const { id } = useParams<{ id?: string }>();
+  const { id: roomId } = useParams<{ id?: string }>();
   const [roomList, setRoomList] = useAtom(RoomListAtom);
   const { data, isLoading, error } = useGetRooms();
-  const { isReady, subscribe, unsubscribe } = useContext(WebSocketContext);
+  // const { isReady, subscribe, unsubscribe } = useContext(WebSocketContext);
+  const lastMessageRef = useRef<{ [roomId: string]: string }>({});
 
   const handleRoomClick = (roomId: string) => {
     navigate(`room/${roomId}`);
+    setRoomList((prevRooms) =>
+      prevRooms.map((room) =>
+        room.id === roomId ? { ...room, unread: 0 } : room
+      )
+    );
   };
 
   useEffect(() => {
     if (data) {
       setRoomList(data);
+      data.forEach((room) => {
+        if (room.latestMessage) {
+          lastMessageRef.current[room.id] = room.latestMessage.id;
+        }
+      });
     }
   }, [data, setRoomList]);
 
@@ -55,20 +70,47 @@ export const RoomList: React.FC = () => {
     [setRoomList]
   );
 
-  useEffect(() => {
-    if (isReady) {
-      subscribe({
-        channel: "ROOM_CREATED",
-        callbackFn: handleRoomCreate,
-      });
-    }
+  const handleNewMessage = useCallback(
+    (data: CallbackProps) => {
+      console.log({ data });
+      const message = data as CreateMessageEvent["data"];
+      setRoomList((prevRooms) => {
+        const updatedRooms = prevRooms.map((room) => {
+          if (room.id === message.roomId) {
+            if (lastMessageRef.current[room.id] === message.id) {
+              return room;
+            }
+            lastMessageRef.current[room.id] = message.id;
 
-    return () => {
-      if (isReady) {
-        unsubscribe({ channel: "ROOM_CREATED" });
-      }
-    };
-  }, [isReady, subscribe, unsubscribe, handleRoomCreate]);
+            return {
+              ...room,
+              latestMessage: {
+                id: message.id,
+                plainText: message.plainText,
+                createdAt: message.createdAt,
+              },
+              unread: roomId === message.roomId ? 0 : (room.unread ?? 0) + 1,
+            } as TRoom;
+          }
+          return room;
+        });
+
+        const updatedRoomIndex = updatedRooms.findIndex(
+          (room) => room.id === message.roomId
+        );
+        if (updatedRoomIndex > 0) {
+          const [updatedRoom] = updatedRooms.splice(updatedRoomIndex, 1);
+          return [updatedRoom, ...updatedRooms];
+        }
+
+        return updatedRooms;
+      });
+    },
+    [roomId, setRoomList]
+  );
+
+  useWebSocketSubscription("MESSAGE_CREATED", handleNewMessage);
+  useWebSocketSubscription("ROOM_CREATED", handleRoomCreate);
 
   if (isLoading) return <Spinner />;
   if (error) throw error;
@@ -84,7 +126,7 @@ export const RoomList: React.FC = () => {
             <RoomItem
               key={room.id}
               room={room}
-              isActive={room.id === id}
+              isActive={room.id === roomId}
               onRoomClick={handleRoomClick}
             />
           ))}

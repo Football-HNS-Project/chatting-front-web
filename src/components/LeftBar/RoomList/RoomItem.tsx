@@ -62,9 +62,16 @@ export const RoomItem = ({ room, isActive, onRoomClick }: RoomItemProps) => {
             <span className="text-xs text-gray-400">{formattedDate}</span>
           )}
         </div>
-        <p className="mt-1 truncate text-sm text-gray-600">
-          {room.latestMessage?.plainText || "No messages yet"}
-        </p>
+        <div className="mt-1 flex items-center justify-between">
+          <p className="truncate text-sm text-gray-600">
+            {room.latestMessage?.plainText || "No messages yet"}
+          </p>
+          {room.unread > 0 && !isHovered && (
+            <span className="ml-2 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-blue-500 text-xs font-medium text-white">
+              {room.unread > 99 ? "99+" : room.unread}
+            </span>
+          )}
+        </div>
       </div>
 
       {(isHovered || showPopover) && (

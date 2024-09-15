@@ -1,43 +1,43 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useParams } from "react-router-dom";
 
 import dayjs from "dayjs";
-import { useAtom } from "jotai";
+import { useAtomValue } from "jotai";
 
 import { useGetMessages } from "@apis/Chat/useGetMessages";
 
 import { changeDate } from "@utils/changeDate";
+import { checkDisplayProfile } from "@utils/checkDisplayProfile";
+import { groupMessagesByDate } from "@utils/groupMessagesByDate";
+
+import { useWebSocketSubscription } from "@hooks/useWebSocketSubscription";
 
 import { TChatMessageDetail } from "@typings/Chat";
-import { TUser } from "@typings/User";
+import { CreateMessageEvent } from "@typings/WebsocketMessage.type";
+import { CallbackProps } from "@typings/WebsocketProvider.type";
 
 import { MyInfoAtom } from "@stores/UserStore";
 
-const checkDisplayProfile = (
-  messages: TChatMessageDetail[],
-  currentMessage: TChatMessageDetail,
-  index: number,
-  currentUser: TUser | null
-) => {
-  if (currentMessage.sender.id === currentUser?.id) return false;
-  if (index === 0) return true;
-  const prevMessage = messages[index - 1];
-  return prevMessage.sender.id !== currentMessage.sender.id;
-};
+import { MessageItem } from "./MessageItem";
 
-export const ChatMessage = () => {
-  const { id } = useParams<{ id: string }>();
+export const ChatMessage: React.FC = () => {
+  const { id: roomId } = useParams<{ id: string }>();
   const [messages, setMessages] = useState<TChatMessageDetail[]>([]);
   const { data } = useGetMessages({
-    roomId: id ?? "",
+    roomId: roomId ?? "",
     direction: "desc",
     messageId: null,
   });
-  const [user] = useAtom(MyInfoAtom);
-  const messageEndRef = useRef<HTMLDivElement>(null);
+  const myInfo = useAtomValue(MyInfoAtom);
   const containerRef = useRef<HTMLDivElement>(null);
+  const standardMessageRef = useRef<HTMLDivElement>(null);
+  const lastMessageIdRef = useRef<string | null>(null);
+  const [shouldScrollToBottom, setShouldScrollToBottom] = useState(true);
 
+  /**
+   * 메세지 데이터 로드 및 초기 스크롤 위치 설정
+   */
   useEffect(() => {
     if (data) {
       const allMessages = [
@@ -46,30 +46,84 @@ export const ChatMessage = () => {
         ...(data.afterMessages.length > 0 ? data.afterMessages : []),
       ];
       setMessages(allMessages);
+      if (allMessages.length > 0) {
+        lastMessageIdRef.current = allMessages[allMessages.length - 1].id;
+      }
+
+      // 메시지가 로드된 후 스크롤 위치 조정
+      setTimeout(() => {
+        if (standardMessageRef.current && containerRef.current) {
+          containerRef.current.scrollTop =
+            standardMessageRef.current.offsetTop -
+            containerRef.current.offsetHeight / 2;
+        }
+      }, 0);
     }
   }, [data]);
 
-  useEffect(() => {
+  /**
+   * 새 메세지 처리 함수
+   */
+  const handleNewMessage = useCallback(
+    (data: CallbackProps) => {
+      const newMessage = data as CreateMessageEvent["data"];
+      if (
+        newMessage.roomId === roomId &&
+        newMessage.id !== lastMessageIdRef.current
+      ) {
+        setMessages((prevMessages) => {
+          if (prevMessages.some((msg) => msg.id === newMessage.id)) {
+            return prevMessages;
+          }
+          lastMessageIdRef.current = newMessage.id;
+          return [...prevMessages, newMessage];
+        });
+      }
+    },
+    [roomId]
+  );
+
+  /**
+   * 스크롤 이벤트 핸들러
+   */
+  const handleScroll = useCallback(() => {
     if (containerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
+      const isAtBottom = scrollHeight - scrollTop - clientHeight < 1;
+      setShouldScrollToBottom(isAtBottom);
+    }
+  }, []);
+
+  /**
+   * 스크롤 이벤트 리스너 등록
+   */
+  useEffect(() => {
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener("scroll", handleScroll);
+      return () => container.removeEventListener("scroll", handleScroll);
+    }
+  }, [handleScroll]);
+
+  /**
+   * 새 메세지 도착 시 스크롤 조정
+   */
+  useEffect(() => {
+    if (shouldScrollToBottom && containerRef.current) {
       containerRef.current.scrollTop = containerRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, shouldScrollToBottom]);
 
-  const groupMessagesByDate = (messages: TChatMessageDetail[]) => {
-    return messages.reduce(
-      (acc, message) => {
-        const date = dayjs(message.createdAt).format("YYYY년 M월 d일");
-        if (!acc[date]) {
-          acc[date] = [];
-        }
-        acc[date].push(message);
-        return acc;
-      },
-      {} as Record<string, TChatMessageDetail[]>
-    );
-  };
+  /**
+   * websocket 구독 설정
+   */
+  useWebSocketSubscription("MESSAGE_CREATED", handleNewMessage);
 
-  const groupedMessages = groupMessagesByDate(messages);
+  // 메시지 그룹화 (메모이제이션 적용)
+  const groupedMessages = useMemo(
+    () => groupMessagesByDate(messages),
+    [messages]
+  );
 
   return (
     <div
@@ -82,67 +136,25 @@ export const ChatMessage = () => {
             {date}
           </div>
           {dayMessages.map((message, index) => {
-            const displayProfile = checkDisplayProfile(
-              dayMessages,
-              message,
-              index,
-              user
-            );
-            const isCurrentUser = message.sender.id === user?.id;
-            const isSystemMessage = message.senderType === "SYSTEM";
-            // const timeValue = dayjs(message.createdAt).format("HH:mm");
-            const timeValue = changeDate(dayjs(message.createdAt));
-
-            if (isSystemMessage) {
-              return (
-                <div key={message.id} className="flex justify-center">
-                  <span className="rounded-3xl bg-slate-200 px-6 py-1 text-[14px]">
-                    {message.plainText}
-                  </span>
-                </div>
-              );
-            }
-
             return (
-              <div
+              <MessageItem
                 key={message.id}
-                className={`flex ${
-                  isCurrentUser
-                    ? "flex-row-reverse self-end"
-                    : "flex-row self-start"
-                } mt-1`}
-              >
-                <div className="flex">
-                  {displayProfile && !isCurrentUser ? (
-                    <div className="h-[40px] w-[40px] rounded-3xl bg-slate-400" />
-                  ) : !isCurrentUser ? (
-                    <div className="w-[40px]" />
-                  ) : null}
-                  <div className="ml-[5px]">
-                    {displayProfile && !isCurrentUser && (
-                      <p className="mb-[5px] text-xl">{message.sender.name}</p>
-                    )}
-                    <div
-                      className={`${
-                        isCurrentUser ? "bg-green-300" : "bg-gray-200"
-                      } max-w-[484px] rounded-2xl p-[8px] text-[14px]`}
-                    >
-                      {message.plainText.split("\n").map((line, i) => (
-                        <span key={i}>
-                          {line}
-                          <br />
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                <div className="mx-2 self-end text-[10px]">{timeValue}</div>
-              </div>
+                message={message}
+                isCurrentUser={message.sender.id === myInfo?.id}
+                displayProfile={checkDisplayProfile(
+                  dayMessages,
+                  message,
+                  index,
+                  myInfo
+                )}
+                isStandardMessage={message.id === data?.standardMessage?.id}
+                timeValue={changeDate(dayjs(message.createdAt))}
+                standardMessageRef={standardMessageRef}
+              />
             );
           })}
         </div>
       ))}
-      <div ref={messageEndRef} />
     </div>
   );
 };
