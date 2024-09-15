@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 
 import { instance } from "@apis/AxiosInstance";
 import { QUERY_KEYS } from "@apis/QUERY_KEYS";
@@ -21,5 +21,6 @@ export const useGetUserInfo = (params: GetUserInfoReq) => {
   return useQuery<GetUserInfoRes, TErrorRes>({
     queryKey: QUERY_KEYS.USER.userInfo(JSON.stringify(params)),
     queryFn: () => getUserInfo(params),
+    placeholderData: keepPreviousData,
   });
 };
