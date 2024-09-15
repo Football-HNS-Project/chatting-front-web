@@ -29,6 +29,7 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
   );
   const myInfo = useAtomValue(MyInfoAtom);
   const [searchTerm, setSearchTerm] = useState("");
+  const [roomName, setRoomName] = useState("");
   const { mutate } = useCreateRoom();
 
   const handleUserToggle = (user: Omit<TUser, "email">) => {
@@ -40,9 +41,12 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
   };
 
   const handleCreate = () => {
+    const finalRoomName =
+      roomName.trim() ||
+      [myInfo?.name, ...selectedUsers.map((v) => v.name)].join(", ");
     mutate(
       {
-        name: selectedUsers.map((v) => v.name).join(", "),
+        name: finalRoomName,
         memberIds: selectedUsers.map((v) => v.id),
         roomType: selectedUsers.length === 1 ? "DIRECT" : "GROUP",
       },
@@ -60,6 +64,18 @@ export const CreateRoomModal: React.FC<CreateRoomModalProps> = ({
   return (
     <div className="flex h-[600px] w-[400px] flex-col items-center rounded-lg bg-white p-8 shadow-2xl">
       <h2 className="mb-4 text-xl font-bold text-gray-800">채팅방 생성</h2>
+
+      {/* 채팅방 이름 입력 필드 */}
+      <div className="mb-4 w-full">
+        <input
+          type="text"
+          placeholder="채팅방 이름 입력 (선택사항)"
+          value={roomName}
+          onChange={(e) => setRoomName(e.target.value)}
+          className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-gray-700"
+        />
+      </div>
+
       <div className="mb-2 self-start text-sm text-gray-500">
         초대할 사용자 {selectedUsers.length}명 선택됨
       </div>
