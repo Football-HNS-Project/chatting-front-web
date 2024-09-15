@@ -6,6 +6,7 @@ import { EllipsisVertical } from "lucide-react";
 import { TRoom } from "@typings/Room";
 
 import { RoomPopover } from "./RoomPopover";
+import { UnreadCountBadge } from "./UnreadCountBadge";
 
 type RoomItemProps = {
   room: TRoom;
@@ -67,9 +68,7 @@ export const RoomItem = ({ room, isActive, onRoomClick }: RoomItemProps) => {
             {room.latestMessage?.plainText || "No messages yet"}
           </p>
           {room.unread > 0 && !isHovered && (
-            <span className="ml-2 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-blue-500 text-xs font-medium text-white">
-              {room.unread > 99 ? "99+" : room.unread}
-            </span>
+            <UnreadCountBadge unread={room.unread} />
           )}
         </div>
       </div>
