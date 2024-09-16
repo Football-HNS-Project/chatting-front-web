@@ -12,6 +12,7 @@ import { TRoom } from "@typings/Room";
 import {
   CreateMessageEvent,
   CreateRoomEvent,
+  UpdateRoomEvent,
 } from "@typings/WebsocketMessage.type";
 import { CallbackProps } from "@typings/WebsocketProvider.type";
 
@@ -109,8 +110,23 @@ export const RoomList: React.FC = () => {
     [roomId, setRoomList]
   );
 
+  const handleRoomChange = useCallback(
+    (data: CallbackProps) => {
+      const changedRoom = data as UpdateRoomEvent["data"];
+      setRoomList((prevRooms) =>
+        prevRooms.map((room) =>
+          room.id === changedRoom.id
+            ? { ...room, memberIds: changedRoom.memberIds }
+            : room
+        )
+      );
+    },
+    [setRoomList]
+  );
+
   useWebSocketSubscription("MESSAGE_CREATED", handleNewMessage);
   useWebSocketSubscription("ROOM_CREATED", handleRoomCreate);
+  useWebSocketSubscription("ROOM_CHANGED", handleRoomChange);
 
   if (isLoading) return <Spinner />;
   if (error) throw error;

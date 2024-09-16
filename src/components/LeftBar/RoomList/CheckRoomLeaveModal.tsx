@@ -27,8 +27,8 @@ export const CheckRoomLeaveModal = ({
       { roomId },
       {
         onSuccess: () => {
+          queryClient.refetchQueries({ queryKey: QUERY_KEYS.ROOM.all() });
           closeModal();
-          queryClient.refetchQueries({ queryKey: QUERY_KEYS.ROOM.list() });
           if (currentRoomId === roomId) {
             navigate("/room");
           }
