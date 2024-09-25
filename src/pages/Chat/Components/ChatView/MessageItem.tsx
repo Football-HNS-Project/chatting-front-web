@@ -30,6 +30,27 @@ export const MessageItem: React.FC<{
       );
     }
 
+    const renderMessageContent = () => {
+      if (message.messageType === "IMAGE" && message.files.length > 0) {
+        return (
+          <img
+            src={message.files[0].url}
+            alt="Sent image"
+            className="max-h-[300px] max-w-[300px] rounded-2xl object-contain"
+          />
+        );
+      }
+      return (
+        <div
+          className={`${
+            isCurrentUser ? "bg-green-300" : "bg-gray-200"
+          } overflow-wrap-anywhere w-fit max-w-[484px] whitespace-pre-wrap break-words rounded-2xl p-[8px] text-[14px]`}
+        >
+          {message.plainText}
+        </div>
+      );
+    };
+
     return (
       <div
         ref={isStandardMessage ? standardMessageRef : null}
@@ -48,13 +69,7 @@ export const MessageItem: React.FC<{
             {displayProfile && !isCurrentUser && (
               <p className="mb-[5px]">{message.sender.name}</p>
             )}
-            <div
-              className={`${
-                isCurrentUser ? "bg-green-300" : "bg-gray-200"
-              } overflow-wrap-anywhere w-fit max-w-[484px] whitespace-pre-wrap break-words rounded-2xl p-[8px] text-[14px]`}
-            >
-              {message.plainText}
-            </div>
+            {renderMessageContent()}
           </div>
         </div>
         {showTime && (
