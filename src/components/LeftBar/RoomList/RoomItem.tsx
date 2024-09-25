@@ -44,9 +44,7 @@ export const RoomItem = ({ room, isActive, onRoomClick }: RoomItemProps) => {
     >
       <img
         width={48}
-        height={48}
-        className="rounded-full border border-gray-200 object-cover"
-        src="/src/assets/HNS.png"
+        src="/src/assets/chat-logo.png"
         alt={`${room.name} icon`}
       />
       <div className="flex-grow overflow-hidden">

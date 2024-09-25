@@ -60,7 +60,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     ws.current.onclose = (event) => {
       setIsReady(false);
       console.log(`WebSocket connection closed: ${event.code} ${event.reason}`);
-      // Attempt to reconnect after a delay
+      // TODO: Attempt to reconnect after a delay
       // setTimeout(connect, 5000);
     };
 

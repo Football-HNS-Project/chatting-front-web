@@ -12,7 +12,7 @@ export const Gnb: React.FC = () => {
         className="text-gray-50-600 cursor-pointer text-3xl font-bold transition-colors duration-200 hover:text-gray-700"
         onClick={() => navigate("/")}
       >
-        HNS
+        CHAT
       </div>
 
       {/* 유저 정보 */}

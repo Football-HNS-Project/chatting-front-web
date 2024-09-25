@@ -4,7 +4,7 @@ import { useCookies } from "react-cookie";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
-import HNS from "@assets/HNS.png";
+import LOGO from "@assets/chat-logo.png";
 
 import { usePostLogin } from "@apis/Auth/usePostLogin";
 import { instance } from "@apis/AxiosInstance";
@@ -123,8 +123,7 @@ export const LoginPage = () => {
 
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center gap-5">
-      <img src={HNS} width={200} height={200} alt="Logo" />
-      <span className="text-xl">로그인</span>
+      <img src={LOGO} width={200} height={200} alt="Logo" />
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
         <InputField
           name="username"
