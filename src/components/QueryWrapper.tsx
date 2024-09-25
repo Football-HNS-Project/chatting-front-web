@@ -15,7 +15,7 @@ export function QueryWrapper<T>({ query, children }: QueryWrapperProps<T>) {
   if (isLoading) return <Spinner />;
 
   if (error) {
-    throw error; // 이 에러는 상위의 ErrorBoundary에 의해 잡힙니다.
+    throw error;
   }
 
   if (!data) {

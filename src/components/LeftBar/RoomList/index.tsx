@@ -28,7 +28,6 @@ export const RoomList: React.FC = () => {
   const { id: roomId } = useParams<{ id?: string }>();
   const [roomList, setRoomList] = useAtom(RoomListAtom);
   const { data, isLoading, error } = useGetRooms();
-  // const { isReady, subscribe, unsubscribe } = useContext(WebSocketContext);
   const lastMessageRef = useRef<{ [roomId: string]: string }>({});
 
   const handleRoomClick = (roomId: string) => {

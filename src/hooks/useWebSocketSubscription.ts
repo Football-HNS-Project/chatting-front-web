@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect } from "react";
+import { useCallback, useContext, useEffect, useRef } from "react";
 
 import { CallbackProps, TSocketMessage } from "@typings/WebsocketProvider.type";
 
@@ -9,23 +9,22 @@ export const useWebSocketSubscription = (
   callback: (data: CallbackProps) => void
 ) => {
   const { isReady, subscribe, unsubscribe } = useContext(WebSocketContext);
-
-  const memoizedCallback = useCallback(callback, [callback]);
+  const callbackRef = useRef(callback);
 
   useEffect(() => {
-    if (isReady) {
-      console.log(`Subscribing to ${channel}`);
-      subscribe({
-        channel,
-        callbackFn: memoizedCallback,
-      });
-    }
+    callbackRef.current = callback;
+  }, [callback]);
+
+  const wrappedCallback = useCallback((data: CallbackProps) => {
+    callbackRef.current(data);
+  }, []);
+
+  useEffect(() => {
+    if (!isReady) return;
+    subscribe({ channel, callbackFn: wrappedCallback });
 
     return () => {
-      if (isReady) {
-        console.log(`Unsubscribing from ${channel}`);
-        unsubscribe({ channel });
-      }
+      unsubscribe({ channel, callbackFn: wrappedCallback });
     };
-  }, [isReady, channel, subscribe, unsubscribe, memoizedCallback]);
+  }, [isReady, channel, subscribe, unsubscribe, wrappedCallback]);
 };

@@ -18,7 +18,7 @@ export type subscribeProps = {
   callbackFn: (props: CallbackProps) => void;
 };
 
-export type unsubscribeProps = Omit<subscribeProps, "callbackFn">;
+export type unsubscribeProps = subscribeProps;
 
 export type SendRequestProps = {
   type: string;

@@ -36,15 +36,36 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
 }) => {
   const [isReady, setIsReady] = useState(false);
   const ws = useRef<WebSocket | null>(null);
+  const isConnecting = useRef(false);
   const subscribers = useRef<{
     [key: string]: Set<(data: CallbackProps) => void>;
   }>({});
+  const reconnectAttempts = useRef(0);
+
+  const reconnect = useCallback(() => {
+    if (isConnecting.current) return; // 이미 연결 시도 중이면 추가 시도를 하지 않음
+
+    const backoffTime = Math.min(1000 * 2 ** reconnectAttempts.current, 30000);
+    setTimeout(() => {
+      if (!isConnecting.current) {
+        // 타이머 실행 시점에도 연결 중이 아닌지 확인
+        connect();
+        reconnectAttempts.current++;
+      }
+    }, backoffTime);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const connect = useCallback(() => {
+    if (isConnecting.current || ws.current?.readyState === WebSocket.OPEN)
+      return;
+
+    isConnecting.current = true;
     const accessToken = localStorage.getItem("accessToken");
 
     if (!accessToken) {
       console.error("No access token found. Unable to connect to WebSocket.");
+      isConnecting.current = false;
       return;
     }
 
@@ -54,17 +75,22 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
 
     ws.current.onopen = () => {
       setIsReady(true);
-      console.log("WebSocket connection opened");
+      reconnectAttempts.current = 0;
+      isConnecting.current = false;
+      console.log("⭐️ WebSocket connection opened ⭐️");
     };
 
     ws.current.onclose = (event) => {
       setIsReady(false);
+      isConnecting.current = false;
       console.log(`WebSocket connection closed: ${event.code} ${event.reason}`);
-      setTimeout(connect, 5000);
+      reconnect();
     };
 
     ws.current.onerror = (error) => {
-      console.error("WebSocket error:", error);
+      console.error("❌ WebSocket error:", error);
+      setIsReady(false);
+      isConnecting.current = false;
     };
 
     ws.current.onmessage = (event: MessageEvent) => {
@@ -72,11 +98,6 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         const message: TSocketMessage = JSON.parse(event.data);
         const channel = message.type;
         if (subscribers.current[channel]) {
-          console.log(
-            "Subscribers for channel:",
-            channel,
-            subscribers.current[channel]
-          );
           subscribers.current[channel].forEach((callback) =>
             callback(message.data)
           );
@@ -85,7 +106,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
         console.error("Error processing WebSocket message:", error);
       }
     };
-  }, []);
+  }, [reconnect]);
 
   useEffect(() => {
     connect();
@@ -94,6 +115,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
       if (ws.current) {
         ws.current.close();
       }
+      isConnecting.current = false; // cleanup 시 연결 상태 초기화
     };
   }, [connect]);
 
@@ -111,20 +133,27 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     if (!subscribers.current[channel]) {
       subscribers.current[channel] = new Set();
     }
-    subscribers.current[channel].add(callbackFn);
-    console.log(
-      `Subscribed to ${channel}. Total subscribers:`,
-      subscribers.current[channel].size
-    );
+
+    subscribers.current[channel]!.add(callbackFn);
+    console.log(`⭕️ ${channel} 구독. Total subscribers:`, subscribers.current);
   }, []);
 
   // 구독 해제 함수
-  const unsubscribe = useCallback(({ channel }: unsubscribeProps) => {
-    if (subscribers.current[channel]) {
-      delete subscribers.current[channel];
-      console.log(`Unsubscribed from ${channel}. Channel removed.`);
-    }
-  }, []);
+  const unsubscribe = useCallback(
+    ({ channel, callbackFn }: unsubscribeProps) => {
+      if (subscribers.current[channel]) {
+        subscribers.current[channel]!.delete(callbackFn);
+        if (subscribers.current[channel]!.size === 0) {
+          delete subscribers.current[channel];
+        }
+        console.log(
+          `❌ ${channel} 구독 해제. Total subscribers:`,
+          subscribers.current
+        );
+      }
+    },
+    []
+  );
 
   // 웹소켓 요청 함수
   const sendRequest = useCallback(
