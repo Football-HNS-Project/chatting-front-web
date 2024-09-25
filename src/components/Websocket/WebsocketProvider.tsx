@@ -60,8 +60,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     ws.current.onclose = (event) => {
       setIsReady(false);
       console.log(`WebSocket connection closed: ${event.code} ${event.reason}`);
-      // TODO: Attempt to reconnect after a delay
-      // setTimeout(connect, 5000);
+      setTimeout(connect, 5000);
     };
 
     ws.current.onerror = (error) => {
@@ -98,6 +97,16 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     };
   }, [connect]);
 
+  // 메모리 누수 방지
+  const cleanup = useCallback(() => {
+    subscribers.current = {};
+  }, []);
+
+  useEffect(() => {
+    return cleanup;
+  }, [cleanup]);
+
+  // 구독 함수
   const subscribe = useCallback(({ channel, callbackFn }: subscribeProps) => {
     if (!subscribers.current[channel]) {
       subscribers.current[channel] = new Set();
@@ -109,6 +118,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     );
   }, []);
 
+  // 구독 해제 함수
   const unsubscribe = useCallback(({ channel }: unsubscribeProps) => {
     if (subscribers.current[channel]) {
       delete subscribers.current[channel];
@@ -116,6 +126,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     }
   }, []);
 
+  // 웹소켓 요청 함수
   const sendRequest = useCallback(
     (props: SendRequestProps) => {
       if (ws.current?.readyState === WebSocket.OPEN) {
@@ -128,6 +139,7 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     [connect]
   );
 
+  // 하트비트 주기 설정
   useHeartbeatInterval(
     () => {
       sendRequest({ type: "HEART_BEAT" });
