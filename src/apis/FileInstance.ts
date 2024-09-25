@@ -1,0 +1,13 @@
+import axios, { AxiosInstance } from "axios";
+
+import { setInterceptors } from "@apis/AxiosInterceptors";
+
+const createInstance = (): AxiosInstance => {
+  const instance = axios.create({
+    baseURL: `${import.meta.env.VITE_FILE_SERVER}/chat`,
+    withCredentials: true,
+  });
+  return setInterceptors(instance);
+};
+
+export const fileInstance = createInstance();

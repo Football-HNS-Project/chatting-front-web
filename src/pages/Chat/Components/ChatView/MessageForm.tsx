@@ -1,13 +1,24 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { useParams } from "react-router-dom";
 
+import { Paperclip } from "lucide-react";
+
 import { useCreateMessage } from "@apis/Chat/useCreateMessage";
+import { useGetFileUrl } from "@apis/Chat/useGetFileUrl";
+
+import { useModal } from "@components/Modal/useModal";
+
+import { FilePreviewModal } from "./FilePreviewModal";
 
 export const MessageForm = () => {
   const [inputMessage, setInputMessage] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { id } = useParams<{ id: string }>();
   const { mutate } = useCreateMessage();
+  const { mutate: mutateFile } = useGetFileUrl();
+  const { showCustomModal, closeCustomModal } = useModal();
+
   const handleSubmit = (
     e:
       | React.FormEvent<HTMLFormElement>
@@ -32,6 +43,71 @@ export const MessageForm = () => {
         },
       }
     );
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const file = e.target.files[0];
+      mutateFile(
+        { fileName: file.name, contentType: file.type, fileSize: file.size },
+        {
+          onSuccess: (data) => {
+            if (data.preSignedUrl) {
+              showCustomModal({
+                displayComponent: (
+                  <FilePreviewModal
+                    closeModal={() => {
+                      closeCustomModal();
+                      if (fileInputRef.current) {
+                        fileInputRef.current.value = "";
+                      }
+                    }}
+                    handleSend={() => {
+                      mutate(
+                        {
+                          roomId: id ?? "",
+                          messageInfo: {
+                            plainText: "",
+                            messageType: file.type.startsWith("image/")
+                              ? "IMAGE"
+                              : "FILE",
+                            options: [],
+                            files: [
+                              {
+                                name: file.name,
+                                mimeType: file.type,
+                                size: file.size,
+                                url: data.fileUrl,
+                              },
+                            ],
+                            replyTo: null,
+                          },
+                        },
+                        {
+                          onSuccess: () => {
+                            if (fileInputRef.current) {
+                              fileInputRef.current.value = "";
+                            }
+                            closeCustomModal();
+                            if (fileInputRef.current) {
+                              fileInputRef.current.value = "";
+                            }
+                          },
+                        }
+                      );
+                    }}
+                    file={file}
+                    preSignedUrl={data.preSignedUrl}
+                  />
+                ),
+                isBackDrop: false,
+              });
+            }
+            console.log(data);
+          },
+        }
+      );
+    }
   };
 
   return (
@@ -60,9 +136,19 @@ export const MessageForm = () => {
       />
       <div className="mx-[10px] my-[8px] flex justify-between">
         <div className="flex items-center gap-[12px]">
-          <div className="flex h-[32px] w-[32px] bg-slate-500" />
-          <div className="flex h-[32px] w-[32px] bg-slate-500" />
-          <div className="flex h-[32px] w-[32px] bg-slate-500" />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="flex h-[32px] w-[32px] items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300"
+          >
+            <Paperclip size={20} />
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            onChange={handleFileChange}
+            className="hidden"
+          />
         </div>
         <button
           type="submit"

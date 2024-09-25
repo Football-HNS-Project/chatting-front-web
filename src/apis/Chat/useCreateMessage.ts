@@ -4,14 +4,17 @@ import { instance } from "@apis/AxiosInstance";
 import { QUERY_KEYS } from "@apis/QUERY_KEYS";
 
 import { TErrorRes } from "@typings/Axios";
-import { TChatMessageDetail } from "@typings/Chat";
+import { TFile, TMessageType } from "@typings/Chat";
 
 type CreateMessageReq = {
   roomId: string;
-  messageInfo: Pick<
-    TChatMessageDetail,
-    "messageType" | "plainText" | "files" | "options" | "replyTo"
-  >;
+  messageInfo: {
+    plainText: string;
+    messageType: TMessageType;
+    options: string[];
+    files: Pick<TFile, "name" | "size" | "mimeType" | "url">[];
+    replyTo: string | null;
+  };
 };
 
 type CreateMessageRes = object;

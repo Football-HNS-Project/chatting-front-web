@@ -35,6 +35,7 @@ export const QUERY_KEYS = {
   },
   CHAT: {
     all: () => ["chat"],
+    fileUrl: () => [...QUERY_KEYS.CHAT.all(), "file_url"],
     messages: (params: string) => [
       ...QUERY_KEYS.CHAT.all(),
       "messages",

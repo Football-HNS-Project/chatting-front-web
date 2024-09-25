@@ -1,3 +1,5 @@
+import { Dayjs } from "dayjs";
+
 import { TUser } from "@typings/User";
 
 export type TChatMessageDetail = {
@@ -15,13 +17,13 @@ export type TChatMessageDetail = {
   replyTo: string | null;
 };
 
-type TFile = {
+export type TFile = {
   id: string;
   name: string;
   size: number;
-  mimType: string;
+  mimeType: string;
   url: string;
-  uploadedAt: Date;
+  uploadedAt: Dayjs;
 };
 
 export type TLastMessage = {
