@@ -20,13 +20,13 @@ export const LeftBar = () => {
   const myInfo = useAtomValue(MyInfoAtom);
   const navigate = useNavigate();
   const { showCustomModal, closeCustomModal } = useModal();
-  const currenPath = location.pathname.split("/")[1] as "user" | "room";
 
   useEffect(() => {
-    setTab(currenPath);
-  }, [currenPath, setTab]);
+    const path = location.pathname.split("/")[1];
+    setTab(path === "user" ? "user" : "room");
+  }, [setTab]);
 
-  if (!myInfo) return;
+  if (!myInfo) return null;
 
   return (
     <nav className="flex w-[350px] min-w-[350px] flex-col overflow-hidden border-r border-gray-200 bg-white shadow-lg">
