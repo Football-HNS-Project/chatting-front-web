@@ -72,7 +72,6 @@ export const RoomList: React.FC = () => {
 
   const handleNewMessage = useCallback(
     (data: CallbackProps) => {
-      console.log({ data });
       const message = data as CreateMessageEvent["data"];
       setRoomList((prevRooms) => {
         const updatedRooms = prevRooms.map((room) => {

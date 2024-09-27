@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 
-import { fileInstance } from "@apis/FileInstance";
+import { instance } from "@apis/AxiosInstance";
 import { QUERY_KEYS } from "@apis/QUERY_KEYS";
 
 import { TErrorRes } from "@typings/Axios";
@@ -17,7 +17,7 @@ type GetFileUrlRes = {
 };
 
 const getFileUrl = async (params: GetFileUrlReq) => {
-  return await fileInstance.post<GetFileUrlReq, GetFileUrlRes>(
+  return await instance.post<GetFileUrlReq, GetFileUrlRes>(
     "/files/upload-url",
     params
   );
