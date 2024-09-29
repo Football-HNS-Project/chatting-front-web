@@ -41,9 +41,15 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
     [key: string]: Set<(data: CallbackProps) => void>;
   }>({});
   const reconnectAttempts = useRef(0);
+  const MAX_RECONNECT_ATTEMPTS = 2;
 
   const reconnect = useCallback(() => {
     if (isConnecting.current) return; // 이미 연결 시도 중이면 추가 시도를 하지 않음
+
+    if (reconnectAttempts.current >= MAX_RECONNECT_ATTEMPTS) {
+      console.log("웹소켓 최대 연결 횟수 도달... 연결 중지");
+      return;
+    }
 
     const backoffTime = Math.min(1000 * 2 ** reconnectAttempts.current, 30000);
     setTimeout(() => {
@@ -95,12 +101,27 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
 
     ws.current.onmessage = (event: MessageEvent) => {
       try {
-        const message: TSocketMessage = JSON.parse(event.data);
+        // const message: TSocketMessage = JSON.parse(event.data);
+        // const channel = message.type;
+        // if (subscribers.current[channel]) {
+        //   subscribers.current[channel].forEach((callback) =>
+        //     callback(message.data)
+        //   );
+        // }
+        const message: TSocketMessage & { error?: boolean } = JSON.parse(
+          event.data
+        );
+        console.log("FEFWEWEFEW", message);
         const channel = message.type;
+        const isError = !!message.error; // 'error' 필드의 존재 여부로 에러 판단
         if (subscribers.current[channel]) {
           subscribers.current[channel].forEach((callback) =>
             callback(message.data)
           );
+        }
+
+        if (isError) {
+          console.error("Received error message:", message);
         }
       } catch (error) {
         console.error("Error processing WebSocket message:", error);
