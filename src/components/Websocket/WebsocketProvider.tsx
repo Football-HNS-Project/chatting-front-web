@@ -81,7 +81,6 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
 
     ws.current.onopen = () => {
       setIsReady(true);
-      reconnectAttempts.current = 0;
       isConnecting.current = false;
       console.log("⭐️ WebSocket connection opened ⭐️");
     };
@@ -101,27 +100,17 @@ export const WebsocketProvider: React.FC<WebsocketProviderProps> = ({
 
     ws.current.onmessage = (event: MessageEvent) => {
       try {
-        // const message: TSocketMessage = JSON.parse(event.data);
-        // const channel = message.type;
-        // if (subscribers.current[channel]) {
-        //   subscribers.current[channel].forEach((callback) =>
-        //     callback(message.data)
-        //   );
-        // }
-        const message: TSocketMessage & { error?: boolean } = JSON.parse(
-          event.data
-        );
-        console.log("FEFWEWEFEW", message);
+        const message: TSocketMessage = JSON.parse(event.data);
         const channel = message.type;
-        const isError = !!message.error; // 'error' 필드의 존재 여부로 에러 판단
         if (subscribers.current[channel]) {
           subscribers.current[channel].forEach((callback) =>
             callback(message.data)
           );
         }
-
-        if (isError) {
-          console.error("Received error message:", message);
+        if (subscribers.current[channel]) {
+          subscribers.current[channel].forEach((callback) =>
+            callback(message.data)
+          );
         }
       } catch (error) {
         console.error("Error processing WebSocket message:", error);
