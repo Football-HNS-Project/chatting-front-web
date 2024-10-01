@@ -21,10 +21,10 @@ export const LeftBar = () => {
   const navigate = useNavigate();
   const { showCustomModal, closeCustomModal } = useModal();
 
+  const path = location.pathname.split("/")[1];
   useEffect(() => {
-    const path = location.pathname.split("/")[1];
     setTab(path === "user" ? "user" : "room");
-  }, [setTab]);
+  }, [path, setTab]);
 
   if (!myInfo) return null;
 
