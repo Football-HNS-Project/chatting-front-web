@@ -49,7 +49,12 @@ export const MessageForm = () => {
     if (e.target.files) {
       const file = e.target.files[0];
       mutateFile(
-        { fileName: file.name, contentType: file.type, fileSize: file.size },
+        {
+          fileName: file.name,
+          contentType: file.type,
+          fileSize: file.size,
+          metadata: new Map(),
+        },
         {
           onSuccess: (data) => {
             if (data.preSignedUrl) {

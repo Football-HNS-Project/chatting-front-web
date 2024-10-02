@@ -9,6 +9,7 @@ type GetFileUrlReq = {
   fileName: File["name"];
   contentType: File["type"];
   fileSize: File["size"];
+  metadata: Map<string, object>;
 };
 
 type GetFileUrlRes = {
