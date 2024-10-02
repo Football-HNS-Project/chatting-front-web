@@ -11,8 +11,10 @@ import { changeDate } from "@utils/changeDate";
 import { checkDisplayProfile } from "@utils/checkDisplayProfile";
 import { groupMessagesByDate } from "@utils/groupMessagesByDate";
 
+import { useScrollHandler } from "@hooks/useScrollHandler";
 import { useWebSocketSubscription } from "@hooks/useWebSocketSubscription";
 
+// New import
 import { TChatMessageDetail } from "@typings/Chat";
 import { CreateMessageEvent } from "@typings/WebsocketMessage.type";
 import { CallbackProps } from "@typings/WebsocketProvider.type";
@@ -30,14 +32,23 @@ export const ChatMessage: React.FC = () => {
     messageId: null,
   });
   const myInfo = useAtomValue(MyInfoAtom);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const standardMessageRef = useRef<HTMLDivElement>(null);
   const lastMessageIdRef = useRef<string | null>(null);
-  const [shouldScrollToBottom, setShouldScrollToBottom] = useState(true);
+  const {
+    containerRef,
+    standardMessageRef,
+    loadMoreRef,
+    inView,
+    shouldScrollToBottom,
+    scrollToStandardMessage,
+    scrollToBottom,
+  } = useScrollHandler();
 
-  /**
-   * 메세지 데이터 로드 및 초기 스크롤 위치 설정
-   */
+  useEffect(() => {
+    if (inView && data?.hasPreviousMessages) {
+      console.log("FFFFFFF");
+    }
+  }, [inView, data?.hasPreviousMessages]);
+
   useEffect(() => {
     if (data) {
       const allMessages = [
@@ -50,20 +61,10 @@ export const ChatMessage: React.FC = () => {
         lastMessageIdRef.current = allMessages[allMessages.length - 1].id;
       }
 
-      // 메시지가 로드된 후 스크롤 위치 조정
-      setTimeout(() => {
-        if (standardMessageRef.current && containerRef.current) {
-          containerRef.current.scrollTop =
-            standardMessageRef.current.offsetTop -
-            containerRef.current.offsetHeight / 2;
-        }
-      }, 0);
+      scrollToStandardMessage();
     }
-  }, [data]);
+  }, [data, scrollToStandardMessage]);
 
-  /**
-   * 새 메세지 처리 함수
-   */
   const handleNewMessage = useCallback(
     (data: CallbackProps) => {
       const newMessage = data as CreateMessageEvent["data"];
@@ -83,43 +84,14 @@ export const ChatMessage: React.FC = () => {
     [roomId]
   );
 
-  /**
-   * 스크롤 이벤트 핸들러
-   */
-  const handleScroll = useCallback(() => {
-    if (containerRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
-      const isAtBottom = scrollHeight - scrollTop - clientHeight < 1;
-      setShouldScrollToBottom(isAtBottom);
-    }
-  }, []);
-
-  /**
-   * 스크롤 이벤트 리스너 등록
-   */
   useEffect(() => {
-    const container = containerRef.current;
-    if (container) {
-      container.addEventListener("scroll", handleScroll);
-      return () => container.removeEventListener("scroll", handleScroll);
+    if (shouldScrollToBottom) {
+      scrollToBottom();
     }
-  }, [handleScroll]);
+  }, [messages, shouldScrollToBottom, scrollToBottom]);
 
-  /**
-   * 새 메세지 도착 시 스크롤 조정
-   */
-  useEffect(() => {
-    if (shouldScrollToBottom && containerRef.current) {
-      containerRef.current.scrollTop = containerRef.current.scrollHeight;
-    }
-  }, [messages, shouldScrollToBottom]);
-
-  /**
-   * websocket 구독 설정
-   */
   useWebSocketSubscription("MESSAGE_CREATED", handleNewMessage);
 
-  // 메시지 그룹화 (메모이제이션 적용)
   const groupedMessages = useMemo(() => {
     const dateGroups = groupMessagesByDate(messages);
     return Object.entries(dateGroups).map(([date, dayMessages]) => {
@@ -146,6 +118,7 @@ export const ChatMessage: React.FC = () => {
       ref={containerRef}
       className="h-full overflow-y-auto overflow-x-hidden px-[20px] pt-[20px]"
     >
+      <h1 ref={loadMoreRef}>Load More</h1>
       {groupedMessages.map(({ date, messageGroups }) => (
         <div key={date} className="flex flex-col gap-[10px]">
           <div className="self-center rounded-xl bg-slate-200 px-4 py-1 text-sm">
