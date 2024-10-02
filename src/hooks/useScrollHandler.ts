@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef } from "react";
 
+import { useLocation } from "react-router-dom";
+
 import { TChatMessageDetail } from "@typings/Chat";
 
 type UseScrollHandlerProps = {
@@ -17,6 +19,7 @@ export const useScrollHandler = ({
   const prevScrollHeightRef = useRef<number>(0);
   const isInitialLoadRef = useRef<boolean>(true);
   const isNearBottomRef = useRef<boolean>(true);
+  const location = useLocation();
 
   const scrollToBottom = useCallback(() => {
     if (containerRef.current) {
@@ -57,6 +60,12 @@ export const useScrollHandler = ({
       }
     }
   }, [messages, scrollToBottom]);
+
+  // 채팅방 이동 시 스크롤을 맨 아래로 이동
+  useEffect(() => {
+    scrollToBottom();
+    isInitialLoadRef.current = true;
+  }, [location.pathname, scrollToBottom]);
 
   return {
     containerRef,
