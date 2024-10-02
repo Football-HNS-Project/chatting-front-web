@@ -3,6 +3,8 @@ import { useState } from "react";
 import dayjs from "dayjs";
 import { EllipsisVertical } from "lucide-react";
 
+import LOGO from "@assets/chat-logo.png";
+
 import { TRoom } from "@typings/Room";
 
 import { RoomPopover } from "./RoomPopover";
@@ -42,11 +44,7 @@ export const RoomItem = ({ room, isActive, onRoomClick }: RoomItemProps) => {
         isActive ? "bg-blue-50" : "bg-white hover:bg-gray-50"
       }`}
     >
-      <img
-        width={48}
-        src="/src/assets/chat-logo.png"
-        alt={`${room.name} icon`}
-      />
+      <img width={48} src={LOGO} alt={`${room.name}`} />
       <div className="flex-grow overflow-hidden">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
