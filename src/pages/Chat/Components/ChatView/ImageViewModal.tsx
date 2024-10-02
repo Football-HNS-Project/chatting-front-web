@@ -46,7 +46,7 @@ export const ImageViewModal: React.FC<ImageViewModalProps> = ({
   };
 
   return (
-    <div className="flex h-fit w-[700px] flex-col items-center rounded-lg bg-white shadow-2xl">
+    <div className="flex h-fit max-h-[700px] w-[400px] flex-col items-center rounded-lg bg-white shadow-2xl">
       <div className="flex w-full flex-row items-center justify-center gap-3 border-b p-2">
         <span className="font-bold">{sender.name}</span>
         <span className="text-sm text-gray-600">
