@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useParams } from "react-router-dom";
 
@@ -14,7 +14,6 @@ import { groupMessagesByDate } from "@utils/groupMessagesByDate";
 import { useScrollHandler } from "@hooks/useScrollHandler";
 import { useWebSocketSubscription } from "@hooks/useWebSocketSubscription";
 
-// New import
 import { TChatMessageDetail } from "@typings/Chat";
 import { CreateMessageEvent } from "@typings/WebsocketMessage.type";
 import { CallbackProps } from "@typings/WebsocketProvider.type";
@@ -26,69 +25,53 @@ import { MessageItem } from "./MessageItem";
 export const ChatMessage: React.FC = () => {
   const { id: roomId } = useParams<{ id: string }>();
   const [messages, setMessages] = useState<TChatMessageDetail[]>([]);
-  const { data } = useGetMessages({
+  const myInfo = useAtomValue(MyInfoAtom);
+
+  const { data, fetchPreviousMessages } = useGetMessages({
     roomId: roomId ?? "",
-    direction: "desc",
+    direction: "before",
     messageId: null,
   });
-  const myInfo = useAtomValue(MyInfoAtom);
-  const lastMessageIdRef = useRef<string | null>(null);
-  const {
-    containerRef,
-    standardMessageRef,
-    loadMoreRef,
-    inView,
-    shouldScrollToBottom,
-    scrollToStandardMessage,
-    scrollToBottom,
-  } = useScrollHandler();
 
-  useEffect(() => {
-    if (inView && data?.hasPreviousMessages) {
-      console.log("FFFFFFF");
+  const loadPreviousMessages = useCallback(async () => {
+    if (data?.hasPreviousMessages && messages.length > 0) {
+      prevScrollHeightRef.current = containerRef.current?.scrollHeight ?? 0;
+      fetchPreviousMessages(messages[0].id);
     }
-  }, [inView, data?.hasPreviousMessages]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data?.hasPreviousMessages, messages, fetchPreviousMessages]);
+
+  const { containerRef, prevScrollHeightRef } = useScrollHandler({
+    messages,
+    loadPreviousMessages,
+    hasPreviousMessages: data?.hasPreviousMessages,
+  });
 
   useEffect(() => {
     if (data) {
       const allMessages = [
-        ...(data.beforeMessages.length > 0 ? data.beforeMessages : []),
-        ...(data.standardMessage !== null ? [data.standardMessage] : []),
-        ...(data.afterMessages.length > 0 ? data.afterMessages : []),
+        ...(data.beforeMessages ?? []),
+        ...(data.standardMessage ? [data.standardMessage] : []),
+        ...(data.afterMessages ?? []),
       ];
       setMessages(allMessages);
-      if (allMessages.length > 0) {
-        lastMessageIdRef.current = allMessages[allMessages.length - 1].id;
-      }
-
-      scrollToStandardMessage();
     }
-  }, [data, scrollToStandardMessage]);
+  }, [data]);
 
   const handleNewMessage = useCallback(
     (data: CallbackProps) => {
       const newMessage = data as CreateMessageEvent["data"];
-      if (
-        newMessage.roomId === roomId &&
-        newMessage.id !== lastMessageIdRef.current
-      ) {
+      if (newMessage.roomId === roomId) {
         setMessages((prevMessages) => {
           if (prevMessages.some((msg) => msg.id === newMessage.id)) {
             return prevMessages;
           }
-          lastMessageIdRef.current = newMessage.id;
           return [...prevMessages, newMessage];
         });
       }
     },
     [roomId]
   );
-
-  useEffect(() => {
-    if (shouldScrollToBottom) {
-      scrollToBottom();
-    }
-  }, [messages, shouldScrollToBottom, scrollToBottom]);
 
   useWebSocketSubscription("MESSAGE_CREATED", handleNewMessage);
 
@@ -118,7 +101,6 @@ export const ChatMessage: React.FC = () => {
       ref={containerRef}
       className="h-full overflow-y-auto overflow-x-hidden px-[20px] pt-[20px]"
     >
-      <h1 ref={loadMoreRef}>Load More</h1>
       {groupedMessages.map(({ date, messageGroups }) => (
         <div key={date} className="flex flex-col gap-[10px]">
           <div className="self-center rounded-xl bg-slate-200 px-4 py-1 text-sm">
@@ -140,7 +122,6 @@ export const ChatMessage: React.FC = () => {
                   )}
                   isStandardMessage={message.id === data?.standardMessage?.id}
                   timeValue={changeDate(dayjs(message.createdAt))}
-                  standardMessageRef={standardMessageRef}
                   showTime={isLastInGroup}
                 />
               );

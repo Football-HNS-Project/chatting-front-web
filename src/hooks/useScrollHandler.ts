@@ -1,20 +1,38 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
-import { useInView } from "react-intersection-observer";
+import { TChatMessageDetail } from "@typings/Chat";
 
-export const useScrollHandler = () => {
+type UseScrollHandlerProps = {
+  messages: TChatMessageDetail[];
+  loadPreviousMessages: () => Promise<void>;
+  hasPreviousMessages: boolean | undefined;
+};
+
+export const useScrollHandler = ({
+  messages,
+  loadPreviousMessages,
+  hasPreviousMessages,
+}: UseScrollHandlerProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const standardMessageRef = useRef<HTMLDivElement>(null);
-  const [shouldScrollToBottom, setShouldScrollToBottom] = useState(true);
-  const { ref: loadMoreRef, inView } = useInView();
+  const prevScrollHeightRef = useRef<number>(0);
+  const isInitialLoadRef = useRef<boolean>(true);
+  const isNearBottomRef = useRef<boolean>(true);
+
+  const scrollToBottom = useCallback(() => {
+    if (containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+    }
+  }, []);
 
   const handleScroll = useCallback(() => {
     if (containerRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = containerRef.current;
-      const isAtBottom = scrollHeight - scrollTop - clientHeight < 1;
-      setShouldScrollToBottom(isAtBottom);
+      if (scrollTop === 0 && hasPreviousMessages) {
+        loadPreviousMessages();
+      }
+      isNearBottomRef.current = scrollHeight - scrollTop - clientHeight < 100;
     }
-  }, []);
+  }, [hasPreviousMessages, loadPreviousMessages]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -24,29 +42,25 @@ export const useScrollHandler = () => {
     }
   }, [handleScroll]);
 
-  const scrollToStandardMessage = useCallback(() => {
-    setTimeout(() => {
-      if (standardMessageRef.current && containerRef.current) {
-        containerRef.current.scrollTop =
-          standardMessageRef.current.offsetTop -
-          containerRef.current.offsetHeight / 2;
-      }
-    }, 0);
-  }, []);
-
-  const scrollToBottom = useCallback(() => {
+  useEffect(() => {
     if (containerRef.current) {
-      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+      if (prevScrollHeightRef.current) {
+        const newScrollHeight = containerRef.current.scrollHeight;
+        containerRef.current.scrollTop =
+          newScrollHeight - prevScrollHeightRef.current;
+        prevScrollHeightRef.current = 0;
+      } else if (isInitialLoadRef.current) {
+        scrollToBottom();
+        isInitialLoadRef.current = false;
+      } else if (isNearBottomRef.current) {
+        scrollToBottom();
+      }
     }
-  }, []);
+  }, [messages, scrollToBottom]);
 
   return {
     containerRef,
-    standardMessageRef,
-    loadMoreRef,
-    inView,
-    shouldScrollToBottom,
-    scrollToStandardMessage,
+    prevScrollHeightRef,
     scrollToBottom,
   };
 };
