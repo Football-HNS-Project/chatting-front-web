@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { useParams } from "react-router-dom";
 
-import { Archive } from "lucide-react";
+import { Archive, X } from "lucide-react";
 
 import LOGO from "@assets/chat-logo.png";
 
@@ -12,6 +12,7 @@ import { QueryWrapper } from "@components/QueryWrapper";
 import {
   Button,
   Drawer,
+  DrawerClose,
   DrawerContent,
   DrawerDescription,
   DrawerHeader,
@@ -56,19 +57,28 @@ export const RoomInfo = () => {
             open={isDrawerOpen}
             onOpenChange={setIsDrawerOpen}
           >
-            <DrawerContent position="right">
-              <div className="max-w-sm p-4">
-                <DrawerHeader>
-                  <DrawerTitle>톡서랍</DrawerTitle>
-                  <DrawerDescription>
-                    이 곳에 톡서랍의 내용을 추가하세요.
-                  </DrawerDescription>
-                </DrawerHeader>
-                <div className="mt-4">
-                  {/* 톡서랍의 내용을 여기에 추가하세요 */}
-                  <p>톡서랍의 내용이 여기에 표시됩니다.</p>
+            <DrawerContent position="right" className="flex flex-row">
+              <div className="flex-grow">
+                <div className="p-4">
+                  <DrawerHeader>
+                    <DrawerTitle>톡서랍</DrawerTitle>
+                    <DrawerDescription>
+                      이 곳에 톡서랍의 내용을 추가하세요.
+                    </DrawerDescription>
+                  </DrawerHeader>
+                  <div className="mt-4">
+                    {/* 톡서랍의 내용을 여기에 추가하세요 */}
+                    <p>톡서랍의 내용이 여기에 표시됩니다.</p>
+                  </div>
                 </div>
               </div>
+              {isDrawerOpen && (
+                <DrawerClose className="absolute -left-12 top-2">
+                  <Button variant="secondary" size="icon">
+                    <X className="h-5 w-5" />
+                  </Button>
+                </DrawerClose>
+              )}
             </DrawerContent>
           </Drawer>
         </>
