@@ -1,63 +1,53 @@
-import { useState } from "react";
+import React from "react";
 
-type FileCardProps = React.ImgHTMLAttributes<HTMLImageElement> & {
-  src: string;
-  alt: string;
-  fallbackSrc?: string;
-  layout?: "fill" | "responsive";
-  objectFit?: "contain" | "cover" | "fill" | "none" | "scale-down";
+import { DefaultExtensionType, FileIcon, defaultStyles } from "react-file-icon";
+
+import dayjs from "dayjs";
+
+import { TFile } from "@typings/Chat";
+
+type FileCardProps = {
+  file: Omit<TFile, "id" | "uploadedAt">;
 };
 
-export const FileCard: React.FC<FileCardProps> = ({
-  src,
-  alt,
-  fallbackSrc = "path/to/fallback/image.jpg",
-  layout = "responsive",
-  objectFit = "cover",
-  className,
-  ...props
-}) => {
-  const [imgSrc, setImgSrc] = useState(src);
-  const [isLoading, setIsLoading] = useState(true);
+const getFileExtension = (fileName: string): string => {
+  return fileName.split(".").pop()?.toLowerCase() || "";
+};
 
-  const handleError = () => {
-    setImgSrc(fallbackSrc);
-  };
+const formatFileSize = (bytes: number): string => {
+  if (bytes < 1024) return bytes + " B";
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+  return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+};
 
-  const handleLoad = () => {
-    setIsLoading(false);
-  };
+const isValidExtension = (
+  extension: string
+): extension is DefaultExtensionType => {
+  return extension in defaultStyles;
+};
 
-  const getWrapperClass = () => {
-    if (layout === "fill") return "absolute inset-0";
-    if (layout === "responsive") return "relative w-full h-0 pb-[100%]"; // 1:1 aspect ratio
-    return "";
-  };
-
-  const getImageClass = () => {
-    let classes = "transition-opacity duration-300 ";
-    classes += isLoading ? "opacity-0" : "opacity-100";
-    if (layout === "fill" || layout === "responsive")
-      classes += " absolute inset-0 w-full h-full";
-    classes += ` object-${objectFit}`;
-    return classes;
-  };
+export const FileCard: React.FC<FileCardProps> = ({ file }) => {
+  const extension = getFileExtension(file.name);
+  const validExtension = isValidExtension(extension) ? extension : "txt";
 
   return (
-    <div className={`${getWrapperClass()} ${className || ""}`}>
-      {isLoading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-200">
-          <span className="text-gray-500">Loading...</span>
+    <div className="flex h-full flex-col gap-4 border p-4">
+      <div className="w-[50px]">
+        <FileIcon
+          extension={validExtension}
+          {...defaultStyles[validExtension]}
+        />
+      </div>
+      <div className="flex flex-col justify-between gap-3">
+        <div className="flex flex-col">
+          <h3 className="truncate text-sm font-medium">{file.name}</h3>
+          {/* TODO 24.10.07 : 추후 유효기간 필드로 변경 */}
+          <p className="text-xs text-gray-400">
+            유효기간: {dayjs().format("YYYY.MM.DD")}
+          </p>
         </div>
-      )}
-      <img
-        src={imgSrc}
-        alt={alt}
-        onError={handleError}
-        onLoad={handleLoad}
-        className={getImageClass()}
-        {...props}
-      />
+        <p className="text-xs text-gray-400">{formatFileSize(file.size)}</p>
+      </div>
     </div>
   );
 };

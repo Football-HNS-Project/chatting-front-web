@@ -20,23 +20,14 @@ export const FileGrid = ({ roomId }: FileGridProps) => {
               <p className="text-gray-500">파일이 없습니다.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-2">
               {data.contents.flatMap((message) =>
                 message.files.map((file) => (
                   <div
-                    key={file.id}
-                    className="relative aspect-square overflow-hidden rounded-md shadow-md transition-shadow hover:shadow-lg"
+                    key={file.url}
+                    className="cursor-pointer rounded-md shadow-md hover:shadow-lg"
                   >
-                    <FileCard
-                      src={file.url}
-                      alt={file.name}
-                      layout="fill"
-                      objectFit="cover"
-                      className="transition-transform duration-300 hover:scale-110"
-                    />
-                    <div className="absolute bottom-0 left-0 right-0 truncate bg-black bg-opacity-50 p-1 text-sm text-white">
-                      {file.name}
-                    </div>
+                    <FileCard file={file} />
                   </div>
                 ))
               )}

@@ -24,7 +24,7 @@ export const NoticeGrid = ({ roomId }: NoticeGridProps) => {
               {data.contents.flatMap((message) =>
                 message.files.map((file) => (
                   <div
-                    key={file.id}
+                    key={file.url}
                     className="relative aspect-square overflow-hidden rounded-md shadow-md transition-shadow hover:shadow-lg"
                   >
                     <NoticeCard

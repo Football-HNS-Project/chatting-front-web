@@ -42,5 +42,5 @@ export type TTalkStorage = {
   senderId: string;
   createdAt: string;
   messageType: "NOTICE" | "IMAGE" | "VIDEO" | "FILE";
-  files: Omit<TFile[], "mimeType" | "uploadedAt">;
+  files: Omit<TFile, "id" | "uploadedAt">[];
 };
