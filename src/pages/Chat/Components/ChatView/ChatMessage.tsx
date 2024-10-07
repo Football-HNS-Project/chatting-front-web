@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import { useParams } from "react-router-dom";
 
@@ -9,7 +9,7 @@ import { useGetMessages } from "@apis/Chat/useGetMessages";
 
 import { changeDate } from "@utils/changeDate";
 import { checkDisplayProfile } from "@utils/checkDisplayProfile";
-import { groupMessagesByDate } from "@utils/groupMessagesByDate";
+import { createGroupedMessageStructure } from "@utils/groupMessagesByDate";
 
 import { useScrollHandler } from "@hooks/useScrollHandler";
 import { useWebSocketSubscription } from "@hooks/useWebSocketSubscription";
@@ -75,60 +75,41 @@ export const ChatMessage: React.FC = () => {
 
   useWebSocketSubscription("MESSAGE_CREATED", handleNewMessage);
 
-  const groupedMessages = useMemo(() => {
-    const dateGroups = groupMessagesByDate(messages);
-    return Object.entries(dateGroups).map(([date, dayMessages]) => {
-      const messageGroups = dayMessages.reduce((groups, message, index) => {
-        const prevMessage = dayMessages[index - 1];
-        if (
-          !prevMessage ||
-          prevMessage.sender.id !== message.sender.id ||
-          dayjs(message.createdAt).format("HH:mm") !==
-            dayjs(prevMessage.createdAt).format("HH:mm")
-        ) {
-          groups.push([]);
-        }
-        groups[groups.length - 1].push(message);
-        return groups;
-      }, [] as TChatMessageDetail[][]);
-
-      return { date, messageGroups };
-    });
-  }, [messages]);
-
   return (
     <div
       ref={containerRef}
       className="h-full overflow-y-auto overflow-x-hidden px-[20px] pt-[20px]"
     >
-      {groupedMessages.map(({ date, messageGroups }) => (
-        <div key={date} className="flex flex-col gap-[10px]">
-          <div className="self-center rounded-xl bg-slate-200 px-4 py-1 text-sm">
-            {date}
+      {createGroupedMessageStructure(messages).map(
+        ({ date, groupedMessagesByUser }) => (
+          <div key={date} className="flex flex-col gap-[10px]">
+            <div className="self-center rounded-xl bg-slate-200 px-4 py-1 text-sm">
+              {date}
+            </div>
+            {groupedMessagesByUser.map((group) =>
+              group.map((message, messageIndex) => {
+                const isLastInGroup = messageIndex === group.length - 1;
+                return (
+                  <MessageItem
+                    key={message.id}
+                    message={message}
+                    isCurrentUser={message.sender.id === myInfo?.id}
+                    displayProfile={checkDisplayProfile(
+                      group,
+                      message,
+                      messageIndex,
+                      myInfo
+                    )}
+                    isStandardMessage={message.id === data?.standardMessage?.id}
+                    timeValue={changeDate(dayjs(message.createdAt))}
+                    showTime={isLastInGroup}
+                  />
+                );
+              })
+            )}
           </div>
-          {messageGroups.map((group) =>
-            group.map((message, messageIndex) => {
-              const isLastInGroup = messageIndex === group.length - 1;
-              return (
-                <MessageItem
-                  key={message.id}
-                  message={message}
-                  isCurrentUser={message.sender.id === myInfo?.id}
-                  displayProfile={checkDisplayProfile(
-                    group,
-                    message,
-                    messageIndex,
-                    myInfo
-                  )}
-                  isStandardMessage={message.id === data?.standardMessage?.id}
-                  timeValue={changeDate(dayjs(message.createdAt))}
-                  showTime={isLastInGroup}
-                />
-              );
-            })
-          )}
-        </div>
-      ))}
+        )
+      )}
     </div>
   );
 };
