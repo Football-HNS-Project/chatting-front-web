@@ -1,21 +1,11 @@
-import { DefaultExtensionType, FileIcon, defaultStyles } from "react-file-icon";
+import { FileIcon, defaultStyles } from "react-file-icon";
 
 import dayjs from "dayjs";
 import mime from "mime-types";
 
 import { TFile } from "@typings/Chat";
 
-const formatFileSize = (bytes: number) => {
-  if (bytes < 1024) return bytes + " B";
-  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
-  return (bytes / (1024 * 1024)).toFixed(1) + " MB";
-};
-
-const isValidExtension = (
-  extension: string | false
-): extension is DefaultExtensionType => {
-  return typeof extension === "string" && extension in defaultStyles;
-};
+import { formatFileSize, isValidExtension } from "./utils";
 
 type FileCardProps = {
   file: TFile;

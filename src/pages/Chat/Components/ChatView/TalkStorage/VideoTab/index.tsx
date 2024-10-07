@@ -2,14 +2,14 @@ import { useGetImages } from "@apis/Room/useGetImages";
 
 import { QueryWrapper } from "@components/QueryWrapper";
 
-import { ImageCard } from "./ImageCard";
+import { VideoCard } from "./VideoCard";
 
-type ImageGridProps = {
+type VideoTabProps = {
   roomId: string;
 };
 
-export const ImageGrid = ({ roomId }: ImageGridProps) => {
-  const query = useGetImages({ roomId, page: 0, messageType: "IMAGE" });
+export const VideoTab = ({ roomId }: VideoTabProps) => {
+  const query = useGetImages({ roomId, page: 0, messageType: "VIDEO" });
 
   return (
     <QueryWrapper query={query}>
@@ -17,7 +17,7 @@ export const ImageGrid = ({ roomId }: ImageGridProps) => {
         <>
           {data.contents.length === 0 ? (
             <div className="flex h-full items-center justify-center">
-              <p className="text-gray-500">이미지가 없습니다.</p>
+              <p className="text-gray-500">동영상이 없습니다.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
@@ -27,7 +27,7 @@ export const ImageGrid = ({ roomId }: ImageGridProps) => {
                     key={file.url}
                     className="relative aspect-square overflow-hidden rounded-md shadow-md transition-shadow hover:shadow-lg"
                   >
-                    <ImageCard
+                    <VideoCard
                       src={file.url}
                       alt={file.name}
                       layout="fill"

@@ -16,10 +16,10 @@ import {
   TabsTrigger,
 } from "@components/ui";
 
-import { FileGrid } from "./File/FileGrid";
-import { ImageGrid } from "./Image/ImageGrid";
-import { NoticeGrid } from "./Notice/NoticeGrid";
-import { VideoGrid } from "./Video/VideoGrid";
+import { FileTab } from "./FileTab";
+import { ImageTab } from "./ImageTab";
+import { NoticeTab } from "./NoticeTab";
+import { VideoTab } from "./VideoTab";
 
 type TalkStorageProps = {
   isDrawerOpen: boolean;
@@ -61,16 +61,16 @@ export const TalkStorage = ({
           </TabsList>
 
           <TabsContent value="images" className="h-full overflow-auto p-2">
-            <ImageGrid roomId={roomId ?? ""} />
+            <ImageTab roomId={roomId ?? ""} />
           </TabsContent>
           <TabsContent value="videos" className="h-full overflow-auto p-2">
-            <VideoGrid roomId={roomId ?? ""} />
+            <VideoTab roomId={roomId ?? ""} />
           </TabsContent>
           <TabsContent value="files" className="h-full overflow-auto p-2">
-            <FileGrid roomId={roomId ?? ""} />
+            <FileTab roomId={roomId ?? ""} />
           </TabsContent>
           <TabsContent value="notices" className="h-full overflow-auto p-2">
-            <NoticeGrid roomId={roomId ?? ""} />
+            <NoticeTab roomId={roomId ?? ""} />
           </TabsContent>
         </Tabs>
 

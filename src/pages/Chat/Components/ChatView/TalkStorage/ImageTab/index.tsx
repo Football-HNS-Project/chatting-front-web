@@ -2,19 +2,19 @@ import { useGetImages } from "@apis/Room/useGetImages";
 
 import { QueryWrapper } from "@components/QueryWrapper";
 
-import { ImageCard } from "./Image/ImageCard";
+import { ImageCard } from "./ImageCard";
 
-type TalkImagesProps = {
+type ImageTabProps = {
   roomId: string;
 };
 
-export const TalkImages = ({ roomId }: TalkImagesProps) => {
+export const ImageTab = ({ roomId }: ImageTabProps) => {
   const query = useGetImages({ roomId, page: 0, messageType: "IMAGE" });
 
   return (
     <QueryWrapper query={query}>
       {(data) => (
-        <div className="h-full overflow-auto p-2">
+        <>
           {data.contents.length === 0 ? (
             <div className="flex h-full items-center justify-center">
               <p className="text-gray-500">이미지가 없습니다.</p>
@@ -42,7 +42,7 @@ export const TalkImages = ({ roomId }: TalkImagesProps) => {
               )}
             </div>
           )}
-        </div>
+        </>
       )}
     </QueryWrapper>
   );

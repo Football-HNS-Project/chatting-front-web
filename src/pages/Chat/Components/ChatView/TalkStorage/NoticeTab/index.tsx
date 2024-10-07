@@ -4,11 +4,11 @@ import { QueryWrapper } from "@components/QueryWrapper";
 
 import { NoticeCard } from "./NoticeCard";
 
-type NoticeGridProps = {
+type NoticeTabProps = {
   roomId: string;
 };
 
-export const NoticeGrid = ({ roomId }: NoticeGridProps) => {
+export const NoticeTab = ({ roomId }: NoticeTabProps) => {
   const query = useGetImages({ roomId, page: 0, messageType: "NOTICE" });
 
   return (

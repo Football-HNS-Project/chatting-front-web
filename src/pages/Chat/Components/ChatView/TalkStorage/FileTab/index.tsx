@@ -4,11 +4,11 @@ import { QueryWrapper } from "@components/QueryWrapper";
 
 import { FileCard } from "./FileCard";
 
-type FileGridProps = {
+type FileTabProps = {
   roomId: string;
 };
 
-export const FileGrid = ({ roomId }: FileGridProps) => {
+export const FileTab = ({ roomId }: FileTabProps) => {
   const query = useGetImages({ roomId, page: 0, messageType: "FILE" });
 
   return (
