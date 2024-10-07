@@ -2,28 +2,21 @@ import { useState } from "react";
 
 import { useParams } from "react-router-dom";
 
-import { Archive, X } from "lucide-react";
+import { Archive } from "lucide-react";
 
 import LOGO from "@assets/chat-logo.png";
 
 import { useGetRoomInfo } from "@apis/Room/useGetRoomInfo";
 
 import { QueryWrapper } from "@components/QueryWrapper";
-import {
-  Button,
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-} from "@components/ui";
+import { Button } from "@components/ui";
 
-import { TalkImages } from "./TalkImages";
+import { TalkStorage } from "./TalkStorage";
 import { UsersInRoom } from "./UsersInRoom";
 
 export const RoomInfo = () => {
-  const { id } = useParams<{ id: string }>();
-  const query = useGetRoomInfo({ roomId: id ?? "" });
+  const { id: roomId } = useParams<{ id: string }>();
+  const query = useGetRoomInfo({ roomId: roomId ?? "" });
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   return (
@@ -52,29 +45,11 @@ export const RoomInfo = () => {
             </div>
           </div>
 
-          <Drawer
-            direction="right"
-            open={isDrawerOpen}
-            onOpenChange={setIsDrawerOpen}
-          >
-            <DrawerContent position="right" className="flex h-full flex-col">
-              <div className="flex-shrink-0 border-b p-4">
-                <DrawerHeader>
-                  <DrawerTitle>톡서랍</DrawerTitle>
-                </DrawerHeader>
-              </div>
-              <div className="flex-grow overflow-y-auto p-4">
-                <TalkImages roomId={id || ""} />
-              </div>
-              {isDrawerOpen && (
-                <DrawerClose asChild className="absolute -left-12 top-2">
-                  <Button variant="secondary" size="icon">
-                    <X className="h-5 w-5" />
-                  </Button>
-                </DrawerClose>
-              )}
-            </DrawerContent>
-          </Drawer>
+          {/* 톡서랍 */}
+          <TalkStorage
+            isDrawerOpen={isDrawerOpen}
+            setIsDrawerOpen={setIsDrawerOpen}
+          />
         </>
       )}
     </QueryWrapper>

@@ -36,3 +36,11 @@ export type TLastMessage = {
 };
 export type TMessageType = "TEXT" | "IMAGE" | "FILE";
 export type TSenderType = "USER" | "SYSTEM";
+
+export type TTalkStorage = {
+  id: string;
+  senderId: string;
+  createdAt: string;
+  messageType: "NOTICE" | "IMAGE" | "VIDEO" | "FILE";
+  files: Omit<TFile[], "mimeType" | "uploadedAt">;
+};

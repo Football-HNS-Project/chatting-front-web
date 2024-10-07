@@ -23,7 +23,7 @@ type GetMessagesRes = {
 const getMessages = async (params: GetMessagesReq) => {
   const { roomId, messageId, direction } = params;
   return await instance.get<GetMessagesReq, GetMessagesRes>(
-    `/rooms/${roomId}/messages`,
+    `/rooms/${roomId}/latest-messages`,
     { params: { messageId, direction } }
   );
 };

@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-type ImageProps = React.ImgHTMLAttributes<HTMLImageElement> & {
+type TalkImageProps = React.ImgHTMLAttributes<HTMLImageElement> & {
   src: string;
   alt: string;
   fallbackSrc?: string;
@@ -8,7 +8,7 @@ type ImageProps = React.ImgHTMLAttributes<HTMLImageElement> & {
   objectFit?: "contain" | "cover" | "fill" | "none" | "scale-down";
 };
 
-export const Image: React.FC<ImageProps> = ({
+export const TalkImage: React.FC<TalkImageProps> = ({
   src,
   alt,
   fallbackSrc = "path/to/fallback/image.jpg",

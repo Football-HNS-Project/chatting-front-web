@@ -4,33 +4,25 @@ import { instance } from "@apis/AxiosInstance";
 import { QUERY_KEYS } from "@apis/QUERY_KEYS";
 
 import { TErrorRes } from "@typings/Axios";
-import { TFile } from "@typings/Chat";
+import { TTalkStorage } from "@typings/Chat";
 import { TPage } from "@typings/Page";
 
 type GetImagesReq = {
   roomId: string;
   page: number;
+  messageType: TTalkStorage["messageType"];
 };
 
 type GetImagesRes = TPage & {
-  contents: {
-    messagesByDate: {
-      [date: string]: {
-        id: string;
-        senderId: string;
-        createdAt: string;
-        files: Omit<TFile[], "mimeType" | "uploadedAt">;
-      }[];
-    };
-  }[];
+  contents: TTalkStorage[];
 };
 
 const getImages = async (params: GetImagesReq) => {
-  const { page, roomId } = params;
+  const { page, roomId, messageType } = params;
   return await instance.get<GetImagesReq, GetImagesRes>(
-    `/rooms/${roomId}/images`,
+    `/rooms/${roomId}/messages`,
     {
-      params: { page, size: 20 },
+      params: { page, size: Number.MAX_SAFE_INTEGER, messageType },
     }
   );
 };
