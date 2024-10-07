@@ -5,3 +5,4 @@ export * from "./dropdown-menu";
 export * from "./input";
 export * from "./popover";
 export * from "./drawer";
+export * from "./tabs";
