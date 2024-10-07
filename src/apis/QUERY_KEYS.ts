@@ -28,6 +28,7 @@ export const QUERY_KEYS = {
       "invitable_user_list",
       params,
     ],
+    images: (params: string) => [...QUERY_KEYS.ROOM.all(), "images", params],
     list: () => [...QUERY_KEYS.ROOM.all(), "list"],
     create: () => [...QUERY_KEYS.ROOM.all(), "create"],
     leave: () => [...QUERY_KEYS.ROOM.all(), "leave"],

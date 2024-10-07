@@ -14,11 +14,11 @@ import {
   Drawer,
   DrawerClose,
   DrawerContent,
-  DrawerDescription,
   DrawerHeader,
   DrawerTitle,
 } from "@components/ui";
 
+import { TalkImages } from "./TalkImages";
 import { UsersInRoom } from "./UsersInRoom";
 
 export const RoomInfo = () => {
@@ -57,23 +57,17 @@ export const RoomInfo = () => {
             open={isDrawerOpen}
             onOpenChange={setIsDrawerOpen}
           >
-            <DrawerContent position="right" className="flex flex-row">
-              <div className="flex-grow">
-                <div className="p-4">
-                  <DrawerHeader>
-                    <DrawerTitle>톡서랍</DrawerTitle>
-                    <DrawerDescription>
-                      이 곳에 톡서랍의 내용을 추가하세요.
-                    </DrawerDescription>
-                  </DrawerHeader>
-                  <div className="mt-4">
-                    {/* 톡서랍의 내용을 여기에 추가하세요 */}
-                    <p>톡서랍의 내용이 여기에 표시됩니다.</p>
-                  </div>
-                </div>
+            <DrawerContent position="right" className="flex h-full flex-col">
+              <div className="flex-shrink-0 border-b p-4">
+                <DrawerHeader>
+                  <DrawerTitle>톡서랍</DrawerTitle>
+                </DrawerHeader>
+              </div>
+              <div className="flex-grow overflow-y-auto p-4">
+                <TalkImages roomId={id || ""} />
               </div>
               {isDrawerOpen && (
-                <DrawerClose className="absolute -left-12 top-2">
+                <DrawerClose asChild className="absolute -left-12 top-2">
                   <Button variant="secondary" size="icon">
                     <X className="h-5 w-5" />
                   </Button>
