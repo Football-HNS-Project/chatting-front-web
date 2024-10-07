@@ -1,43 +1,39 @@
-import React from "react";
-
 import { DefaultExtensionType, FileIcon, defaultStyles } from "react-file-icon";
 
 import dayjs from "dayjs";
+import mime from "mime-types";
 
 import { TFile } from "@typings/Chat";
 
-type FileCardProps = {
-  file: TFile;
-};
-
-const getFileExtension = (fileName: string): string => {
-  return fileName.split(".").pop()?.toLowerCase() || "";
-};
-
-const formatFileSize = (bytes: number): string => {
+const formatFileSize = (bytes: number) => {
   if (bytes < 1024) return bytes + " B";
   if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
   return (bytes / (1024 * 1024)).toFixed(1) + " MB";
 };
 
 const isValidExtension = (
-  extension: string
+  extension: string | false
 ): extension is DefaultExtensionType => {
-  return extension in defaultStyles;
+  return typeof extension === "string" && extension in defaultStyles;
 };
 
-export const FileCard: React.FC<FileCardProps> = ({ file }) => {
-  const extension = getFileExtension(file.name);
+type FileCardProps = {
+  file: TFile;
+};
+
+export const FileCard = ({ file }: FileCardProps) => {
+  const extension = mime.extension(file.mimeType);
   const validExtension = isValidExtension(extension) ? extension : "txt";
 
   return (
-    <div className="flex h-full flex-col gap-4 border p-4">
+    <div className="flex h-full cursor-pointer flex-col gap-4 rounded-md border p-4 shadow-md hover:shadow-lg">
       <div className="w-[50px]">
         <FileIcon
           extension={validExtension}
           {...defaultStyles[validExtension]}
         />
       </div>
+
       <div className="flex flex-col justify-between gap-3">
         <div className="flex flex-col">
           <h3 className="truncate text-sm font-medium">{file.name}</h3>

@@ -23,12 +23,7 @@ export const FileGrid = ({ roomId }: FileGridProps) => {
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-2">
               {data.contents.flatMap((message) =>
                 message.files.map((file) => (
-                  <div
-                    key={file.url}
-                    className="cursor-pointer rounded-md shadow-md hover:shadow-lg"
-                  >
-                    <FileCard file={file} />
-                  </div>
+                  <FileCard key={file.url} file={file} />
                 ))
               )}
             </div>
