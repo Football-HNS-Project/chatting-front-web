@@ -2,22 +2,22 @@ import { useGetImages } from "@apis/Room/useGetImages";
 
 import { QueryWrapper } from "@components/QueryWrapper";
 
-import { ImageCard } from "./Image/ImageCard";
+import { VideoCard } from "./VideoCard";
 
-type TalkImagesProps = {
+type VideoGridProps = {
   roomId: string;
 };
 
-export const TalkImages = ({ roomId }: TalkImagesProps) => {
-  const query = useGetImages({ roomId, page: 0, messageType: "IMAGE" });
+export const VideoGrid = ({ roomId }: VideoGridProps) => {
+  const query = useGetImages({ roomId, page: 0, messageType: "VIDEO" });
 
   return (
     <QueryWrapper query={query}>
       {(data) => (
-        <div className="h-full overflow-auto p-2">
+        <>
           {data.contents.length === 0 ? (
             <div className="flex h-full items-center justify-center">
-              <p className="text-gray-500">이미지가 없습니다.</p>
+              <p className="text-gray-500">동영상이 없습니다.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
@@ -27,7 +27,7 @@ export const TalkImages = ({ roomId }: TalkImagesProps) => {
                     key={file.id}
                     className="relative aspect-square overflow-hidden rounded-md shadow-md transition-shadow hover:shadow-lg"
                   >
-                    <ImageCard
+                    <VideoCard
                       src={file.url}
                       alt={file.name}
                       layout="fill"
@@ -42,7 +42,7 @@ export const TalkImages = ({ roomId }: TalkImagesProps) => {
               )}
             </div>
           )}
-        </div>
+        </>
       )}
     </QueryWrapper>
   );
