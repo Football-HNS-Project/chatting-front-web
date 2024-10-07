@@ -7,7 +7,7 @@ import dayjs from "dayjs";
 import { TFile } from "@typings/Chat";
 
 type FileCardProps = {
-  file: Omit<TFile, "id" | "uploadedAt">;
+  file: TFile;
 };
 
 const getFileExtension = (fileName: string): string => {

@@ -12,7 +12,7 @@ type CreateMessageReq = {
     plainText: string;
     messageType: TMessageType;
     options: string[];
-    files: Pick<TFile, "name" | "size" | "mimeType" | "url">[];
+    files: TFile[];
     replyTo: string | null;
   };
 };
