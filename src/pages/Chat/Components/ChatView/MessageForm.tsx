@@ -120,6 +120,7 @@ export const MessageForm = () => {
       className="relative m-[16px] flex h-[125px] flex-col justify-between rounded-lg border-[1px] border-gray-900"
       onSubmit={handleSubmit}
     >
+      {/* TODO : 입력창 autofocus 적용 */}
       <textarea
         value={inputMessage}
         maxLength={1000}

@@ -82,7 +82,7 @@ export const ChatMessage: React.FC = () => {
     >
       {createGroupedMessageStructure(messages).map(
         ({ date, groupedMessagesByUser }) => (
-          <div key={date} className="flex flex-col gap-[10px]">
+          <div key={date} className="flex flex-col">
             <div className="self-center rounded-xl bg-slate-200 px-4 py-1 text-sm">
               {date}
             </div>
