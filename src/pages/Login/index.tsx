@@ -14,9 +14,8 @@ import { useLocalStorage } from "@hooks/useLocalStorage";
 import { TErrorRes } from "@typings/Axios";
 import { TLoginForm } from "@typings/Login";
 
-import { Button, Checkbox, Dialog } from "@components/ui";
+import { Button, Checkbox } from "@components/ui";
 
-import { DisabledAccountDialog } from "./components/DisabledAccountDialog";
 import { InputField } from "./components/Inputfield";
 
 const STORAGE_KEYS = {
@@ -39,7 +38,7 @@ export const LoginPage = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [saveId, setSaveId] = useState(false);
-  const [isAccountDisabledDialog, setIsAccountDisabledDialog] = useState(false);
+  // const [isAccountDisabledDialog, setIsAccountDisabledDialog] = useState(false);
 
   const {
     register,
@@ -108,7 +107,7 @@ export const LoginPage = () => {
   const handleLoginError = (error: TErrorRes) => {
     setIsLoading(false);
     if (error.response?.data.errorCode === "ACCOUNT_DISABLED") {
-      setIsAccountDisabledDialog(true);
+      // setIsAccountDisabledDialog(true);
       return;
     }
     const errorMessage =
@@ -165,14 +164,22 @@ export const LoginPage = () => {
         <Button type="submit" disabled={isLoading}>
           {isLoading ? "로그인 중..." : "로그인"}
         </Button>
-        <Dialog
+        <div>
+          <p className="mt-3 text-center text-sm">
+            계정이 없으신가요?{" "}
+            <a href="/sign-up" className="text-blue-500 hover:underline">
+              회원가입
+            </a>
+          </p>
+        </div>
+        {/* <Dialog
           open={isAccountDisabledDialog}
           onOpenChange={(open) => {
             if (!open) setIsAccountDisabledDialog(false);
           }}
         >
           <DisabledAccountDialog />
-        </Dialog>
+        </Dialog> */}
       </form>
     </div>
   );

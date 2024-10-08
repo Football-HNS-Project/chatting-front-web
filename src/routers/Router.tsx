@@ -4,6 +4,7 @@ import { RootLayout } from "@routers/RootLayout";
 
 import { ChatPage } from "@pages/Chat";
 import { LoginPage } from "@pages/Login";
+import { SignUpPage } from "@pages/SignUp";
 
 import { AuthRoute } from "./AuthRoute";
 
@@ -35,5 +36,6 @@ export const router = () =>
       ],
     },
     { path: "login", element: <LoginPage /> },
+    { path: "sign-up", element: <SignUpPage /> },
     { path: "*", element: <Navigate to="/room" replace /> },
   ]);
