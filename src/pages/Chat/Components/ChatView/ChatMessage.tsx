@@ -21,6 +21,7 @@ import { CallbackProps } from "@typings/WebsocketProvider.type";
 import { MyInfoAtom } from "@stores/UserStore";
 
 import { MessageItem } from "./MessageItem";
+import { useChatRoomReadStatus } from "./useChatRoomReadStatus";
 
 export const ChatMessage: React.FC = () => {
   const { id: roomId } = useParams<{ id: string }>();
@@ -32,6 +33,9 @@ export const ChatMessage: React.FC = () => {
     direction: "before",
     messageId: null,
   });
+
+  // 새로운 훅 사용
+  useChatRoomReadStatus(roomId ?? "", messages);
 
   const loadPreviousMessages = useCallback(async () => {
     if (data?.hasPreviousMessages && messages.length > 0) {
