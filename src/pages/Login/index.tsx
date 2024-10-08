@@ -11,12 +11,11 @@ import { instance } from "@apis/AxiosInstance";
 
 import { useLocalStorage } from "@hooks/useLocalStorage";
 
+import { TLoginForm } from "@typings/Auth";
 import { TErrorRes } from "@typings/Axios";
-import { TLoginForm } from "@typings/Login";
 
+import { InputField } from "@components/Auth/InputField";
 import { Button, Checkbox } from "@components/ui";
-
-import { InputField } from "./components/Inputfield";
 
 const STORAGE_KEYS = {
   USERNAME: "PMS_USERNAME",
