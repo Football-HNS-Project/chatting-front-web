@@ -24,6 +24,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "dayjs": "^1.11.10",
+    "firebase": "^10.11.0",
     "jotai": "^2.6.1",
     "lucide-react": "^0.368.0",
     "mime-types": "^2.1.35",

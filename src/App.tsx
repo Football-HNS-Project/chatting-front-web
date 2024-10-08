@@ -7,6 +7,8 @@ import { router } from "@routers/Router";
 
 import { ModalProvider } from "@components/Modal/ModalProvider";
 
+import "./firebase";
+
 export const App: React.FC = () => {
   const queryClient = new QueryClient({
     defaultOptions: {},
