@@ -1,11 +1,14 @@
 import { useState } from "react";
 
-import { SubmitHandler, useForm } from "react-hook-form";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 
 import LOGO from "@assets/chat-logo.png";
 
-import { Button, Checkbox } from "@components/ui";
+import { usePostSignUp } from "@apis/Auth/usePostSignUp";
+import { useGetFileUrl } from "@apis/Chat/useGetFileUrl";
+
+import { Button } from "@components/ui";
 
 import { InputField } from "@pages/Login/components/Inputfield";
 
@@ -15,12 +18,14 @@ type SignUpForm = {
   confirmPassword: string;
   name: string;
   email: string;
-  agreeTerms: boolean;
+  profileImage: FileList;
+  phoneNumber: string;
 };
 
 export const SignUpPage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const { mutate: signUpMutate } = usePostSignUp();
 
   const {
     register,
@@ -28,16 +33,53 @@ export const SignUpPage = () => {
     formState: { errors },
     setError,
     watch,
+    control,
   } = useForm<SignUpForm>();
 
   const password = watch("password");
+  const { mutate: getFileUrlMutate } = useGetFileUrl();
 
   const onSubmit: SubmitHandler<SignUpForm> = async (data) => {
     setIsLoading(true);
     try {
-      console.log("Submitting:", data);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      navigate("/login");
+      const formData = new FormData();
+      formData.append("username", data.username);
+      formData.append("password", data.password);
+      formData.append("name", data.name);
+      formData.append("email", data.email);
+      formData.append("phoneNumber", data.phoneNumber);
+      if (data.profileImage[0]) {
+        formData.append("profileImage", data.profileImage[0]);
+      }
+
+      console.log("Submitting:", formData);
+      getFileUrlMutate(
+        {
+          fileName: data.profileImage[0].name,
+          contentType: data.profileImage[0].type,
+          fileSize: data.profileImage[0].size,
+          metadata: new Map(),
+        },
+        {
+          onSuccess: (res) => {
+            signUpMutate(
+              {
+                username: data.username,
+                password: data.password,
+                name: data.name,
+                email: data.email,
+                profileImageUrl: res.preSignedUrl,
+                phoneNumber: data.phoneNumber,
+              },
+              {
+                onSuccess: () => {
+                  navigate("/login");
+                },
+              }
+            );
+          },
+        }
+      );
     } catch (error) {
       setError("root", {
         type: "manual",
@@ -46,6 +88,17 @@ export const SignUpPage = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const formatPhoneNumber = (value: string) => {
+    const phoneNumber = value.replace(/[^\d]/g, "");
+    if (phoneNumber.length <= 3) return phoneNumber;
+    if (phoneNumber.length <= 7)
+      return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3)}`;
+    return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(
+      3,
+      7
+    )}-${phoneNumber.slice(7, 11)}`;
   };
 
   return (
@@ -77,9 +130,7 @@ export const SignUpPage = () => {
               placeholder="비밀번호"
               type="password"
               register={register}
-              validation={{
-                required: "비밀번호를 입력해주세요.",
-              }}
+              validation={{ required: "비밀번호를 입력해주세요." }}
               className="w-full"
             />
             {errors.password && (
@@ -141,18 +192,48 @@ export const SignUpPage = () => {
               </p>
             )}
           </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id="agreeTerms"
-              {...register("agreeTerms", { required: "약관에 동의해주세요." })}
+          <div>
+            <input
+              type="file"
+              accept="image/*"
+              {...register("profileImage", {
+                required: "프로필 이미지를 선택해주세요.",
+              })}
+              className="w-full"
             />
-            <label htmlFor="agreeTerms" className="text-sm">
-              이용약관에 동의합니다.
-            </label>
+            {errors.profileImage && (
+              <p className="mt-1 text-xs text-red-500">
+                {errors.profileImage.message}
+              </p>
+            )}
           </div>
-          {errors.agreeTerms && (
-            <p className="text-xs text-red-500">{errors.agreeTerms.message}</p>
-          )}
+          <div>
+            <Controller
+              name="phoneNumber"
+              control={control}
+              rules={{
+                required: "전화번호를 입력해주세요.",
+                pattern: {
+                  value: /^\d{3}-\d{4}-\d{4}$/,
+                  message: "올바른 전화번호 형식이 아닙니다.",
+                },
+              }}
+              render={({ field: { onChange, value } }) => (
+                <input
+                  type="tel"
+                  placeholder="전화번호 (xxx-xxxx-xxxx)"
+                  value={value || ""}
+                  onChange={(e) => onChange(formatPhoneNumber(e.target.value))}
+                  className="h-11 w-full rounded-3xl bg-gray-200 px-4 py-1"
+                />
+              )}
+            />
+            {errors.phoneNumber && (
+              <p className="mt-1 text-xs text-red-500">
+                {errors.phoneNumber.message}
+              </p>
+            )}
+          </div>
           {errors.root && (
             <div className="text-center text-sm text-red-500">
               {errors.root.message}
