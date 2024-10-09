@@ -19,6 +19,7 @@ export const PasswordForm = () => {
         register={register}
         validation={{ required: "비밀번호를 입력해주세요." }}
         className="w-full"
+        isPassword
       />
       {errors.password && (
         <p className="mt-1 text-xs text-red-500">{errors.password.message}</p>

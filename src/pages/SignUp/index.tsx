@@ -8,40 +8,22 @@ import LOGO from "@assets/chat-logo.png";
 import { usePostSignUp } from "@apis/Auth/usePostSignUp";
 import { useGetFileUrl } from "@apis/Chat/useGetFileUrl";
 
-import { Button } from "@components/ui";
+import { TSignUpForm } from "@typings/Auth";
 
-import { EmailForm } from "./components/EmailForm";
-import { NameForm } from "./components/NameForm";
-import { PasswordConfirmForm } from "./components/PasswordConfirmForm";
-import { PasswordForm } from "./components/PasswordForm";
-import { PhoneNumberForm } from "./components/PhoneNumberForm";
-import { ProfileImageForm } from "./components/ProfileImageForm";
-import { UsernameForm } from "./components/UsernameForm";
-
-type SignUpForm = {
-  username: string;
-  password: string;
-  confirmPassword: string;
-  name: string;
-  email: string;
-  profileImage: FileList;
-  phoneNumber: string;
-};
+import { StepOne } from "./components/StepOne";
+import { StepTwo } from "./components/StepTwo";
 
 export const SignUpPage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const { mutate: signUpMutate } = usePostSignUp();
   const { mutate: getFileUrlMutate } = useGetFileUrl();
+  const [step, setStep] = useState(0);
 
-  const methods = useForm<SignUpForm>();
-  const {
-    handleSubmit,
-    formState: { errors },
-    setError,
-  } = methods;
+  const methods = useForm<TSignUpForm>();
+  const { handleSubmit, setError } = methods;
 
-  const onSubmit: SubmitHandler<SignUpForm> = async (data) => {
+  const onSubmit: SubmitHandler<TSignUpForm> = async (data) => {
     setIsLoading(true);
     try {
       const formData = new FormData();
@@ -50,16 +32,16 @@ export const SignUpPage = () => {
       formData.append("name", data.name);
       formData.append("email", data.email);
       formData.append("phoneNumber", data.phoneNumber);
-      if (data.profileImage[0]) {
-        formData.append("profileImage", data.profileImage[0]);
+      if (data.profileImage) {
+        formData.append("profileImage", data.profileImage);
       }
 
       console.log("Submitting:", formData);
       getFileUrlMutate(
         {
-          fileName: data.profileImage[0].name,
-          contentType: data.profileImage[0].type,
-          fileSize: data.profileImage[0].size,
+          fileName: data.profileImage.name,
+          contentType: data.profileImage.type,
+          fileSize: data.profileImage.size,
           metadata: new Map(),
         },
         {
@@ -93,39 +75,31 @@ export const SignUpPage = () => {
   };
 
   return (
-    <div className="flex h-screen w-full flex-col items-center justify-center bg-gray-100">
-      <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-md">
-        <div className="mb-3 flex justify-center">
-          <img src={LOGO} width={150} height={150} alt="Logo" />
-        </div>
-        <h2 className="mb-4 text-center text-xl font-bold">회원가입</h2>
-        <FormProvider {...methods}>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <UsernameForm />
-            <PasswordForm />
-            <PasswordConfirmForm />
-            <NameForm />
-            <EmailForm />
-            <ProfileImageForm />
-            <PhoneNumberForm />
-            {errors.root && (
-              <div className="text-center text-sm text-red-500">
-                {errors.root.message}
-              </div>
-            )}
-            <Button type="submit" disabled={isLoading} className="w-full">
-              {isLoading ? "처리 중..." : "회원가입"}
-            </Button>
-          </form>
-        </FormProvider>
+    <div className="flex h-screen w-full flex-col items-center justify-center">
+      {step === 0 && (
+        <>
+          <div className="mb-3 flex justify-center">
+            <img src={LOGO} width={200} height={200} alt="Logo" />
+          </div>
+          <h2 className="mb-4 text-center text-xl font-bold">회원가입</h2>
+        </>
+      )}
+      <FormProvider {...methods}>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
+          {step === 0 ? (
+            <StepOne setStep={setStep} />
+          ) : (
+            <StepTwo setStep={setStep} isLoading={isLoading} />
+          )}
+        </form>
+      </FormProvider>
 
-        <p className="mt-4 text-center text-sm">
-          이미 계정이 있으신가요?{" "}
-          <a href="/login" className="text-blue-500 hover:underline">
-            로그인
-          </a>
-        </p>
-      </div>
+      <p className="mt-4 text-center text-sm">
+        이미 계정이 있으신가요?{" "}
+        <a href="/login" className="text-blue-500 hover:underline">
+          로그인
+        </a>
+      </p>
     </div>
   );
 };
