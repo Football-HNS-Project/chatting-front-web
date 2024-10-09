@@ -2,7 +2,7 @@ import { Controller, useFormContext } from "react-hook-form";
 
 import { TSignUpForm } from "@typings/Auth";
 
-import { formatPhoneNumber } from "../utils";
+import { formatPhoneNumber } from "../../utils";
 
 export const PhoneNumberForm = () => {
   const {
@@ -15,6 +15,7 @@ export const PhoneNumberForm = () => {
       <Controller
         name="phoneNumber"
         control={control}
+        defaultValue="010"
         rules={{
           required: "전화번호를 입력해주세요.",
           pattern: {
@@ -25,10 +26,10 @@ export const PhoneNumberForm = () => {
         render={({ field: { onChange, value } }) => (
           <input
             type="tel"
-            placeholder="전화번호 (xxx-xxxx-xxxx)"
+            placeholder="전화번호"
             value={value || ""}
             onChange={(e) => onChange(formatPhoneNumber(e.target.value))}
-            className="h-11 w-full rounded-3xl bg-gray-200 px-4 py-1"
+            className="h-11 w-full rounded-xl bg-gray-200 px-4"
           />
         )}
       />

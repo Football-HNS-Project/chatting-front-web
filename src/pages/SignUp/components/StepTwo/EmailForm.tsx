@@ -11,7 +11,7 @@ export const EmailForm = () => {
   } = useFormContext<TSignUpForm>();
 
   return (
-    <div>
+    <div className="space-y-1">
       <InputField
         name="email"
         placeholder="이메일"
@@ -27,7 +27,7 @@ export const EmailForm = () => {
         className="w-full"
       />
       {errors.email && (
-        <p className="mt-1 text-xs text-red-500">{errors.email.message}</p>
+        <p className="text-xs text-red-500">{errors.email.message}</p>
       )}
     </div>
   );

@@ -37,7 +37,6 @@ export const LoginPage = () => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [saveId, setSaveId] = useState(false);
-  // const [isAccountDisabledDialog, setIsAccountDisabledDialog] = useState(false);
 
   const {
     register,
@@ -106,7 +105,6 @@ export const LoginPage = () => {
   const handleLoginError = (error: TErrorRes) => {
     setIsLoading(false);
     if (error.response?.data.errorCode === "ACCOUNT_DISABLED") {
-      // setIsAccountDisabledDialog(true);
       return;
     }
     const errorMessage =
@@ -122,13 +120,17 @@ export const LoginPage = () => {
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center gap-5">
       <img src={LOGO} width={200} height={200} alt="Logo" />
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex w-[300px] flex-col gap-3"
+      >
         <InputField
           name="username"
           placeholder="Id"
           type="text"
           register={register}
           validation={{ required: "아이디를 입력해주세요." }}
+          className="w-full"
         />
         <InputField
           name="password"
@@ -136,6 +138,7 @@ export const LoginPage = () => {
           type="password"
           register={register}
           validation={{ required: "비밀번호를 입력해주세요." }}
+          className="w-full"
         />
         <div className="my-2 flex items-center justify-center space-x-2">
           <Checkbox
@@ -171,14 +174,6 @@ export const LoginPage = () => {
             </a>
           </p>
         </div>
-        {/* <Dialog
-          open={isAccountDisabledDialog}
-          onOpenChange={(open) => {
-            if (!open) setIsAccountDisabledDialog(false);
-          }}
-        >
-          <DisabledAccountDialog />
-        </Dialog> */}
       </form>
     </div>
   );
