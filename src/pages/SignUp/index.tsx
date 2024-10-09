@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
 import { FormProvider, SubmitHandler, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -10,68 +10,90 @@ import { useGetFileUrl } from "@apis/Chat/useGetFileUrl";
 
 import { TSignUpForm } from "@typings/Auth";
 
+import { useModal } from "@components/Modal/useModal";
+
+import { SignUpCompleteModal } from "./components/SignUpCompleteModal";
+import { SignUpErrorModal } from "./components/SignUpErrorModal";
 import { StepOne } from "./components/StepOne";
 import { StepTwo } from "./components/StepTwo";
 
-export const SignUpPage = () => {
+export const SignUpPage: React.FC = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const { mutate: signUpMutate } = usePostSignUp();
-  const { mutate: getFileUrlMutate } = useGetFileUrl();
   const [step, setStep] = useState(0);
+  const { mutate: signUpMutate } = usePostSignUp();
+  const { mutateAsync: getFileUrlMutate } = useGetFileUrl();
+  const { showCustomModal, closeCustomModal } = useModal();
 
-  const methods = useForm<TSignUpForm>();
-  const { handleSubmit, setError } = methods;
+  const methods = useForm<TSignUpForm>({
+    defaultValues: {
+      username: "",
+      password: "",
+      confirmPassword: "",
+      name: "",
+      email: "",
+      profileImage: null,
+      profileImageUrl: "",
+      phoneNumber: "010",
+    },
+  });
+
+  const showErrorModal = () => {
+    showCustomModal({
+      displayComponent: <SignUpErrorModal closeModal={closeCustomModal} />,
+      isBackDrop: false,
+    });
+  };
+
+  const handleFileUpload = async (file: File) => {
+    try {
+      const res = await getFileUrlMutate({
+        fileName: file.name,
+        fileSize: file.size,
+        contentType: file.type,
+        metadata: new Map(),
+      });
+      methods.setValue("profileImageUrl", res.preSignedUrl);
+    } catch (err) {
+      console.error(err);
+      showErrorModal();
+    }
+  };
 
   const onSubmit: SubmitHandler<TSignUpForm> = async (data) => {
     setIsLoading(true);
-    try {
-      const formData = new FormData();
-      formData.append("username", data.username);
-      formData.append("password", data.password);
-      formData.append("name", data.name);
-      formData.append("email", data.email);
-      formData.append("phoneNumber", data.phoneNumber);
-      if (data.profileImage) {
-        formData.append("profileImage", data.profileImage);
-      }
-
-      console.log("Submitting:", formData);
-      getFileUrlMutate(
-        {
-          fileName: data.profileImage.name,
-          contentType: data.profileImage.type,
-          fileSize: data.profileImage.size,
-          metadata: new Map(),
-        },
-        {
-          onSuccess: (res) => {
-            signUpMutate(
-              {
-                username: data.username,
-                password: data.password,
-                name: data.name,
-                email: data.email,
-                profileImageUrl: res.preSignedUrl,
-                phoneNumber: data.phoneNumber,
-              },
-              {
-                onSuccess: () => {
-                  navigate("/login");
-                },
-              }
-            );
-          },
-        }
-      );
-    } catch (error) {
-      setError("root", {
-        type: "manual",
-        message: "회원가입에 실패했습니다. 다시 시도해 주세요.",
-      });
-    } finally {
-      setIsLoading(false);
+    if (data.profileImage) {
+      await handleFileUpload(data.profileImage);
     }
+
+    signUpMutate(
+      {
+        username: data.username,
+        password: data.password,
+        name: data.name,
+        email: data.email,
+        profileImageUrl: data.profileImageUrl,
+        phoneNumber: data.phoneNumber,
+      },
+      {
+        onSuccess: () => {
+          setIsLoading(false);
+          showCustomModal({
+            displayComponent: (
+              <SignUpCompleteModal
+                closeModal={closeCustomModal}
+                navigate={navigate}
+              />
+            ),
+            isBackDrop: false,
+          });
+        },
+        onError: () => {
+          setIsLoading(false);
+          showErrorModal();
+        },
+      }
+    );
   };
 
   return (
@@ -85,7 +107,10 @@ export const SignUpPage = () => {
         </>
       )}
       <FormProvider {...methods}>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
+        <form
+          onSubmit={methods.handleSubmit(onSubmit)}
+          className="flex flex-col"
+        >
           {step === 0 ? (
             <StepOne setStep={setStep} />
           ) : (
@@ -93,7 +118,6 @@ export const SignUpPage = () => {
           )}
         </form>
       </FormProvider>
-
       <p className="mt-4 text-center text-sm">
         이미 계정이 있으신가요?{" "}
         <a href="/login" className="text-blue-500 hover:underline">

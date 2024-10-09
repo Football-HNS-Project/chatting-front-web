@@ -9,6 +9,7 @@ export type TSignUpForm = {
   confirmPassword: string;
   name: string;
   email: string;
-  profileImage: File;
+  profileImage: File | null;
+  profileImageUrl: string;
   phoneNumber: string;
 };
