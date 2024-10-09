@@ -15,7 +15,6 @@ export const PhoneNumberForm = () => {
       <Controller
         name="phoneNumber"
         control={control}
-        defaultValue="010"
         rules={{
           required: "전화번호를 입력해주세요.",
           pattern: {
