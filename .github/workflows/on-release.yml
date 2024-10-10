@@ -4,6 +4,9 @@ on:
   release:
     types: [created]
 
+env:
+  AMPLIFY_WEBHOOK_URL: ${{ secrets.AMPLIFY_WEBHOOK_URL }}
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -30,9 +33,6 @@ jobs:
       - name: Build project
         run: pnpm build:prod
 
-  amplify-webhook:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Trigger Amplify webhook
+      - name: Trigger Amplify Webhook
         run: |
-          curl -X POST -d {} ${{ secrets.AMPLIFY_WEBHOOK_URL }} -H "Content-Type:application/json"
+          curl -X POST -H "Content-Type: application/json" -d '{}' "$AMPLIFY_WEBHOOK_URL" --fail
