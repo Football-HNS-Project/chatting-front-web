@@ -6,7 +6,6 @@ import { TErrorRes } from "@typings/Axios";
 
 type CheckReadReq = {
   roomId: string;
-  messageId: string;
 };
 
 type CheckReadRes = {
@@ -14,9 +13,9 @@ type CheckReadRes = {
 };
 
 const checkRead = async (params: CheckReadReq) => {
+  const { roomId } = params;
   return await instance.post<CheckReadReq, CheckReadRes>(
-    "/messages/mark-as-read",
-    params
+    `/rooms/${roomId}/messages/mark-as-read`
   );
 };
 
