@@ -10,6 +10,7 @@ type PostLoginReq = {
   username: string;
   password: string;
   deviceType: "WEB" | "IOS" | "ANDROID";
+  fcmToken?: string; // Optional FCM token
 };
 
 type PostLoginRes = {
@@ -17,43 +18,35 @@ type PostLoginRes = {
   refreshToken: string;
 };
 
-const requestNotificationPermission = async () => {
+// FCM 관련 로직을 별도 함수로 분리
+const getFCMTokenIfPossible = async (): Promise<string | null> => {
   try {
     const permission = await Notification.requestPermission();
-    return permission === "granted";
-  } catch (error) {
-    console.error("Error requesting notification permission:", error);
-    return false;
-  }
-};
 
-const getFCMToken = async () => {
-  try {
+    if (permission !== "granted") {
+      return null;
+    }
+
     const token = await getToken(messaging, {
       vapidKey: import.meta.env.VITE_VAPID_KEY,
     });
+
     return token;
   } catch (error) {
-    console.error("Error generating FCM token:", error);
+    console.warn("FCM token generation failed:", error);
     return null;
   }
 };
 
+// 로그인 함수 - FCM 토큰 없이도 동작
 const postLogin = async (params: PostLoginReq) => {
   try {
-    const isPermissionGranted = await requestNotificationPermission();
-    if (!isPermissionGranted) {
-      throw new Error("Notification permission denied");
-    }
-
-    const fcmToken = await getFCMToken();
-    if (!fcmToken) {
-      throw new Error("Failed to generate FCM token");
-    }
+    // FCM 토큰을 비동기적으로 가져오되, 실패해도 계속 진행
+    const fcmToken = await getFCMTokenIfPossible();
 
     return await instance.post<PostLoginReq, PostLoginRes>("/login", {
-      fcmToken,
       ...params,
+      ...(fcmToken && { fcmToken }), // FCM 토큰이 있을 때만 포함
     });
   } catch (error) {
     console.error("Login failed:", error);
