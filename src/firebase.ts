@@ -16,7 +16,7 @@ export const messaging = getMessaging(app);
 
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker
-    .register("../public/firebase-messaging-sw.js")
+    .register("/firebase-messaging-sw.js")
     .then(function (registration) {
       console.log("Service Worker registered with scope:", registration.scope);
     })

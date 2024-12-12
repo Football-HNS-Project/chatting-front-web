@@ -2,6 +2,8 @@ import { useCallback, useContext, useEffect, useRef } from "react";
 
 import { useParams } from "react-router-dom";
 
+import CHAT_LOGO from "@assets/chat-logo.png";
+
 import { CreateMessageEvent } from "@typings/WebsocketMessage.type";
 import { CallbackProps, TSocketMessage } from "@typings/WebsocketProvider.type";
 
@@ -31,7 +33,7 @@ export const useWebSocketSubscription = (
       // 새 알림 생성
       const notification = new Notification(data.notificationInfo?.senderName, {
         body: data.notificationInfo?.plainText,
-        icon: "/src/assets/chat-logo.png",
+        icon: CHAT_LOGO,
         tag: notificationId,
       });
 
